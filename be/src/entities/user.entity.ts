@@ -1,7 +1,17 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Course } from './course.entity';
 import { Enrollment } from './enrollment.entity';
 import { Review } from './review.entity';
+
+import * as bcrypt from 'bcrypt';
 
 export type UserRole = 'admin' | 'instructure' | 'student';
 
@@ -31,6 +41,10 @@ export class User {
   @Column({ nullable: true })
   providerId: string;
 
+  @Column({ nullable: true })
+  hashedRefreshToken: string;
+  //TODO: what if log in many accounts
+
   @OneToMany(() => Course, (course) => course.instructor)
   courses: Course[];
 
@@ -46,4 +60,8 @@ export class User {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @BeforeInsert()
+  async hashPassword() {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
 }

@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty, IsString, Min } from '@nestjs/class-validator';
+import { IsInt, IsNotEmpty, IsString, IsUrl, IsUUID, Min } from '@nestjs/class-validator';
 
 export class CreateLessonDto {
   @IsString()
@@ -9,10 +9,13 @@ export class CreateLessonDto {
   content: string;
 
   @IsString()
+  @IsUrl()
   videoUrl: string;
+
+  @IsUUID()
+  courseId: string;
 
   @IsInt()
   @Min(0)
   order: number;
 }
-// TODO: lesson and review dtos

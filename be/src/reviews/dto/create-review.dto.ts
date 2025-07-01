@@ -1,17 +1,16 @@
-import { IsInt, IsNotEmpty, IsString, IsUUID } from '@nestjs/class-validator';
+import { IsInt, IsNotEmpty, IsOptional, IsString, IsUUID, Max, Min } from '@nestjs/class-validator';
 
 export class CreateReviewDto {
+
+  @IsUUID()
+  courseId: string;
+
   @IsInt()
+  @Min(1)
+  @Max(5)
   rating: number;
 
+  @IsOptional()
   @IsString()
-  comment: string;
-
-  @IsUUID()
-  @IsNotEmpty()
-  userId: string;
-
-  @IsUUID()
-  @IsNotEmpty()
-  courseId: string;
+  comment?: string;
 }

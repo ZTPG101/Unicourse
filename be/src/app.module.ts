@@ -8,9 +8,10 @@ import { CoursesModule } from './courses/courses.module';
 import { EnrollmentsModule } from './enrollments/enrollments.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { DatabaseModule } from './database/database.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [UsersModule, CoursesModule,TypeOrmModule.forRoot(), LessonsModule, EnrollmentsModule, ReviewsModule, DatabaseModule],
+  imports: [UsersModule, CoursesModule,TypeOrmModule.forRoot(), LessonsModule, EnrollmentsModule, ReviewsModule, DatabaseModule, AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })
