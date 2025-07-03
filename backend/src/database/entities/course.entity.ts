@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -13,8 +14,8 @@ import { Review } from './review.entity';
 import { Lesson } from './lesson.entity';
 
 @Entity()
-export class Course {
-  @PrimaryGeneratedColumn('uuid')
+export class Course  {
+  @PrimaryGeneratedColumn()
   id: string;
 
   @Column()

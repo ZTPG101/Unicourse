@@ -9,9 +9,22 @@ import { EnrollmentsModule } from './enrollments/enrollments.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [UsersModule, CoursesModule,TypeOrmModule.forRoot(), LessonsModule, EnrollmentsModule, ReviewsModule, DatabaseModule, AuthModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
+    DatabaseModule,
+    // UsersModule,
+    // CoursesModule,
+    // LessonsModule,
+    // EnrollmentsModule,
+    // ReviewsModule,
+    // AuthModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

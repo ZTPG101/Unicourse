@@ -1,4 +1,4 @@
-import { Enrollment } from 'src/entities/enrollment.entity';
+import { Enrollment } from 'src/database/entities/enrollment.entity';
 
 export class EnrollmentResponseDto {
   id: number;

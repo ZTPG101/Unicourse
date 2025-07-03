@@ -1,4 +1,4 @@
-import { User } from 'src/entities/user.entity';
+import { User } from 'src/database/entities/user.entity';
 
 export class UserResponseDto {
   id: number;
@@ -14,6 +14,6 @@ export class UserResponseDto {
     this.name = user.name;
     this.avatar = user.avatar;
     this.role = user.role;
-    this.provider = user.provider || null;
+    // this.provider = user.provider || null;
   }
 }

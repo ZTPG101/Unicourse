@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sql_server_container
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Ztpgsql1122@
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+
+  # api:
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile
+  #   container_name: unicourse_api
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - ./backend:/usr/src/app
+  #     - /usr/src/app/node_modules
+  #   depends_on:
+  #     - db
+  #   env_file:
+  #     - ./backend/.env
+  #   command: npm run start:dev
+
+volumes:
+  sqlserver_data:

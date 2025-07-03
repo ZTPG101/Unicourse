@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   BeforeInsert,
   Column,
   CreateDateColumn,
@@ -16,8 +17,8 @@ import * as bcrypt from 'bcrypt';
 export type UserRole = 'admin' | 'instructure' | 'student';
 
 @Entity()
-export class User {
-  @PrimaryGeneratedColumn('uuid')
+export class User  {
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ unique: true })
@@ -35,8 +36,8 @@ export class User {
   @Column({ default: 'student' })
   role: UserRole;
 
-  @Column({ nullable: true })
-  provider: 'google' | 'facebook' | null;
+  // @Column({ nullable: true })
+  // provider: 'google' | 'facebook' | null;
 
   @Column({ nullable: true })
   providerId: string;

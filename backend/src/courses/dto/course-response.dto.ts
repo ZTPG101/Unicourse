@@ -1,4 +1,4 @@
-import { Course } from '../../entities/course.entity';
+import { Course } from '../../database/entities/course.entity';
 
 export class CourseResponseDto {
   id: string;
