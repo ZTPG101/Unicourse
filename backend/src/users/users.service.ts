@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -7,13 +7,13 @@ import { User } from 'src/database/entities/user.entity';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectRepository(User) private UserRepo: Repository<User>) {}
+  constructor(@Inject('USER_REPOSITORY') private UserRepo: Repository<User>) {}
 
   async updateHashedRefreshToken(userId: number, hashedRefreshToken: string) {
     return await this.UserRepo.update({ id: userId }, { hashedRefreshToken });
   }
 
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto): Promise<User> {
     const user = await this.UserRepo.create(createUserDto);
     return await this.UserRepo.save(user);
   }
@@ -26,36 +26,41 @@ export class UsersService {
     });
   }
 
-  findAll() {
-    return `This action returns all users`;
+  findAll(): Promise<User[]> {
+    return this.UserRepo.find();
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<User | null> {
     return this.UserRepo.findOne({
       where: { id },
       select: ['name', 'avatar', 'hashedRefreshToken'],
     });
   }
 
-  async findById(id: number) {
+  async findById(id: number): Promise<User | null> {
     return this.UserRepo.findOne({
       where: { id },
       select: ['id', 'email', 'name', 'avatar', 'role'],
     });
   }
 
-  async findPublicProfile(id: number) {
+  async findPublicProfile(id: number): Promise<User | null> {
     return this.UserRepo.findOne({
       where: { id },
       select: ['name', 'avatar'],
     });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<User | null> {
+    const user = await this.UserRepo.preload({
+      id,
+      ...updateUserDto,
+    });
+    if (!user) return null;
+    return this.UserRepo.save(user);
   }
 
   remove(id: number) {
-    return `This action removes a #${id} user`;
+    return this.UserRepo.delete({ id });
   }
 }

@@ -12,14 +12,20 @@ import { ConfigModule } from '@nestjs/config';
 import refreshJwtConfig from './config/refresh-jwt.config';
 import { RefreshJwtStrategy } from './strategies/refresh.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './guards/jwt-auth/jwt-auth.guard';
+import { RolesGuard } from './guards/roles/roles.guard';
+import { DatabaseModule } from 'src/database/database.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    // TypeOrmModule.forFeature([User]),
     JwtModule.registerAsync(jwtConfig.asProvider()),
     ConfigModule.forFeature(jwtConfig),
     ConfigModule.forFeature(refreshJwtConfig),
+    DatabaseModule,
     UsersModule,
+
   ],
   controllers: [AuthController],
   providers: [
@@ -28,6 +34,14 @@ import { LocalStrategy } from './strategies/local.strategy';
     LocalStrategy,
     JwtStrategy,
     RefreshJwtStrategy,
+    { 
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard //@UseGuards(JwtAuthGuard) applied on all API endpoints
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard
+    }
   ],
   exports: [AuthService],
 })

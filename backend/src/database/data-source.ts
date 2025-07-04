@@ -12,9 +12,8 @@ export const dataSourceOptions: DataSourceOptions = {
   entities: ['dist/database/entities/*.js'],
   migrations: ['dist/database/migrations/*.js'],
   synchronize: false,
-  extra: {
-    trustServerCertificate: true,
-  },
+  options: { encrypt: false, enableArithAbort: true },
+  extra: { trustServerCertificate: true },
 };
 
 const dataSource = new DataSource(dataSourceOptions);

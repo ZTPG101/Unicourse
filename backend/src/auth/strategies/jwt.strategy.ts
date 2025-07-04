@@ -4,6 +4,8 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigType } from '@nestjs/config';
 import { UsersService } from 'src/users/users.service'; // adjust path
 import jwtConfig from '../config/jwt.config';
+import { AuthService } from '../auth.service';
+import { AuthJwtpayload } from '../types/auth-jwtPayload';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -11,6 +13,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
     private readonly usersService: UsersService,
+    private authService: AuthService,
   ) {
     if (!jwtConfiguration.secret) {
       throw new Error('JWT secret is not defined');
@@ -23,11 +26,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: any) {
-    const user = await this.usersService.findById(payload.sub);
-    if (!user) {
-      throw new UnauthorizedException();
-    }
-    return user; // will be attached to request.user
+  async validate(payload: AuthJwtpayload) {
+    const userId = await payload.sub
+    return this.authService.validateJwtUser(userId)
+    // if (!user) {
+    //   throw new UnauthorizedException();
+    // }
+    // return user; // will be attached to request.user
   }
 }

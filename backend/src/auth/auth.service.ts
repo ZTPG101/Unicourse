@@ -6,6 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import refreshJwtConfig from './config/refresh-jwt.config';
 import { ConfigType } from '@nestjs/config';
 import * as argon2 from 'argon2'
+import { CurrentUser } from './types/current-user';
 
 @Injectable()
 export class AuthService {
@@ -64,20 +65,27 @@ export class AuthService {
   async validateRefreshToken(userId: number, refreshToken: string) {
     const user = await this.userService.findOne(userId);
     if (!user || !user.hashedRefreshToken)
-      throw new UnauthorizedException('Invalid Refresh Token');
+      throw new UnauthorizedException('Invalid Refresh Token1');
 
     const refreshTokenMatches = await argon2.verify(
       user.hashedRefreshToken,
       refreshToken,
     );
     if (!refreshTokenMatches)
-      throw new UnauthorizedException('Invalid Refresh Token');
-
+      throw new UnauthorizedException('Invalid Refresh Token2');
+//TODO: check hashed refreshtoken and refreshtoken has to be the same
     return { id: userId };
   }
 
   async logOut(userId: number){
     await this.userService.updateHashedRefreshToken(userId, '')
     //TODO: better ways to handle revoke token
+  }
+
+  async validateJwtUser(userId: number){
+    const user = await this.userService.findOne(userId)
+    if(!user) throw new UnauthorizedException("User not found")
+    const currentUser: CurrentUser = {id:user.id, role: user.role}
+    return currentUser
   }
 }

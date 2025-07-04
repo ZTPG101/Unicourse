@@ -33,18 +33,18 @@ export class User  {
   @Column({ nullable: true })
   avatar: string;
 
-  @Column({ default: 'student' })
+  @Column({ default: 'student', nullable: true  })
   role: UserRole;
 
   // @Column({ nullable: true })
   // provider: 'google' | 'facebook' | null;
 
-  @Column({ nullable: true })
-  providerId: string;
+  // @Column({ nullable: true })
+  // providerId: string;
 
   @Column({ nullable: true })
   hashedRefreshToken: string;
-  //TODO: what if log in many accounts
+  //TODO: what if 1 user log in many devices
 
   @OneToMany(() => Course, (course) => course.instructor)
   courses: Course[];

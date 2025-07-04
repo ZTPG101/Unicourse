@@ -5,6 +5,9 @@ import { UpdateEnrollmentDto } from './dto/update-enrollment.dto';
 import { User } from 'src/database/entities/user.entity';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth/jwt-auth.guard';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from 'src/auth/guards/roles/roles.guard';
 
 @Controller('enrollments')
 export class EnrollmentsController {
@@ -27,6 +30,8 @@ export class EnrollmentsController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('instructor', 'admin')
   update(@Param('id') id: string, @Body() updateEnrollmentDto: UpdateEnrollmentDto) {
     return this.enrollmentsService.update(+id, updateEnrollmentDto);
   }
