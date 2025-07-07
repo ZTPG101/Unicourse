@@ -16,6 +16,8 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './guards/jwt-auth/jwt-auth.guard';
 import { RolesGuard } from './guards/roles/roles.guard';
 import { DatabaseModule } from 'src/database/database.module';
+import { SessionModule } from 'src/session/session.module';
+import { SessionService } from 'src/session/session.service';
 
 @Module({
   imports: [
@@ -25,12 +27,14 @@ import { DatabaseModule } from 'src/database/database.module';
     ConfigModule.forFeature(refreshJwtConfig),
     DatabaseModule,
     UsersModule,
+    SessionModule
 
   ],
   controllers: [AuthController],
   providers: [
     AuthService,
     UsersService,
+    SessionService,
     LocalStrategy,
     JwtStrategy,
     RefreshJwtStrategy,
@@ -38,10 +42,10 @@ import { DatabaseModule } from 'src/database/database.module';
       provide: APP_GUARD,
       useClass: JwtAuthGuard //@UseGuards(JwtAuthGuard) applied on all API endpoints
     },
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard
-    }
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: RolesGuard
+    // }
   ],
   exports: [AuthService],
 })

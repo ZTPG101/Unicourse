@@ -13,11 +13,12 @@ import { Enrollment } from './enrollment.entity';
 import { Review } from './review.entity';
 
 import * as bcrypt from 'bcrypt';
+import { Session } from './session.entity';
 
 export type UserRole = 'admin' | 'instructure' | 'student';
 
 @Entity()
-export class User  {
+export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -33,7 +34,7 @@ export class User  {
   @Column({ nullable: true })
   avatar: string;
 
-  @Column({ default: 'student', nullable: true  })
+  @Column({ default: 'student', nullable: true })
   role: UserRole;
 
   // @Column({ nullable: true })
@@ -41,10 +42,8 @@ export class User  {
 
   // @Column({ nullable: true })
   // providerId: string;
-
-  @Column({ nullable: true })
-  hashedRefreshToken: string;
-  //TODO: what if 1 user log in many devices
+  @OneToMany(() => Session, (session) => session.user)
+  sessions: Session[];
 
   @OneToMany(() => Course, (course) => course.instructor)
   courses: Course[];

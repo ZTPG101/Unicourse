@@ -8,12 +8,9 @@ export class CreateUserTable1751444003109 implements MigrationInterface {
   [password] nvarchar(255),
   [name] nvarchar(255),
   [avatar] nvarchar(255),
-  [role] nvarchar(255),
-  hashedRefreshToken nvarchar(255),
-  [provider] nvarchar(255),
-  [providerId] nvarchar(255),
-  [createdAt] DATETIME,
-  [updatedAt] DATETIME
+  [role] nvarchar(255) DEFAULT 'student',
+  [createdAt] DATETIME DEFAULT GETDATE(),
+  [updatedAt] DATETIME DEFAULT GETDATE()
 )`);
   }
 

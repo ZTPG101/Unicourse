@@ -14,6 +14,8 @@ export class UsersController {
   create(@Body() body: CreateUserDto) {
     return this.usersService.create(body);
   }
+
+  @Public()
   @Get()
   getAllProfile(){
     return this.usersService.findAll()

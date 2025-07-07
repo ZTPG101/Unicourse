@@ -9,9 +9,9 @@ import { User } from 'src/database/entities/user.entity';
 export class UsersService {
   constructor(@Inject('USER_REPOSITORY') private UserRepo: Repository<User>) {}
 
-  async updateHashedRefreshToken(userId: number, hashedRefreshToken: string) {
-    return await this.UserRepo.update({ id: userId }, { hashedRefreshToken });
-  }
+  // async updateHashedRefreshToken(userId: number, hashedRefreshToken: string) {
+  //   return await this.UserRepo.update({ id: userId }, { hashedRefreshToken });
+  // }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const user = await this.UserRepo.create(createUserDto);
@@ -33,7 +33,7 @@ export class UsersService {
   async findOne(id: number): Promise<User | null> {
     return this.UserRepo.findOne({
       where: { id },
-      select: ['name', 'avatar', 'hashedRefreshToken'],
+      select: ['name', 'avatar',],
     });
   }
 

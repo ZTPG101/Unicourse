@@ -22,18 +22,18 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Request() req) {
-    return this.authService.login(req.userId);
+    return this.authService.login(req.user.id);
   }
 
   @UseGuards(RefreshAuthGuard)
   @Post('refresh')
   refreshToken(@Request() req) {
-    return this.authService.refreshtoken(req.userId);
+    return this.authService.refreshToken(req.user.id, req.body.refreshToken);
   }
 
   @UseGuards(JwtAuthGuard)
   @Post('logout')
   logOut(@Request() req) {
-    this.authService.logOut(req.userId);
+    this.authService.logout(req.userId, req.body.refreshToken);
   }
 }
