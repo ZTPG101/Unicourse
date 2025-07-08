@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto } from '../auth/dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -9,21 +9,17 @@ import { User } from 'src/database/entities/user.entity';
 export class UsersService {
   constructor(@Inject('USER_REPOSITORY') private UserRepo: Repository<User>) {}
 
-  // async updateHashedRefreshToken(userId: number, hashedRefreshToken: string) {
-  //   return await this.UserRepo.update({ id: userId }, { hashedRefreshToken });
-  // }
-
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    const user = await this.UserRepo.create(createUserDto);
-    return await this.UserRepo.save(user);
+  async create(createUserDto: CreateUserDto): Promise<User | null> {
+    const userPayload = this.UserRepo.create(createUserDto);
+    const user = await this.UserRepo.save(userPayload);
+    return this.findById(user.id);
   }
 
-  async findByEmail(email: string) {
-    return await this.UserRepo.findOne({
-      where: {
-        email,
-      },
-    });
+  async findByEmail(email: string): Promise<User | null> {
+    return this.UserRepo.createQueryBuilder('user')
+      .addSelect('user.password')
+      .where('user.email = :email', { email })
+      .getOne();
   }
 
   findAll(): Promise<User[]> {
@@ -33,14 +29,14 @@ export class UsersService {
   async findOne(id: number): Promise<User | null> {
     return this.UserRepo.findOne({
       where: { id },
-      select: ['name', 'avatar',],
+      select: ['name', 'avatar'],
     });
   }
 
   async findById(id: number): Promise<User | null> {
     return this.UserRepo.findOne({
       where: { id },
-      select: ['id', 'email', 'name', 'avatar', 'role'],
+      // select: ['id', 'email', 'name', 'avatar', 'role'],
     });
   }
 

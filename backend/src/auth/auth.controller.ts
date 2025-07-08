@@ -1,37 +1,59 @@
 import {
+  BadRequestException,
+  Body,
+  ConflictException,
   Controller,
-  HttpCode,
-  HttpStatus,
   Post,
-  Req,
   Request,
   UseGuards,
 } from '@nestjs/common';
+import { CreateUserDto } from 'src/auth/dto/create-user.dto';
+import { QueryFailedError } from 'typeorm';
 import { AuthService } from './auth.service';
-import { LocalAuthGuard } from './guards/local-auth/local-auth.guard';
-import { RefreshAuthGuard } from './guards/refresh-auth/refresh-auth.guard';
-import { JwtAuthGuard } from './guards/jwt-auth/jwt-auth.guard';
 import { Public } from './decorators/public.deocrator';
+import { LoginDto } from './dto/login.dto';
+import { JwtAuthGuard } from './guards/jwt-auth/jwt-auth.guard';
+import { RefreshAuthGuard } from './guards/refresh-auth/refresh-auth.guard';
 
 @Public()
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-  
-  @HttpCode(HttpStatus.OK)
-  @UseGuards(LocalAuthGuard)
-  @Post('login')
-  async login(@Request() req) {
-    return this.authService.login(req.user.id);
+
+  @Public()
+  @Post('register')
+  async create(@Body() body: CreateUserDto) {
+    try {
+      return await this.authService.register(body);
+    } catch (err) {
+      if (
+        err instanceof QueryFailedError &&
+        err.driverError &&
+        err.driverError.number === 2627
+      ) {
+        throw new ConflictException('Email already in use');
+      }
+
+      if (err instanceof QueryFailedError) {
+        throw new BadRequestException('Failed to create user');
+      }
+      
+      throw err;
+    }
   }
 
-  @UseGuards(RefreshAuthGuard)
+  @Post('login')
+  async login(@Body() body: LoginDto) {
+    const user = await this.authService.validateUser(body.email, body.password);
+    return this.authService.login(user);
+  }
+
   @Post('refresh')
+  @UseGuards(RefreshAuthGuard)
   refreshToken(@Request() req) {
     return this.authService.refreshToken(req.user.id, req.body.refreshToken);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post('logout')
   logOut(@Request() req) {
     this.authService.logout(req.userId, req.body.refreshToken);

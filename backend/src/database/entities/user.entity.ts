@@ -25,7 +25,7 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column({ nullable: true })
+  @Column({ select: false })
   password: string;
 
   @Column()
@@ -36,6 +36,9 @@ export class User {
 
   @Column({ default: 'student', nullable: true })
   role: UserRole;
+
+  @Column({ nullable: true })
+  phone: string;
 
   // @Column({ nullable: true })
   // provider: 'google' | 'facebook' | null;

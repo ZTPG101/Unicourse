@@ -1,29 +1,34 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth/jwt-auth.guard';
+import {
+  BadRequestException,
+  Body,
+  ConflictException,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Req
+} from '@nestjs/common';
 import { Public } from 'src/auth/decorators/public.deocrator';
+import { CreateUserDto } from '../auth/dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UsersService } from './users.service';
+import { QueryFailedError } from 'typeorm';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Public()
-  @Post('registor')
-  create(@Body() body: CreateUserDto) {
-    return this.usersService.create(body);
-  }
-
-  @Public()
   @Get()
-  getAllProfile(){
-    return this.usersService.findAll()
+  getAllProfile() {
+    return this.usersService.findAll();
   }
 
   @Get('Profile')
-  getProfile(@Req() req){
-    return this.usersService.findById(req.user.id)
+  getProfile(@Req() req) {
+    return this.usersService.findById(req.user.id);
   }
 
   @Patch(':id')
