@@ -10,7 +10,7 @@ import { User } from './user.entity';
 import { Course } from './course.entity';
 
 @Entity()
-export class Enrollment  {
+export class Enrollment {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -22,7 +22,7 @@ export class Enrollment  {
   })
   course: Course;
 
-  @Column('decimal', { precision: 3, scale: 2 })
+  @Column({ type: 'int', default: 0 })
   progress: number;
 
   @CreateDateColumn()

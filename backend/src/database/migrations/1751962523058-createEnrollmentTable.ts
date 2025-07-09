@@ -7,7 +7,8 @@ export class CreateEnrollmentTable1751962523058 implements MigrationInterface {
         [id] int IDENTITY(1,1) PRIMARY KEY,
         [userId] int NOT NULL,
         [courseId] int NOT NULL,
-        [createdAt] DATETIME DEFAULT GETDATE(),
+        [progress] int DEFAULT 0,
+        [enrolledAt] DATETIME DEFAULT GETDATE(),
         [updatedAt] DATETIME DEFAULT GETDATE(),
         CONSTRAINT [FK_enrollment_user] FOREIGN KEY ([userId]) REFERENCES [user]([id]) ON DELETE CASCADE,
         CONSTRAINT [FK_enrollment_course] FOREIGN KEY ([courseId]) REFERENCES [course]([id])

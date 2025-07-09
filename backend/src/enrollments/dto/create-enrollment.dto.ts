@@ -1,11 +1,12 @@
-import { IsNotEmpty, IsUUID } from '@nestjs/class-validator';
+import { IsNotEmpty } from '@nestjs/class-validator';
+import { IsInt, IsNumber, Max, Min } from 'class-validator';
 
 export class CreateEnrollmentDto {
-  @IsUUID()
+  @IsNumber()
   @IsNotEmpty()
-  userId: string;
+  userId: number;
 
-  @IsUUID()
+  @IsNumber()
   @IsNotEmpty()
-  courseId: string;
+  courseId: number;
 }

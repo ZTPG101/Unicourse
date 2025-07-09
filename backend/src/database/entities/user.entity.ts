@@ -14,8 +14,7 @@ import { Review } from './review.entity';
 
 import * as bcrypt from 'bcrypt';
 import { Session } from './session.entity';
-
-export type UserRole = 'admin' | 'instructure' | 'student';
+import { UserRole, UserRoleType } from 'src/auth/types/roles.enum';
 
 @Entity()
 export class User {
@@ -34,8 +33,13 @@ export class User {
   @Column({ nullable: true })
   avatar: string;
 
-  @Column({ default: 'student', nullable: true })
-  role: UserRole;
+  @Column({ 
+    type: 'varchar',
+    length: 20,
+    default: UserRole.STUDENT,
+    nullable: true 
+  })
+  role: UserRoleType;
 
   @Column({ nullable: true })
   phone: string;

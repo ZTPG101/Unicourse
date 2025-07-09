@@ -4,17 +4,26 @@ import { UpdateLessonDto } from './dto/update-lesson.dto';
 import { Lesson } from 'src/database/entities/lesson.entity';
 import { Repository } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
+import { Course } from 'src/database/entities/course.entity';
 
 @Injectable()
 export class LessonsService {
   constructor(
       @Inject('LESSON_REPOSITORY') private LessonRepo: Repository<Lesson>,
+      @Inject('COURSE_REPOSITORY') private CourseRepo: Repository<Course>,
     ) {}
   
     async create(createLessonDto: CreateLessonDto): Promise<Lesson | null> {
-      const lessonPayload = this.LessonRepo.create(createLessonDto);
-      const lesson = await this.LessonRepo.save(lessonPayload);
-      return this.findById(lesson.id);
+      const { courseId, ...lessonData } = createLessonDto;
+      const course = await this.CourseRepo.findOne({ where: { id: courseId } });
+      if (!course) {
+        throw new NotFoundException('Course not found');
+      }
+      const lesson = this.LessonRepo.create({
+        ...lessonData,
+        course,
+      });
+      return this.LessonRepo.save(lesson);
     }
   
     async findById(id: number): Promise<Lesson | null> {

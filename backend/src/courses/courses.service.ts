@@ -26,10 +26,6 @@ export class CoursesService {
     return this.CourseRepo.find();
   }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} course`;
-  // }
-
   async update(
     id: number,
     updateCourseDto: UpdateCourseDto,
