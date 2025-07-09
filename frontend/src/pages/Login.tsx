@@ -1,31 +1,47 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; // Import Link for internal navigation
+import axios from "axios";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom"; // Import Link for internal navigation
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Add your login logic here
     if (!email || !password) {
-      setError('Please fill in all fields.');
+      setError("Please fill in all fields.");
       return;
     }
-    setError('');
-    // Proceed with login...
+    setError("");
+
+    try {
+      const response = await axios.post("http://localhost:3000/auth/login", {
+        email,
+        password,
+      });
+      alert("Login successful!");
+      navigate("/");
+      login();
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Login failed");
+    }
   };
 
   return (
     <>
       {/* Page Header Start */}
       <section className="page-header">
-        <div 
-          className="page-header__bg" 
-          style={{ backgroundImage: 'url(/assets/images/shapes/page-header-bg-shape.png)' }}
-        >
-        </div>
+        <div
+          className="page-header__bg"
+          style={{
+            backgroundImage:
+              "url(/assets/images/shapes/page-header-bg-shape.png)",
+          }}
+        ></div>
         <div className="page-header__shape-4">
           <img src="/assets/images/shapes/page-header-shape-4.png" alt="" />
         </div>
@@ -44,22 +60,38 @@ const Login = () => {
         <div className="container">
           <div className="page-header__inner">
             <div className="page-header__img">
-              <img src="/assets/images/resources/page-header-img-1.png" alt="" />
+              <img
+                src="/assets/images/resources/page-header-img-1.png"
+                alt=""
+              />
               <div className="page-header__shape-1">
-                <img src="/assets/images/shapes/page-header-shape-1.png" alt="" />
+                <img
+                  src="/assets/images/shapes/page-header-shape-1.png"
+                  alt=""
+                />
               </div>
               <div className="page-header__shape-2">
-                <img src="/assets/images/shapes/page-header-shape-2.png" alt="" />
+                <img
+                  src="/assets/images/shapes/page-header-shape-2.png"
+                  alt=""
+                />
               </div>
               <div className="page-header__shape-3">
-                <img src="/assets/images/shapes/page-header-shape-3.png" alt="" />
+                <img
+                  src="/assets/images/shapes/page-header-shape-3.png"
+                  alt=""
+                />
               </div>
             </div>
             <h2>Login</h2>
             <div className="thm-breadcrumb__box">
               <ul className="thm-breadcrumb list-unstyled">
-                <li><Link to="/">Home</Link></li>
-                <li><span>//</span></li>
+                <li>
+                  <Link to="/">Home</Link>
+                </li>
+                <li>
+                  <span>//</span>
+                </li>
                 <li>Login</li>
               </ul>
             </div>
@@ -86,7 +118,7 @@ const Login = () => {
                         id="formEmail"
                         placeholder="Email..."
                         value={email}
-                        onChange={e => setEmail(e.target.value)}
+                        onChange={(e) => setEmail(e.target.value)}
                         required
                       />
                     </div>
@@ -101,7 +133,7 @@ const Login = () => {
                         id="formPassword"
                         placeholder="Password..."
                         value={password}
-                        onChange={e => setPassword(e.target.value)}
+                        onChange={(e) => setPassword(e.target.value)}
                         required
                       />
                     </div>
@@ -110,7 +142,7 @@ const Login = () => {
                 {error && (
                   <div className="col-xl-12">
                     <div className="form-group">
-                      <div className="input-box" style={{ color: 'red' }}>
+                      <div className="input-box" style={{ color: "red" }}>
                         {error}
                       </div>
                     </div>
@@ -125,7 +157,12 @@ const Login = () => {
                 </div>
                 <div className="remember-forget">
                   <div className="checked-box1">
-                    <input type="checkbox" name="saveMyInfo" id="saveinfo" defaultChecked />
+                    <input
+                      type="checkbox"
+                      name="saveMyInfo"
+                      id="saveinfo"
+                      defaultChecked
+                    />
                     <label htmlFor="saveinfo">
                       <span></span>
                       Remember me
@@ -137,7 +174,8 @@ const Login = () => {
                 </div>
                 <div className="create-account text-center">
                   <p>
-                    Not registered yet? <Link to="/Register">Create an Account</Link>
+                    Not registered yet?{" "}
+                    <Link to="/Register">Create an Account</Link>
                   </p>
                 </div>
               </div>
@@ -146,7 +184,6 @@ const Login = () => {
         </div>
       </section>
       {/* End Login One */}
-
     </>
   );
 };

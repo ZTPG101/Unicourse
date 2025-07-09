@@ -6,6 +6,8 @@ import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { SessionModule } from './sessions/session.module';
+import { CoursesModule } from './courses/courses.module';
+import { LessonsModule } from './lessons/lessons.module';
 
 @Module({
   imports: [
@@ -17,8 +19,8 @@ import { SessionModule } from './sessions/session.module';
     UsersModule,
     AuthModule,
     SessionModule,
-    // CoursesModule,
-    // LessonsModule,
+    CoursesModule,
+    LessonsModule,
     // EnrollmentsModule,
     // ReviewsModule,
   ],

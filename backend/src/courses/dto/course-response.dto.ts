@@ -1,7 +1,7 @@
 import { Course } from '../../database/entities/course.entity';
 
 export class CourseResponseDto {
-  id: string;
+  id: number;
   title: string;
   description: string;
   price: number;

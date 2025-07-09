@@ -14,6 +14,7 @@ import refreshJwtConfig from './config/refresh-jwt.config';
 import { JwtAuthGuard } from './guards/jwt-auth/jwt-auth.guard';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { RefreshJwtStrategy } from './strategies/refresh.strategy';
+import { RolesGuard } from './guards/roles/roles.guard';
 
 @Module({
   imports: [
@@ -37,10 +38,6 @@ import { RefreshJwtStrategy } from './strategies/refresh.strategy';
       provide: APP_GUARD,
       useClass: JwtAuthGuard //@UseGuards(JwtAuthGuard) applied on all API endpoints
     },
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: RolesGuard
-    // }
   ],
   exports: [AuthService],
 })

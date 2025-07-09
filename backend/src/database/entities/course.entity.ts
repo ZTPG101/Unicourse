@@ -16,7 +16,7 @@ import { Lesson } from './lesson.entity';
 @Entity()
 export class Course  {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @Column()
   title: string;
@@ -29,6 +29,15 @@ export class Course  {
 
   @Column({ default: 'general' })
   category: string;
+
+  @Column({ nullable: true })
+  imageUrl: string;
+
+  @Column({ default: 'Beginner' })
+  level: string;
+
+  @Column({ type: 'int', default: 0 })
+  durationMinutes: number;
 
   @ManyToOne(() => User, (user) => user.courses, { eager: true })
   instructor: User;
@@ -44,6 +53,12 @@ export class Course  {
 
   @Column({ default: 0 })
   rating: number;
+
+  @Column({ default: 0 })
+  reviewCount: number;
+
+  @Column({ default: 0 })
+  lessonCount: number;
 
   @CreateDateColumn()
   createdAt: Date;

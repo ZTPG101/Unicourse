@@ -8,8 +8,9 @@ export class CreateSessionTable1751612076412 implements MigrationInterface {
         [hashedRefreshToken] NVARCHAR(255) NOT NULL,
         [deviceInfo] NVARCHAR(255),
         [userId] int,
-        CONSTRAINT [FK_session_user] FOREIGN KEY ([userId]) REFERENCES [user]([id]) ON DELETE CASCADE,
-        [createdAt] DATETIME DEFAULT GETDATE()
+        [createdAt] DATETIME DEFAULT GETDATE(),
+        [updatedAt] DATETIME DEFAULT GETDATE(),
+        CONSTRAINT [FK_session_user] FOREIGN KEY ([userId]) REFERENCES [user]([id]) ON DELETE CASCADE
       )
     `);
   }

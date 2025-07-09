@@ -1,26 +1,52 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
+import { Repository } from 'typeorm';
+import { Course } from 'src/database/entities/course.entity';
 
 @Injectable()
 export class CoursesService {
-  create(createCourseDto: CreateCourseDto) {
-    return 'This action adds a new course';
+  constructor(
+    @Inject('COURSE_REPOSITORY') private CourseRepo: Repository<Course>,
+  ) {}
+
+  async create(createCourseDto: CreateCourseDto): Promise<Course | null> {
+    const coursePayload = this.CourseRepo.create(createCourseDto);
+    const course = await this.CourseRepo.save(coursePayload);
+    return this.findById(course.id);
   }
 
-  findAll() {
-    return `This action returns all courses`;
+  async findById(id: number): Promise<Course | null> {
+    return this.CourseRepo.findOne({
+      where: { id },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} course`;
+  findAll(): Promise<Course[]> {
+    return this.CourseRepo.find();
   }
 
-  update(id: number, updateCourseDto: UpdateCourseDto) {
-    return `This action updates a #${id} course`;
+  // findOne(id: number) {
+  //   return `This action returns a #${id} course`;
+  // }
+
+  async update(
+    id: number,
+    updateCourseDto: UpdateCourseDto,
+  ): Promise<Course | null> {
+    const course = await this.CourseRepo.preload({
+      id,
+      ...updateCourseDto,
+    });
+    if (!course) return null;
+    return this.CourseRepo.save(course);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} course`;
+  async remove(id: number): Promise<{ message: string }> {
+    const result = await this.CourseRepo.delete({ id });
+    if (!result.affected) {
+      throw new NotFoundException(`Course with id ${id} not found`);
+    }
+    return { message: 'Course deleted successfully.' };
   }
 }
