@@ -3,10 +3,7 @@
 --------------------------------------------------------------*/
 .banner-one {
   position: relative;
-  display: block;
-  padding: 200px 0 100px;
-  background-color: #f2f2ff;
-  z-index: 5;
+  min-height: 400px; /* or whatever fits your design */
 }
 
 .banner-one__icon-1 {

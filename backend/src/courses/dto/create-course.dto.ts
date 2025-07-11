@@ -35,4 +35,8 @@ export class CreateCourseDto {
   @IsNumber()
   @IsOptional()
   lessonCount?: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  instructorId: number;
 }

@@ -42,13 +42,13 @@ export class Course  {
   @ManyToOne(() => User, (user) => user.courses, { eager: true })
   instructor: User;
 
-  @OneToMany(() => Enrollment, (enrollment) => enrollment.course)
+  @OneToMany(() => Enrollment, (enrollment) => enrollment.course, { cascade: true, onDelete: 'CASCADE' })
   enrollments: Enrollment[];
 
-  @OneToMany(() => Lesson, (lesson) => lesson.course)
+  @OneToMany(() => Lesson, (lesson) => lesson.course, { cascade: true, onDelete: 'CASCADE' })
   lessons: Lesson[];
 
-  @OneToMany(() => Review, (review) => review.course)
+  @OneToMany(() => Review, (review) => review.course, { cascade: true, onDelete: 'CASCADE' })
   reviews: Review[];
 
   @Column({ default: 0 })

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'; // Import Link for navigation
 import { useAuth } from '../context/AuthContext';
 
 const Header = () => {
-  // const { isLoggedIn, logout } = useAuth();
+  const { isLoggedIn, logout, user } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -50,9 +50,9 @@ const Header = () => {
                   <div className="icon">
                     <i className="icon-location"></i>
                   </div>
-                  <div className="text">
+                  {/* <div className="text">
                     <p>684 West College St. Sun City, USA</p>
-                  </div>
+                  </div> */}
                 </li>
               </ul>
             </div>
@@ -67,7 +67,7 @@ const Header = () => {
                     {/* Use Link for home navigation */}
                     <Link to="/">
                       <img
-                        src="/assets/images/unicourselogo2.jpeg"
+                        src="/assets/images/unicourselogo.jpeg"
                         alt="Unicourse Logo"
                         style={{ width: "100px", height: "auto" }}
                       />
@@ -98,6 +98,7 @@ const Header = () => {
                       <Link to="/pages">Pages</Link>
                       <ul className="shadow-box">
                         <li><Link to="/instructor">Instructors</Link></li>
+                        <li><Link to="/review">Reviews</Link></li>
                         {/* ... other page links ... */}
                       </ul>
                     </li>
@@ -106,16 +107,17 @@ const Header = () => {
                        <ul className="shadow-box">
                             <li><Link to="/course">Course</Link></li>
                             <li><Link to="/course-carousel">Course Carousel</Link></li>
+                            <li><Link to="/course-details">Course Details</Link></li>
                         </ul>
                     </li>
-                    <li className="dropdown">
+                    {/* <li className="dropdown">
                        <Link to="/shop">Shop</Link>
                        <ul className="shadow-box">
                             <li><Link to="/products">Products</Link></li>
                             <li><Link to="/sign-up">Sign Up</Link></li>
                             <li><Link to="/login">Login</Link></li>
                         </ul>
-                    </li>
+                    </li> */}
                     <li>
                       <Link to="/contact">Contact</Link>
                     </li>
@@ -131,12 +133,24 @@ const Header = () => {
                     </div>
                   </div>
                   <div className="main-menu__btn-boxes">
-                    <div className="main-menu__btn-box-1">
-                      <Link to="/login" className="thm-btn">Login</Link>
-                    </div>
-                    <div className="main-menu__btn-box-2">
-                      <Link to="/Register" className="thm-btn">Register</Link>
-                    </div>
+                    {isLoggedIn && user ? (
+                      <div className="main-menu__user-info" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        {user.avatar && (
+                          <img src={user.avatar} alt="avatar" style={{ width: 32, height: 32, borderRadius: '50%' }} />
+                        )}
+                        <span>{user.name}</span>
+                        <button onClick={logout} className="thm-btn" style={{ marginLeft: 8 }}>Logout</button>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="main-menu__btn-box-1">
+                          <Link to="/login" className="thm-btn">Login</Link>
+                        </div>
+                        <div className="main-menu__btn-box-2">
+                          <Link to="/Register" className="thm-btn">Register</Link>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -154,9 +168,9 @@ const Header = () => {
                 <div className="main-menu__logo">
                   <Link to="/">
                     <img
-                      src="/assets/images/resources/logo-1.png"
-                      alt="Fistudy Logo"
-                      style={{ width: "120px", height: "auto" }} // Adjust width as needed
+                      src="/assets/images/unicourselogo.jpeg"
+                      alt="Unicourse Logo"
+                      style={{ width: "100px", height: "auto" }} // Adjust width as needed
                     />
                   </Link>
                 </div>
@@ -172,6 +186,7 @@ const Header = () => {
                     <Link to="/pages">Pages</Link>
                     <ul className="shadow-box">
                       <li><Link to="/instructor">Instructors</Link></li>
+                      <li><Link to="/review">Reviews</Link></li>
                     </ul>
                   </li>
                   <li className="dropdown">
@@ -179,23 +194,24 @@ const Header = () => {
                     <ul className="shadow-box">
                       <li><Link to="/course">Course</Link></li>
                       <li><Link to="/course-carousel">Course Carousel</Link></li>
+                      <li><Link to="/course-details">Course Details</Link></li>
                     </ul>
                   </li>
-                  <li className="dropdown">
+                  {/* <li className="dropdown">
                     <Link to="/shop">Shop</Link>
                     <ul className="shadow-box">
                       <li><Link to="/products">Products</Link></li>
                       <li><Link to="/sign-up">Sign Up</Link></li>
                       <li><Link to="/login">Login</Link></li>
                     </ul>
-                  </li>
-                  <li className="dropdown">
+                  </li> */}
+                  {/* <li className="dropdown">
                     <Link to="/blog">Blog</Link>
                     <ul className="shadow-box">
                       <li><Link to="/blog">Blog</Link></li>
                       <li><Link to="/blog-details">Blog Details</Link></li>
                     </ul>
-                  </li>
+                  </li> */}
                   <li>
                     <Link to="/contact">Contact</Link>
                   </li>
@@ -211,12 +227,24 @@ const Header = () => {
                   </div>
                 </div>
                 <div className="main-menu__btn-boxes">
-                  <div className="main-menu__btn-box-1">
-                    <Link to="/login" className="thm-btn">Login</Link>
-                  </div>
-                  <div className="main-menu__btn-box-2">
-                    <Link to="/Register" className="thm-btn">Register</Link>
-                  </div>
+                  {isLoggedIn && user ? (
+                    <div className="main-menu__user-info" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      {user.avatar && (
+                        <img src={user.avatar} alt="avatar" style={{ width: 32, height: 32, borderRadius: '50%' }} />
+                      )}
+                      <span>{user.name}</span>
+                      <button onClick={logout} className="thm-btn" style={{ marginLeft: 8 }}>Logout</button>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="main-menu__btn-box-1">
+                        <Link to="/login" className="thm-btn">Login</Link>
+                      </div>
+                      <div className="main-menu__btn-box-2">
+                        <Link to="/Register" className="thm-btn">Register</Link>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>

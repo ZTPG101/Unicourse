@@ -3,40 +3,44 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Patch,
   Post,
   UseGuards,
-  NotFoundException,
 } from '@nestjs/common';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { AdminOrInstructor } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles/roles.guard';
+import { SelfOrAdminGuard } from 'src/auth/guards/self-admin.guard';
 import { User } from 'src/database/entities/user.entity';
 import { CreateEnrollmentDto } from './dto/create-enrollment.dto';
 import { UpdateEnrollmentDto } from './dto/update-enrollment.dto';
-import { EnrollmentsService } from './enrollments.service';
-import { SelfOrAdminGuard } from 'src/auth/guards/self-admin.guard';
 import { UpdateProgressDto } from './dto/update-progress.dto';
-import { Public } from 'src/auth/decorators/public.decorator';
+import { EnrollmentsService } from './enrollments.service';
 
 @Controller('enrollments')
 export class EnrollmentsController {
   constructor(private readonly enrollmentsService: EnrollmentsService) {}
 
-  @Public()
   @Post()
-  create(@Body() dto: CreateEnrollmentDto) {
-    return this.enrollmentsService.create(dto);
+  @UseGuards(JwtAuthGuard, RolesGuard, SelfOrAdminGuard)
+  create(
+    @Body() dto: CreateEnrollmentDto,
+    @CurrentUser() user: User,
+  ) {
+    return this.enrollmentsService.create(dto, user.id);
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard, RolesGuard, SelfOrAdminGuard)
   findAll() {
     return this.enrollmentsService.findAll();
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard, SelfOrAdminGuard)
   findOne(@Param('id') id: string) {
     return this.enrollmentsService.findById(+id);
   }

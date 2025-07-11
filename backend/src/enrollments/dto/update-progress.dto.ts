@@ -1,4 +1,4 @@
-import { IsNumber, Max, Min } from '@nestjs/class-validator';
+import { Max, Min } from '@nestjs/class-validator';
 import { IsInt } from 'class-validator';
 
 export class UpdateProgressDto {

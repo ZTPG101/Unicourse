@@ -1,33 +1,56 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ReviewsService } from './reviews.service';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
+import { Public } from 'src/auth/decorators/public.decorator';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles/roles.guard';
+import { SelfOrAdminGuard } from 'src/auth/guards/self-admin.guard';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
+import { ReviewsService } from './reviews.service';
+import { User } from 'src/database/entities/user.entity';
 
 @Controller('reviews')
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
-  @Post()
-  create(@Body() createReviewDto: CreateReviewDto) {
-    return this.reviewsService.create(createReviewDto);
-  }
-
+  @Public()
   @Get()
-  findAll() {
+  getAllReview() {
     return this.reviewsService.findAll();
   }
 
+  @Public()
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.reviewsService.findOne(+id);
+  getReview(@Param('id') id: string) {
+    return this.reviewsService.findById(+id);
+  }
+
+  @Post()
+  @UseGuards(JwtAuthGuard, RolesGuard, SelfOrAdminGuard)
+  create(
+    @Body() dto: CreateReviewDto,
+    @CurrentUser() user: User,
+  ) {
+    return this.reviewsService.create(dto, user.id, dto.courseId);
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard, SelfOrAdminGuard)
   update(@Param('id') id: string, @Body() updateReviewDto: UpdateReviewDto) {
     return this.reviewsService.update(+id, updateReviewDto);
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard, SelfOrAdminGuard)
   remove(@Param('id') id: string) {
     return this.reviewsService.remove(+id);
   }

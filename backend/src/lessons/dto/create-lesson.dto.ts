@@ -1,5 +1,4 @@
-import { IsInt, IsNotEmpty, IsString, IsUrl, IsUUID, Min } from '@nestjs/class-validator';
-import { IsNumber } from 'class-validator';
+import { IsInt, IsNotEmpty, IsString, IsUrl, Min } from '@nestjs/class-validator';
 
 export class CreateLessonDto {
   @IsString()
@@ -13,7 +12,7 @@ export class CreateLessonDto {
   @IsUrl()
   videoUrl: string;
 
-  @IsNumber()
+  @IsInt()
   courseId: number;
 
   @IsInt()

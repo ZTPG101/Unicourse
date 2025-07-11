@@ -19,8 +19,9 @@ export class EnrollmentsService {
 
   async create(
     createEnrollmentDto: CreateEnrollmentDto,
+    userId: number,
   ): Promise<Enrollment | null> {
-    const { userId, courseId } = createEnrollmentDto;
+    const { courseId } = createEnrollmentDto;
     const user = await this.UserRepo.findOne({ where: { id: userId } });
     const course = await this.CourseRepo.findOne({ where: { id: courseId } });
     if (!user || !course) {

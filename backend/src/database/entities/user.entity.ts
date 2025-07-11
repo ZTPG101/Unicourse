@@ -44,6 +44,9 @@ export class User {
   @Column({ nullable: true })
   phone: string;
 
+  @Column({ type: 'int', nullable: true, default: 0 })
+  experience: number;
+
   // @Column({ nullable: true })
   // provider: 'google' | 'facebook' | null;
 

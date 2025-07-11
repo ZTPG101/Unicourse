@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom"; // Import Link for internal navigation
 import { useAuth } from "../context/AuthContext";
 
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,6 +24,10 @@ const Login = () => {
         email,
         password,
       });
+      // Store the accessToken in localStorage
+      localStorage.setItem("token", response.data.accessToken);
+      // Store the refreshToken in localStorage
+      localStorage.setItem("refreshToken", response.data.refreshToken);
       alert("Login successful!");
       navigate("/");
       login();
@@ -112,6 +117,7 @@ const Login = () => {
                 <div className="col-xl-12">
                   <div className="form-group">
                     <div className="input-box">
+                      <label htmlFor="formEmail">Email</label>
                       <input
                         type="email"
                         name="form_email"
@@ -127,6 +133,7 @@ const Login = () => {
                 <div className="col-xl-12">
                   <div className="form-group">
                     <div className="input-box">
+                      <label htmlFor="formPassword">Password</label>
                       <input
                         type="password"
                         name="form_password"
