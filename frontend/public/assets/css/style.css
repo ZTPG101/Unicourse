@@ -2393,9 +2393,37 @@ ul {
   display: none;
 }
 
+.instructor-avatar {
+  width: 305px;
+  height: 360px;
+  object-fit: cover;
+  border-radius: 50%;      /* Makes it round */
+  border: 3px solid #eee;  /* Subtle border */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08); /* Soft shadow */
+  display: block;
+  margin: 0 auto;          /* Center horizontally if needed */
+}
 
+.course-detail-img {
+  width: 852px;
+  height: 400px;
+  object-fit: cover;
+  border-radius: 50%;      /* Makes it round */
+  border: 3px solid #eee;  /* Subtle border */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08); /* Soft shadow */
+  display: block;
+  margin: 0 auto;          /* Center horizontally if needed */
+}
 
-
+.instructor-avatar--small {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  border-radius: 50%;      /* Makes it round */
+  border: 2px solid #eee;  /* Optional: subtle border */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08); /* Optional: soft shadow */
+  display: block;
+}
 
 /*--------------------------------------------------------------
 # End

@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
@@ -24,7 +25,10 @@ export class ReviewsController {
 
   @Public()
   @Get()
-  getAllReview() {
+  getAllReview(@Query('courseId') courseId?: string) {
+    if (courseId) {
+      return this.reviewsService.findByCourseId(+courseId);
+    }
     return this.reviewsService.findAll();
   }
 

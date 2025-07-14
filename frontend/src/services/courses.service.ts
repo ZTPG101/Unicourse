@@ -17,6 +17,7 @@ export interface BackendCourse {
     role: string;
   };
   rating: number;
+  lessons: Lesson[];
   reviewCount: number;
   lessonCount: number;
   createdAt: string;
@@ -28,17 +29,29 @@ export interface Course {
   id: number;
   imageUrl: string;
   title: string;
+  description: string;
   price: number;
   rating: number;
   reviewCount: number;
   level: string;
   lessonCount: number;
   duration: number; // in minutes
+  category: string;
+  lessons: Lesson[];
   instructor: {
     name: string;
     image: string;
     experience: number;
   };
+}
+
+export interface Lesson {
+  id: number;
+  title: string;
+  description: string;
+  content: string;
+  videoUrl?: string;
+  courseId: Course;
 }
 
 const API_BASE_URL = 'http://localhost:3000';
@@ -57,12 +70,15 @@ export class CoursesService {
         id: course.id,
         imageUrl: course.imageUrl || '/assets/images/resources/courses-2-1.jpg', // fallback image
         title: course.title,
+        description: course.description,
         price: course.price,
         rating: course.rating,
         reviewCount: course.reviewCount,
         level: course.level,
+        lessons: course.lessons,
         lessonCount: course.lessonCount,
         duration: course.durationMinutes,
+        category: course.category,
         instructor: {
           name: course.instructor.name,
           image: course.instructor.avatar || '/assets/images/resources/courses-two-client-img-1.jpg', // fallback image
@@ -71,6 +87,40 @@ export class CoursesService {
       }));
     } catch (error) {
       console.error('Error fetching courses:', error);
+      throw error;
+    }
+  }
+
+  static async getCourseById(courseId: number): Promise<Course> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/courses/${courseId}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const backendCourse: BackendCourse = await response.json();
+      
+      // Map backend data to frontend format
+      return {
+        id: backendCourse.id,
+        imageUrl: backendCourse.imageUrl || '/assets/images/resources/courses-2-1.jpg', // fallback image
+        title: backendCourse.title,
+        description: backendCourse.description,
+        price: backendCourse.price,
+        rating: backendCourse.rating,
+        reviewCount: backendCourse.reviewCount,
+        level: backendCourse.level,
+        lessons: backendCourse.lessons,
+        lessonCount: backendCourse.lessonCount,
+        duration: backendCourse.durationMinutes,
+        category: backendCourse.category,
+        instructor: {
+          name: backendCourse.instructor.name,
+          image: backendCourse.instructor.avatar || '/assets/images/resources/courses-two-client-img-1.jpg', // fallback image
+          experience: backendCourse.instructor.experience || 0,
+        },
+      };
+    } catch (error) {
+      console.error('Error fetching course details:', error);
       throw error;
     }
   }

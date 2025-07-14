@@ -10,7 +10,7 @@ import {
 import { Course } from './course.entity';
 
 @Entity()
-export class Lesson  {
+export class Lesson {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -26,7 +26,7 @@ export class Lesson  {
   @Column({ type: 'int' })
   order: number;
 
-  @ManyToOne(() => Course, (course) => course.lessons, {onDelete: 'CASCADE'})
+  @ManyToOne(() => Course, (course) => course.lessons, { onDelete: 'CASCADE' })
   course: Course;
 
   @CreateDateColumn()

@@ -51,7 +51,7 @@ export class Course  {
   @OneToMany(() => Review, (review) => review.course, { cascade: true, onDelete: 'CASCADE' })
   reviews: Review[];
 
-  @Column({ default: 0 })
+  @Column('decimal', { precision: 3, scale: 2, default: 0 })
   rating: number;
 
   @Column({ default: 0 })

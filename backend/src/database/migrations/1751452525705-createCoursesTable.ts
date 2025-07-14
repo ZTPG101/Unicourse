@@ -12,7 +12,7 @@ export class CreateCoursesTable1751452525705 implements MigrationInterface {
         [imageUrl] nvarchar(255),
         [level] nvarchar(255) DEFAULT 'Beginner',
         [durationMinutes] int DEFAULT 0,
-        [rating] float DEFAULT 0,
+        [rating] decimal(3,2) DEFAULT 0,
         [reviewCount] int DEFAULT 0,
         [lessonCount] int DEFAULT 0,
         [instructorId] int,

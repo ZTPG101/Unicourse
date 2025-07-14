@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import ContactInfo from './ContactInfo';
+import ScrollToTopButton from './ScrollToTopButton';
 
 const Layout = () => {
   return (
@@ -20,10 +21,7 @@ const Layout = () => {
       <Footer />
       
       {/* Scroll-to-top button here */}
-      <a href="#" data-target="html" className="scroll-to-target scroll-to-top">
-        <span className="scroll-to-top__wrapper"><span className="scroll-to-top__inner"></span></span>
-        <span className="scroll-to-top__text"> Go Back Top</span>
-      </a>
+      <ScrollToTopButton />
     </div>
   );
 };

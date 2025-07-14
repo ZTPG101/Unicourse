@@ -11,6 +11,7 @@ export class CreateUserTable1751444003109 implements MigrationInterface {
       [password] nvarchar(255),
       [avatar] nvarchar(255),
       [role] nvarchar(255) DEFAULT 'student',
+      [experience] int DEFAULT 0,
       [createdAt] DATETIME DEFAULT GETDATE(),
       [updatedAt] DATETIME DEFAULT GETDATE()
       )

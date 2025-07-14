@@ -6,7 +6,8 @@ import Register from './pages/Register';
 import Course from './pages/Course';
 import CustomCursor from './components/CustomCursor';
 import Home from './pages/Home';
-import CourseDetails from './pages/course-details';
+import CourseDetails from './pages/Course-details';
+import LessonPage from './pages/lesson';
 
 const App: React.FC = () => {
   return (
@@ -17,7 +18,8 @@ const App: React.FC = () => {
           <Route path="register" element={<Register />} />
           <Route path="login" element={<Login />} />
           <Route path="/course" element={<Course />} />
-          <Route path="/course-details" element={<CourseDetails/>} />
+          <Route path="/course-details/:courseId" element={<CourseDetails/>} />
+          <Route path="/lesson/:lessonId" element={<LessonPage />} />
           <Route index element={<Home />} />
           {/* Define other routes for your application here */}
         </Route>

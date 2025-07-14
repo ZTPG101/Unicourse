@@ -318,7 +318,7 @@ const CourseComponent: React.FC = () => {
                             </h3>
                             <div className="courses-two__btn-and-client-box">
                               <div className="courses-two__btn-box">
-                                <a href="#" className="thm-btn-two">
+                                <a href={`/course-details/${course.id}`} className="thm-btn-two">
                                   <span>Enroll Now</span>
                                   <i className="icon-angles-right"></i>
                                 </a>

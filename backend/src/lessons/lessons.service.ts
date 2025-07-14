@@ -9,54 +9,72 @@ import { Course } from 'src/database/entities/course.entity';
 @Injectable()
 export class LessonsService {
   constructor(
-      @Inject('LESSON_REPOSITORY') private LessonRepo: Repository<Lesson>,
-      @Inject('COURSE_REPOSITORY') private CourseRepo: Repository<Course>,
-    ) {}
-  
-    async create(createLessonDto: CreateLessonDto): Promise<Lesson | null> {
-      const { courseId, ...lessonData } = createLessonDto;
-      const course = await this.CourseRepo.findOne({ where: { id: courseId } });
-      if (!course) {
-        throw new NotFoundException('Course not found');
-      }
-      const lesson = this.LessonRepo.create({
-        ...lessonData,
-        course,
-      });
-      return this.LessonRepo.save(lesson);
+    @Inject('LESSON_REPOSITORY') private LessonRepo: Repository<Lesson>,
+    @Inject('COURSE_REPOSITORY') private CourseRepo: Repository<Course>,
+  ) {}
+
+  async create(createLessonDto: CreateLessonDto): Promise<Lesson | null> {
+    const { courseId, ...lessonData } = createLessonDto;
+    const course = await this.CourseRepo.findOne({ where: { id: courseId } });
+    if (!course) {
+      throw new NotFoundException('Course not found');
     }
-  
-    async findById(id: number): Promise<Lesson | null> {
-      return this.LessonRepo.findOne({
-        where: { id },
-      });
+    const lesson = this.LessonRepo.create({
+      ...lessonData,
+      course,
+    });
+
+    await this.CourseRepo.increment({ id: courseId }, 'lessonCount', 1);
+    return this.LessonRepo.save(lesson);
+  }
+
+  async findById(id: number): Promise<any> {
+    const lesson = await this.LessonRepo.findOne({
+      where: { id },
+      relations: ['course'],
+    });
+    if (!lesson) return null;
+    return {
+      ...lesson,
+      courseId: lesson.course?.id,
+    };
+  }
+
+  findAll(): Promise<Lesson[]> {
+    return this.LessonRepo.find();
+  }
+
+  // findOne(id: number) {
+  //   return `This action returns a #${id} lesson`;
+  // }
+
+  async update(
+    id: number,
+    updateLessonDto: UpdateLessonDto,
+  ): Promise<Lesson | null> {
+    const lesson = await this.LessonRepo.preload({
+      id,
+      ...updateLessonDto,
+    });
+    if (!lesson) return null;
+    return this.LessonRepo.save(lesson);
+  }
+
+  async remove(id: number): Promise<{ message: string }> {
+    const lesson = await this.LessonRepo.findOne({
+      where: { id },
+      relations: ['course'],
+    });
+    if (!lesson) {
+      throw new NotFoundException(`Lesson with id ${id} not found`);
     }
-  
-    findAll(): Promise<Lesson[]> {
-      return this.LessonRepo.find();
+    const courseId = lesson.course.id;
+    const result = await this.LessonRepo.delete({ id });
+    if (!result.affected) {
+      throw new NotFoundException(`Lesson with id ${id} not found`);
     }
-  
-    // findOne(id: number) {
-    //   return `This action returns a #${id} lesson`;
-    // }
-  
-    async update(
-      id: number,
-      updateLessonDto: UpdateLessonDto,
-    ): Promise<Lesson | null> {
-      const lesson = await this.LessonRepo.preload({
-        id,
-        ...updateLessonDto,
-      });
-      if (!lesson) return null;
-      return this.LessonRepo.save(lesson);
-    }
-  
-    async remove(id: number): Promise<{ message: string }> {
-      const result = await this.LessonRepo.delete({ id });
-      if (!result.affected) {
-        throw new NotFoundException(`Lesson with id ${id} not found`);
-      }
-      return { message: 'Lesson deleted successfully.' };
-    }
+
+    await this.CourseRepo.decrement({ id: courseId }, 'lessonCount', 1);
+    return { message: 'Lesson deleted successfully.' };
+  }
 }
