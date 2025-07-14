@@ -1,18 +1,16 @@
 import React from "react";
+import Select from "react-select";
 
 const BannerOne: React.FC = () => (
   <section className="banner-one">
     <div
       className="banner-one__bg-shape-1"
       style={{
-        backgroundImage: 'url("/assets/images/shapes/banner-one-bg-shape-1.png")'
+        backgroundImage: 'url("/assets/images/shapes/banner-one-bg-shape-1.png")',
       }}
     ></div>
     <div className="banner-one__icon-1 img-bounce">
       <img src="/assets/images/icon/idea-bulb.png" alt="" />
-    </div>
-    <div className="banner-one__icon-2 float-bob-x">
-      <img src="/assets/images/icon/3d-alarm.png" alt="" />
     </div>
     <div className="banner-one__icon-3 float-bob-y">
       <img src="/assets/images/icon/linke-icon.png" alt="" />
@@ -64,8 +62,103 @@ const BannerOne: React.FC = () => (
             <div className="banner-one__img-box">
               <div className="banner-one__img">
                 <img src="/assets/images/resources/banner-two-img-1.png" alt="" />
-                {/* Add other shapes and overlays as needed */}
+                <div className="banner-one__udemy-review">
+                  <div className="banner-one__udemy-review-img">
+                    <img src="/assets/images/resources/banner-one-udemy-review-img.jpg" alt="" />
+                  </div>
+                  <div className="banner-one__udemy-review-logo">
+                    <img src="/assets/images/resources/banner-one-udemy-review-logo.png" alt="" />
+                  </div>
+                  <div className="banner-one__udemy-review-client-info">
+                    <p className="banner-one__udemy-review-client-name">Alisa Olivia/</p>
+                    <div className="banner-one__udemy-review-star">
+                      <span className="icon-star"></span>
+                      <span className="icon-star"></span>
+                      <span className="icon-star"></span>
+                      <span className="icon-star"></span>
+                    </div>
+                  </div>
+                </div>
+                <div className="banner-one__img-shape-box rotate-me">
+                  <div className="banner-one__img-shape-1">
+                    <div className="banner-one__img-shape-2"></div>
+                  </div>
+                  <div className="banner-one__shape-1">
+                    <img src="/assets/images/shapes/banner-one-shape-1.png" alt="" />
+                  </div>
+                  <div className="banner-one__shape-2 rotate-me">
+                    <img src="/assets/images/shapes/banner-one-shape-2.png" alt="" />
+                  </div>
+                  <div className="banner-one__shape-3">
+                    <img src="/assets/images/shapes/banner-one-shape-3.png" alt="" />
+                  </div>
+                </div>
+                <div className="banner-one__student-trained">
+                  <div className="banner-one__student-trained-shape-1 rotate-me">
+                    <img src="/assets/images/shapes/banner-one-student-trained-shape-1.png" alt="" />
+                  </div>
+                  <ul className="list-unstyled banner-one__student-trained-list">
+                    <li>
+                      <div className="banner-one__student-trained-img">
+                        <img src="/assets/images/resources/banner-one-student-trained-img-1-1.jpg" alt="" />
+                      </div>
+                    </li>
+                    <li>
+                      <div className="banner-one__student-trained-img">
+                        <img src="/assets/images/resources/banner-one-student-trained-img-1-2.jpg" alt="" />
+                      </div>
+                    </li>
+                  </ul>
+                  <div className="banner-one__student-trained-count-box">
+                    <div className="banner-one__student-trained-count-box-inner count-box">
+                      <p className="count-text" data-stop="2000" data-speed="3000">00</p>
+                      <span>+</span>
+                    </div>
+                    <p className="banner-one__student-trained-text">Success Student</p>
+                  </div>
+                </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Category Search Row */}
+      <div className="row">
+        <div className="col-xl-12">
+          <div className="banner-one__category-search-box">
+            <div className="banner-one__category-search-inner">
+              <div className="banner-one__category-select-box">
+                <div className="select-box">
+                  <Select
+                    classNamePrefix="nice-select"
+                    options={[
+                      { value: "", label: "All Categories" },
+                      { value: "2", label: "Accounting" },
+                      { value: "3", label: "Business" },
+                      { value: "4", label: "Dance" },
+                      { value: "5", label: "Design & Art" },
+                      { value: "6", label: "Development" },
+                      { value: "7", label: "Marketing" },
+                      { value: "8", label: "Meditation" },
+                    ]}
+                    defaultValue={{ value: "", label: "All Categories" }}
+                    isSearchable={false}
+                  />
+                </div>
+              </div>
+              <form className="banner-one__category-form">
+                <div className="banner-one__category-input">
+                  <input type="search" placeholder="Find Your Course" />
+                </div>
+                <button type="submit" className="banner-one__category-btn">Search</button>
+              </form>
+            </div>
+            <div className="banner-one__tags">
+              <a href="#">Accounting</a>
+              <a href="#">Business</a>
+              <a href="#">Development</a>
+              <a href="#">Marketing</a>
+              <a href="#">Meditation</a>
             </div>
           </div>
         </div>

@@ -15,6 +15,7 @@ import { Review } from './review.entity';
 import * as bcrypt from 'bcrypt';
 import { Session } from './session.entity';
 import { UserRole, UserRoleType } from 'src/auth/types/roles.enum';
+import { Cart } from './cart.entity';
 
 @Entity()
 export class User {
@@ -44,6 +45,9 @@ export class User {
   @Column({ nullable: true })
   phone: string;
 
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  balance: number;
+
   @Column({ type: 'int', nullable: true, default: 0 })
   experience: number;
 
@@ -52,6 +56,10 @@ export class User {
 
   // @Column({ nullable: true })
   // providerId: string;
+
+  @OneToMany(()=> Cart, (cart)=> cart.user)
+  carts: Cart[]
+
   @OneToMany(() => Session, (session) => session.user)
   sessions: Session[];
 

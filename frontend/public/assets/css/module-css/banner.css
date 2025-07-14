@@ -3,7 +3,7 @@
 --------------------------------------------------------------*/
 .banner-one {
   position: relative;
-  min-height: 400px; /* or whatever fits your design */
+  min-height: 900px; /* or match the template's visual height */
 }
 
 .banner-one__icon-1 {
@@ -54,7 +54,7 @@
   bottom: 0px;
   background-repeat: no-repeat;
   background-position: center;
-  background-size: cover;
+  background-size: auto;
   z-index: -1;
 }
 
@@ -695,7 +695,6 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-fill-color: transparent;
   font-family: var(--fistudy-font-two);
   font-weight: 400;
   font-style: italic;
@@ -1246,6 +1245,72 @@
   text-transform: lowercase;
   font-size: 16px;
   line-height: 26px;
+}
+
+/* React-Select custom styles to match template */
+.banner-one__category-select-box .select-box .nice-select__control {
+  background-color: var(--fistudy-white);
+  color: var(--fistudy-gray);
+  font-size: 16px;
+  font-weight: 400;
+  height: 60px;
+  min-height: 60px;
+  line-height: 60px;
+  padding-left: 30px;
+  padding-right: 30px;
+  width: 100%;
+  margin-bottom: 0px;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  border: none;
+  box-shadow: none;
+}
+
+.banner-one__category-select-box .select-box .nice-select__value-container {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.banner-one__category-select-box .select-box .nice-select__single-value {
+  color: var(--fistudy-gray);
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.banner-one__category-select-box .select-box .nice-select__indicator-separator {
+  display: none;
+}
+
+.banner-one__category-select-box .select-box .nice-select__dropdown-indicator {
+  color: var(--fistudy-gray);
+  padding-right: 0px;
+}
+
+.banner-one__category-select-box .select-box .nice-select__menu {
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  margin-top: 4px;
+  font-size: 16px;
+  background: var(--fistudy-white);
+  z-index: 10;
+}
+
+.banner-one__category-select-box .select-box .nice-select__option {
+  color: var(--fistudy-gray);
+  padding: 14px 30px;
+  cursor: pointer;
+}
+
+.banner-one__category-select-box .select-box .nice-select__option--is-selected {
+  background: var(--fistudy-primary);
+  color: #fff;
+}
+
+.banner-one__category-select-box .select-box .nice-select__option--is-focused {
+  background: var(--fistudy-base);
+  color: #fff;
 }
 
 

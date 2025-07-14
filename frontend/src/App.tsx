@@ -8,6 +8,7 @@ import CustomCursor from './components/CustomCursor';
 import Home from './pages/Home';
 import CourseDetails from './pages/Course-details';
 import LessonPage from './pages/lesson';
+import Cart from './pages/Cart';
 
 const App: React.FC = () => {
   return (
@@ -15,12 +16,13 @@ const App: React.FC = () => {
       <CustomCursor />
       <Routes>
         <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
           <Route path="register" element={<Register />} />
           <Route path="login" element={<Login />} />
           <Route path="/course" element={<Course />} />
-          <Route path="/course-details/:courseId" element={<CourseDetails/>} />
+          <Route path="/course-details/:courseId" element={<CourseDetails />} />
           <Route path="/lesson/:lessonId" element={<LessonPage />} />
-          <Route index element={<Home />} />
+          <Route path="/cart" element={<Cart />} />
           {/* Define other routes for your application here */}
         </Route>
       </Routes>

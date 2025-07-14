@@ -1,20 +1,19 @@
 import {
-  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  UpdateDateColumn
 } from 'typeorm';
-import { User } from './user.entity';
 import { Enrollment } from './enrollment.entity';
-import { Review } from './review.entity';
 import { Lesson } from './lesson.entity';
+import { Review } from './review.entity';
+import { User } from './user.entity';
 
 @Entity()
-export class Course  {
+export class Course {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -42,13 +41,22 @@ export class Course  {
   @ManyToOne(() => User, (user) => user.courses, { eager: true })
   instructor: User;
 
-  @OneToMany(() => Enrollment, (enrollment) => enrollment.course, { cascade: true, onDelete: 'CASCADE' })
+  @OneToMany(() => Enrollment, (enrollment) => enrollment.course, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   enrollments: Enrollment[];
 
-  @OneToMany(() => Lesson, (lesson) => lesson.course, { cascade: true, onDelete: 'CASCADE' })
+  @OneToMany(() => Lesson, (lesson) => lesson.course, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   lessons: Lesson[];
 
-  @OneToMany(() => Review, (review) => review.course, { cascade: true, onDelete: 'CASCADE' })
+  @OneToMany(() => Review, (review) => review.course, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   reviews: Review[];
 
   @Column('decimal', { precision: 3, scale: 2, default: 0 })

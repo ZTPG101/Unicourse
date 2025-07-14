@@ -2984,11 +2984,14 @@
 }
 
 
+/* Custom styles for checked checkboxes */
+.course-grid__list-check.checked {
+    background-color: var(--fistudy-base);
+}
 
-
-
-
-
+.course-grid__list-check.checked:before {
+    opacity: 1;
+}
 
 
 

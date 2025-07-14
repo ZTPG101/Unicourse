@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { CoursesService } from "../services/courses.service";
 import type { Course } from "../services/courses.service";
 import CourseOverviewTab from "../components/CourseOverviewTab";
@@ -7,16 +7,23 @@ import CourseCurriculumTab from "../components/CourseCurriculumTab";
 import CourseInstructorTab from "../components/CourseInstructorTab";
 import CourseReviewTab from "../components/CourseReviewTab";
 import { formatDuration } from "../utils/formatters";
+import PageHeader from "../components/PageHeader";
+import { CartService, type Cart } from "../services/carts.service";
+
 
 const CourseDetails: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const location = useLocation();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<
     "overview" | "curriculum" | "instructor" | "review"
   >(() => location.state?.activeTab || "overview");
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [purchaseLoading, setPurchaseLoading] = useState(false);
+  const [purchaseError, setPurchaseError] = useState<string | null>(null);
+  const [purchaseSuccess, setPurchaseSuccess] = useState(false);
 
   // Fetch course details
   useEffect(() => {
@@ -78,77 +85,14 @@ const CourseDetails: React.FC = () => {
       </div>
     );
   }
-
+  const breadcrumbs = [
+    { label: "Home", path: "/" },
+    { label: "Course", path: "/course" },
+    { label: "Course Details" }
+  ];
   return (
     <div className="page-wrapper">
-      {/* Page Header Start */}
-      <section className="page-header">
-        <div
-          className="page-header__bg"
-          style={{
-            backgroundImage:
-              "url(/assets/images/shapes/page-header-bg-shape.png)",
-          }}
-        ></div>
-        <div className="page-header__shape-4">
-          <img src="assets/images/shapes/page-header-shape-4.png" alt="" />
-        </div>
-        <div className="page-header__shape-5">
-          <img src="assets/images/shapes/page-header-shape-5.png" alt="" />
-        </div>
-        <div className="page-header__social">
-          <a href="#">Facebook</a>
-          <span>//</span>
-          <a href="#">Instagram</a>
-          <span>//</span>
-          <a href="#">LinkedIn</a>
-          <span>//</span>
-          <a href="#">Twitter</a>
-        </div>
-        <div className="container">
-          <div className="page-header__inner">
-            <div className="page-header__img">
-              <img src="assets/images/resources/page-header-img-1.png" alt="" />
-              <div className="page-header__shape-1">
-                <img
-                  src="assets/images/shapes/page-header-shape-1.png"
-                  alt=""
-                />
-              </div>
-              <div className="page-header__shape-2">
-                <img
-                  src="assets/images/shapes/page-header-shape-2.png"
-                  alt=""
-                />
-              </div>
-              <div className="page-header__shape-3">
-                <img
-                  src="assets/images/shapes/page-header-shape-3.png"
-                  alt=""
-                />
-              </div>
-            </div>
-            <h2>{course.title}</h2>
-            <div className="thm-breadcrumb__box">
-              <ul className="thm-breadcrumb list-unstyled">
-                <li>
-                  <a href="/">Home</a>
-                </li>
-                <li>
-                  <span>//</span>
-                </li>
-                <li>
-                  <a href="/course">Courses</a>
-                </li>
-                <li>
-                  <span>//</span>
-                </li>
-                <li>{course.title}</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
+      <PageHeader title="Course Details" breadcrumbs={breadcrumbs} />
       {/* Course Details Start */}
       <section className="course-details">
         <div className="container">
@@ -316,13 +260,37 @@ const CourseDetails: React.FC = () => {
                       ${course.price.toFixed(2)}
                     </h3>
                     <div className="course-details__doller-btn-box">
-                      <a
-                        href={`/course-details/${course.id}`}
+                      <button
                         className="thm-btn-two"
+                        onClick={async () => {
+                          if (!course) return;
+                          setPurchaseLoading(true);
+                          setPurchaseError(null);
+                          setPurchaseSuccess(false);
+                          try {
+                            await CartService.addItem(course.id);
+                            setPurchaseSuccess(true);
+                            setTimeout(() => navigate("/cart"), 1000);
+                          } catch (err) {
+                            setPurchaseError("Failed to add to cart. Please try again.");
+                          } finally {
+                            setPurchaseLoading(false);
+                          }
+                        }}
+                        type="button"
+                        disabled={purchaseLoading}
                       >
-                        <span>Enroll Now</span>
+                        <span>
+                          {purchaseLoading ? "Processing..." : "Purchase Now"}
+                        </span>
                         <i className="icon-angles-right"></i>
-                      </a>
+                      </button>
+                      {purchaseError && (
+                        <div className="alert alert-danger mt-2">{purchaseError}</div>
+                      )}
+                      {purchaseSuccess && (
+                        <div className="alert alert-success mt-2">Added to cart! Redirecting...</div>
+                      )}
                     </div>
                   </div>
                   <div className="course-details__social-box">

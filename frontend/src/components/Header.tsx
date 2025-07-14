@@ -99,6 +99,7 @@ const Header = () => {
                       <ul className="shadow-box">
                         <li><Link to="/instructor">Instructors</Link></li>
                         <li><Link to="/review">Reviews</Link></li>
+                        <li><Link to="/cart">Cart</Link></li>
                         {/* ... other page links ... */}
                       </ul>
                     </li>
@@ -129,7 +130,7 @@ const Header = () => {
                       <a href="#" className="main-menu__search searcher-toggler-box icon-search"></a>
                     </div>
                     <div className="main-menu__cart">
-                      <a href="#"><span className="fas fa-shopping-cart"></span></a>
+                      <a href="/cart"><span className="fas fa-shopping-cart"></span></a>
                     </div>
                   </div>
                   <div className="main-menu__btn-boxes">
@@ -187,6 +188,7 @@ const Header = () => {
                     <ul className="shadow-box">
                       <li><Link to="/instructor">Instructors</Link></li>
                       <li><Link to="/review">Reviews</Link></li>
+                      <li><Link to="/cart">Cart</Link></li>
                     </ul>
                   </li>
                   <li className="dropdown">
@@ -223,7 +225,7 @@ const Header = () => {
                     <a href="#" className="main-menu__search searcher-toggler-box icon-search"></a>
                   </div>
                   <div className="main-menu__cart">
-                    <a href="#"><span className="fas fa-shopping-cart"></span></a>
+                    <a href="/cart"><span className="fas fa-shopping-cart"></span></a>
                   </div>
                 </div>
                 <div className="main-menu__btn-boxes">

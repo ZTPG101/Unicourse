@@ -10,6 +10,7 @@ import { CoursesModule } from './courses/courses.module';
 import { LessonsModule } from './lessons/lessons.module';
 import { EnrollmentsModule } from './enrollments/enrollments.module';
 import { ReviewsModule } from './reviews/reviews.module';
+import { CartsModule } from './carts/carts.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { ReviewsModule } from './reviews/reviews.module';
     LessonsModule,
     EnrollmentsModule,
     ReviewsModule,
+    CartsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { CoursesService } from "../services/courses.service";
 import type { Course } from "../services/courses.service";
+import PageHeader from "../components/PageHeader";
 
 // Declare jQuery types for TypeScript
 declare global {
@@ -13,7 +14,7 @@ declare global {
 const formatDuration = (minutes: number): string => {
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
-  
+
   if (hours > 0 && mins > 0) {
     return `${hours}h, ${mins}min`;
   } else if (hours > 0) {
@@ -28,11 +29,18 @@ const CourseComponent: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   // State for price filtering
   const [priceRange, setPriceRange] = React.useState({ min: 0, max: 250 });
-  const [selectedPriceType, setSelectedPriceType] = React.useState('paid');
+  const [selectedPriceType, setSelectedPriceType] = React.useState("all");
   const [sliderInitialized, setSliderInitialized] = React.useState(false);
+  const [selectedCategories, setSelectedCategories] = React.useState<string[]>(
+    []
+  );
+  const [selectedSkillLevels, setSelectedSkillLevels] = React.useState<
+    string[]
+  >([]);
+  const [searchTerm, setSearchTerm] = React.useState("");
 
   // Fetch courses from backend
   useEffect(() => {
@@ -41,20 +49,20 @@ const CourseComponent: React.FC = () => {
         setLoading(true);
         const fetchedCourses = await CoursesService.getAllCourses();
         setCourses(fetchedCourses);
-        
+
         // Calculate price range from actual course data
         if (fetchedCourses.length > 0) {
-          const prices = fetchedCourses.map(course => course.price);
+          const prices = fetchedCourses.map((course) => course.price);
           const minPrice = Math.floor(Math.min(...prices));
           const maxPrice = Math.ceil(Math.max(...prices));
-          
+
           setPriceRange({ min: minPrice, max: maxPrice });
         }
-        
+
         setError(null);
       } catch (err) {
-        setError('Failed to load courses. Please try again later.');
-        console.error('Error fetching courses:', err);
+        setError("Failed to load courses. Please try again later.");
+        console.error("Error fetching courses:", err);
       } finally {
         setLoading(false);
       }
@@ -63,13 +71,40 @@ const CourseComponent: React.FC = () => {
     fetchCourses();
   }, []);
 
-  // Filter courses based on price
-  const filteredCourses = courses.filter(course => {
-    if (selectedPriceType === 'free') {
-      return course.price === 0;
-    } else {
-      return course.price >= priceRange.min && course.price <= priceRange.max;
-    }
+  // Filter courses based on price, category, skill level, and search term
+  const filteredCourses = courses.filter((course) => {
+    // Price filter
+    const priceMatch =
+      (selectedPriceType === "free"
+        ? course.price === 0
+        : selectedPriceType === "paid"
+        ? course.price > 0
+        : true) &&
+      course.price >= priceRange.min &&
+      course.price <= priceRange.max;
+
+    // Category filter
+    const categoryMatch =
+      selectedCategories.length === 0 ||
+      (course.category && selectedCategories.includes(course.category));
+
+    // Skill level filter
+    const skillMatch =
+      selectedSkillLevels.length === 0 ||
+      (course.level && selectedSkillLevels.includes(course.level));
+
+    // Search filter
+    const searchMatch =
+      searchTerm === "" ||
+      course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (course.description &&
+        course.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (course.instructor &&
+        course.instructor.name
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()));
+
+    return priceMatch && categoryMatch && skillMatch && searchMatch;
   });
 
   // Initialize slider when courses are loaded and price range is calculated
@@ -80,10 +115,10 @@ const CourseComponent: React.FC = () => {
         if (window.$ && window.$.fn.slider) {
           if (window.$(".price-ranger #slider-range").length) {
             // Destroy existing slider if it exists
-            if (window.$(".price-ranger #slider-range").hasClass('ui-slider')) {
-              window.$(".price-ranger #slider-range").slider('destroy');
+            if (window.$(".price-ranger #slider-range").hasClass("ui-slider")) {
+              window.$(".price-ranger #slider-range").slider("destroy");
             }
-            
+
             window.$(".price-ranger #slider-range").slider({
               range: true,
               min: priceRange.min,
@@ -91,12 +126,20 @@ const CourseComponent: React.FC = () => {
               values: [priceRange.min, priceRange.max],
               slide: function (event: any, ui: any) {
                 setPriceRange({ min: ui.values[0], max: ui.values[1] });
-                window.$(".price-ranger .ranger-min-max-block .min").val("$" + ui.values[0]);
-                window.$(".price-ranger .ranger-min-max-block .max").val("$" + ui.values[1]);
+                window
+                  .$(".price-ranger .ranger-min-max-block .min")
+                  .val("$" + ui.values[0]);
+                window
+                  .$(".price-ranger .ranger-min-max-block .max")
+                  .val("$" + ui.values[1]);
               },
             });
-            window.$(".price-ranger .ranger-min-max-block .min").val("$" + priceRange.min);
-            window.$(".price-ranger .ranger-min-max-block .max").val("$" + priceRange.max);
+            window
+              .$(".price-ranger .ranger-min-max-block .min")
+              .val("$" + priceRange.min);
+            window
+              .$(".price-ranger .ranger-min-max-block .max")
+              .val("$" + priceRange.max);
             setSliderInitialized(true);
           }
         } else {
@@ -108,6 +151,64 @@ const CourseComponent: React.FC = () => {
       initSlider();
     }
   }, [courses, priceRange, sliderInitialized]);
+
+  // Toggle category selection
+  const toggleCategory = (category: string) => {
+    setSelectedCategories((prev) =>
+      prev.includes(category)
+        ? prev.filter((cat) => cat !== category)
+        : [...prev, category]
+    );
+  };
+
+  // Toggle skill level selection
+  const toggleSkillLevel = (level: string) => {
+    setSelectedSkillLevels((prev) =>
+      prev.includes(level)
+        ? prev.filter((skill) => skill !== level)
+        : [...prev, level]
+    );
+  };
+
+  // Predefined categories
+  const categorys = [
+    "Technology & Programming",
+    "Business & Finance",
+    "Arts & Design",
+    "Personal Development",
+    "Language Learning",
+    "Academic Subjects",
+    "Lifestyle & Hobbies",
+  ];
+  // Initialize all counts to 0
+  const categoryCounts: Record<string, number> = {};
+  categorys.forEach((cat) => {
+    categoryCounts[cat] = 0;
+  });
+  courses.forEach((course) => {
+    if (course.category && categorys.includes(course.category)) {
+      categoryCounts[course.category] =
+        (categoryCounts[course.category] || 0) + 1;
+    }
+  });
+  const categoryList = categorys.map((cat) => ({
+    name: cat,
+    count: categoryCounts[cat],
+  }));
+
+  // Compute skill level counts
+  const skillLevels = ["Beginner", "Intermediate", "Advanced"];
+  const skillLevelCounts: Record<string, number> = {
+    Beginner: 0,
+    Intermediate: 0,
+    Advanced: 0,
+  };
+  courses.forEach((course) => {
+    if (skillLevels.includes(course.level)) {
+      skillLevelCounts[course.level] =
+        (skillLevelCounts[course.level] || 0) + 1;
+    }
+  });
 
   // Show loading state
   if (loading) {
@@ -134,8 +235,8 @@ const CourseComponent: React.FC = () => {
             <div className="alert alert-danger" role="alert">
               {error}
             </div>
-            <button 
-              className="btn btn-primary" 
+            <button
+              className="btn btn-primary"
               onClick={() => window.location.reload()}
             >
               Try Again
@@ -146,8 +247,11 @@ const CourseComponent: React.FC = () => {
     );
   }
 
+  const breadcrumbs = [{ label: "Home", path: "/" }, { label: "Course" }];
+
   return (
     <>
+      <PageHeader title="Course" breadcrumbs={breadcrumbs} />
       {/* Course Grid Start */}
       <section className="course-grid">
         <div className="container">
@@ -159,15 +263,27 @@ const CourseComponent: React.FC = () => {
                   {/* Search Now */}
                   <div className="course-grid__search course-grid__single">
                     <div className="course-grid__title-box">
-                      <h3 className="course-grid__title">Search Now</h3>
+                      <h3 className="course-grid__title">Search</h3>
                       <div className="course-grid__title-shape-1">
-                        <img src="/assets/images/shapes/course-grid-title-shape-1.png" alt="" />
+                        <img
+                          src="/assets/images/shapes/course-grid-title-shape-1.png"
+                          alt=""
+                        />
                       </div>
                     </div>
-                    <p className="course-grid__search-text">There was a random sentence here, so I write this one.</p>
-                    <form action="#">
-                      <input type="search" placeholder="Find by Categories" />
-                      <button type="submit"><i className="icon-search"></i>Search</button>
+                    <p className="course-grid__search-text">
+                      There was a random sentence here, so I write this one.
+                    </p>
+                    <form onSubmit={(e) => e.preventDefault()}>
+                      <input
+                        type="search"
+                        placeholder="Search by typing here"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                      />
+                      <button type="submit">
+                        <i className="icon-search"></i>
+                      </button>
                     </form>
                   </div>
                   {/* Price Filter */}
@@ -175,31 +291,45 @@ const CourseComponent: React.FC = () => {
                     <div className="course-grid__title-box">
                       <h3 className="course-grid__title">Price Filter</h3>
                       <div className="course-grid__title-shape-1">
-                        <img src="/assets/images/shapes/course-grid-title-shape-1.png" alt="" />
+                        <img
+                          src="/assets/images/shapes/course-grid-title-shape-1.png"
+                          alt=""
+                        />
                       </div>
                     </div>
                     <div className="course-grid__price-filter-free-and-paid-course">
-                      <label className="custom-radio">
-                        <input 
-                          type="radio" 
-                          name="priceType" 
-                          value="paid" 
-                          checked={selectedPriceType === 'paid'}
+                    <label className="custom-radio">
+                        <input
+                          type="radio"
+                          name="priceType"
+                          value="all"
+                          checked={selectedPriceType === "all"}
                           onChange={(e) => setSelectedPriceType(e.target.value)}
                         />
                         <span className="radio-dot"></span>
-                        <span className="radio-text">Paid Course</span>
+                        <span className="radio-text">All Courses</span>
                       </label>
                       <label className="custom-radio">
-                        <input 
-                          type="radio" 
-                          name="priceType" 
-                          value="free" 
-                          checked={selectedPriceType === 'free'}
+                        <input
+                          type="radio"
+                          name="priceType"
+                          value="paid"
+                          checked={selectedPriceType === "paid"}
                           onChange={(e) => setSelectedPriceType(e.target.value)}
                         />
                         <span className="radio-dot"></span>
-                        <span className="radio-text">Free Course</span>
+                        <span className="radio-text">Paid Courses</span>
+                      </label>
+                      <label className="custom-radio">
+                        <input
+                          type="radio"
+                          name="priceType"
+                          value="free"
+                          checked={selectedPriceType === "free"}
+                          onChange={(e) => setSelectedPriceType(e.target.value)}
+                        />
+                        <span className="radio-dot"></span>
+                        <span className="radio-text">Free Courses</span>
                       </label>
                     </div>
                     <div className="course-grid__price-filter-ranger">
@@ -209,24 +339,26 @@ const CourseComponent: React.FC = () => {
                       <div className="price-ranger">
                         <div id="slider-range"></div>
                         <div className="ranger-min-max-block">
-                          <input 
-                            type="text" 
-                            readOnly 
-                            className="min" 
+                          <input
+                            type="text"
+                            readOnly
+                            className="min"
                             value={`$${priceRange.min}`}
                           />
                           <span> - </span>
-                          <input 
-                            type="text" 
-                            readOnly 
-                            className="max" 
+                          <input
+                            type="text"
+                            readOnly
+                            className="max"
                             value={`$${priceRange.max}`}
                           />
-                          <button 
-                            type="button" 
+                          <button
+                            type="button"
                             className="btn btn-sm btn-outline-secondary ms-2"
                             onClick={() => {
-                              const prices = courses.map(course => course.price);
+                              const prices = courses.map(
+                                (course) => course.price
+                              );
                               const minPrice = Math.floor(Math.min(...prices));
                               const maxPrice = Math.ceil(Math.max(...prices));
                               setPriceRange({ min: minPrice, max: maxPrice });
@@ -244,17 +376,29 @@ const CourseComponent: React.FC = () => {
                     <div className="course-grid__title-box">
                       <h3 className="course-grid__title">Categories</h3>
                       <div className="course-grid__title-shape-1">
-                        <img src="/assets/images/shapes/course-grid-title-shape-1.png" alt="" />
+                        <img
+                          src="/assets/images/shapes/course-grid-title-shape-1.png"
+                          alt=""
+                        />
                       </div>
                     </div>
                     <ul className="list-unstyled course-grid__list-item">
-                      <li><div className="course-grid__list-check"></div><p className="course-grid__list-text">Accounting & Finace (12)</p></li>
-                      <li><div className="course-grid__list-check"></div><p className="course-grid__list-text">Programming & Tech (25)</p></li>
-                      <li><div className="course-grid__list-check"></div><p className="course-grid__list-text">Art & Design (59)</p></li>
-                      <li><div className="course-grid__list-check"></div><p className="course-grid__list-text">Health & Fitness (24)</p></li>
-                      <li><div className="course-grid__list-check"></div><p className="course-grid__list-text">Sales & Marketing (40)</p></li>
-                      <li><div className="course-grid__list-check"></div><p className="course-grid__list-text">User Research (40)</p></li>
-                      <li><div className="course-grid__list-check"></div><p className="course-grid__list-text">Business Development (30)</p></li>
+                      {categoryList.map(({ name, count }) => (
+                        <li
+                          key={name}
+                          onClick={() => toggleCategory(name)}
+                          style={{ cursor: "pointer" }}
+                        >
+                          <div
+                            className={`course-grid__list-check ${
+                              selectedCategories.includes(name) ? "checked" : ""
+                            }`}
+                          ></div>
+                          <p className="course-grid__list-text">
+                            {name} ({count})
+                          </p>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                   {/* Skills Level */}
@@ -262,16 +406,31 @@ const CourseComponent: React.FC = () => {
                     <div className="course-grid__title-box">
                       <h3 className="course-grid__title">Skills Level</h3>
                       <div className="course-grid__title-shape-1">
-                        <img src="/assets/images/shapes/course-grid-title-shape-1.png" alt="" />
+                        <img
+                          src="/assets/images/shapes/course-grid-title-shape-1.png"
+                          alt=""
+                        />
                       </div>
                     </div>
                     <ul className="list-unstyled course-grid__list-item">
-                      <li><div className="course-grid__list-check"></div><p className="course-grid__list-text">All Level (290)</p></li>
-                      <li><div className="course-grid__list-check"></div><p className="course-grid__list-text">Intermediate (230)</p></li>
-                      <li><div className="course-grid__list-check"></div><p className="course-grid__list-text">Beginner (40)</p></li>
-                      <li><div className="course-grid__list-check"></div><p className="course-grid__list-text">Free Seminar (300)</p></li>
-                      <li><div className="course-grid__list-check"></div><p className="course-grid__list-text">Professional (50)</p></li>
-                      <li><div className="course-grid__list-check"></div><p className="course-grid__list-text">Advanced (30)</p></li>
+                      {skillLevels.map((level) => (
+                        <li
+                          key={level}
+                          onClick={() => toggleSkillLevel(level)}
+                          style={{ cursor: "pointer" }}
+                        >
+                          <div
+                            className={`course-grid__list-check ${
+                              selectedSkillLevels.includes(level)
+                                ? "checked"
+                                : ""
+                            }`}
+                          ></div>
+                          <p className="course-grid__list-text">
+                            {level} ({skillLevelCounts[level]})
+                          </p>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 </div>
@@ -283,7 +442,7 @@ const CourseComponent: React.FC = () => {
               <div className="course-grid__right">
                 <div className="course-list__right-top">
                   <p className="course-list__right-top-text">
-                    Showing {filteredCourses.length} Courses
+                    Showing {filteredCourses.length} out of {courses.length} Courses 
                   </p>
                 </div>
                 <div className="course-grid__right-content-box">
@@ -316,9 +475,23 @@ const CourseComponent: React.FC = () => {
                             <h3 className="courses-two__title">
                               <a href="#">{course.title}</a>
                             </h3>
+                            {/* Show course category as a badge or line below the title */}
+                            <div
+                              className="courses-two__category"
+                              style={{
+                                marginBottom: "8px",
+                                color: "#3D59F9",
+                                fontWeight: 500,
+                              }}
+                            >
+                              {course.category}
+                            </div>
                             <div className="courses-two__btn-and-client-box">
                               <div className="courses-two__btn-box">
-                                <a href={`/course-details/${course.id}`} className="thm-btn-two">
+                                <a
+                                  href={`/course-details/${course.id}`}
+                                  className="thm-btn-two"
+                                >
                                   <span>Enroll Now</span>
                                   <i className="icon-angles-right"></i>
                                 </a>
@@ -333,7 +506,10 @@ const CourseComponent: React.FC = () => {
                                 <div className="courses-two__client-content">
                                   <h4>{course.instructor.name}</h4>
                                   <p>
-                                    <span className="odometer" data-count={course.instructor.experience}>
+                                    <span
+                                      className="odometer"
+                                      data-count={course.instructor.experience}
+                                    >
                                       {course.instructor.experience}
                                     </span>
                                     <i>+</i> Years Experience

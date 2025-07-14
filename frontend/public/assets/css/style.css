@@ -442,7 +442,7 @@ ul {
   vertical-align: middle;
   -webkit-appearance: none;
   appearance: none;
-  outline: none !important;
+  outline: none;
   font-weight: 400;
   font-size: 18px;
   color: var(--fistudy-white);
