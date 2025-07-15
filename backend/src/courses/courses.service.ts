@@ -43,9 +43,11 @@ export class CoursesService {
     });
   }
 
-  findAll(): Promise<Course[]> {
+  findAll(limit?: number, offset?: number): Promise<Course[]> {
     return this.CourseRepo.find({
       relations: ['instructor'],
+      take: limit,
+      skip: offset,
     });
   }
 

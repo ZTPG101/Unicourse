@@ -371,6 +371,8 @@
     display: block;
     overflow: hidden;
     border-radius: 16px;
+    width: 368px;
+    height: 230px;
 }
 
 .courses-two__img::before {
@@ -1722,6 +1724,24 @@
     display: inline-block;
     font-size: 14px;
     color: #FFC224;
+}
+
+.course-details__review-ratting .icon-star {
+    color: transparent;
+    -webkit-text-stroke: 1px #FFC224;
+}
+
+.course-details__review-ratting .icon-star.filled {
+    color: #FFC224; /* Filled stars */
+}
+
+.comment-one__review-rating .icon-star{
+    color: transparent;
+    -webkit-text-stroke: 1px #FFC224;
+}
+
+.comment-one__review-rating .icon-star.filled {
+    color: #FFC224; /* Filled stars */
 }
 
 .course-details__review-text {

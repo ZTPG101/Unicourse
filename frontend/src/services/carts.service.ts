@@ -16,10 +16,17 @@ export type Cart = {
 };
 
 export class CartService {
+  static getToken() {
+    return localStorage.getItem('token');
+  }
+
   static async getCart(): Promise<Cart | null> {
     try {
+      const token = this.getToken();
       const response = await fetch(`${API_BASE_URL}/carts/me`, {
-        credentials: 'include',
+        ...(token && {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
       });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       return await response.json();
@@ -31,10 +38,12 @@ export class CartService {
 
   static async addItem(courseId: number): Promise<Cart> {
     try {
+      const token = this.getToken();
       const response = await fetch(`${API_BASE_URL}/carts/me/items`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
+        headers: token
+          ? { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }
+          : { 'Content-Type': 'application/json' },
         body: JSON.stringify({ courseId }),
       });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -47,9 +56,12 @@ export class CartService {
 
   static async removeItem(courseId: number): Promise<Cart> {
     try {
+      const token = this.getToken();
       const response = await fetch(`${API_BASE_URL}/carts/me/items/${courseId}`, {
         method: 'DELETE',
-        credentials: 'include',
+        ...(token && {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
       });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       return await response.json();
@@ -61,9 +73,12 @@ export class CartService {
 
   static async clearCart(): Promise<Cart> {
     try {
+      const token = this.getToken();
       const response = await fetch(`${API_BASE_URL}/carts/me`, {
         method: 'DELETE',
-        credentials: 'include',
+        ...(token && {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
       });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       return await response.json();

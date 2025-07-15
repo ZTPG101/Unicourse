@@ -29,36 +29,35 @@ const CourseComponent: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // State for price filtering
   const [priceRange, setPriceRange] = React.useState({ min: 0, max: 250 });
   const [selectedPriceType, setSelectedPriceType] = React.useState("all");
   const [sliderInitialized, setSliderInitialized] = React.useState(false);
-  const [selectedCategories, setSelectedCategories] = React.useState<string[]>(
-    []
-  );
-  const [selectedSkillLevels, setSelectedSkillLevels] = React.useState<
-    string[]
-  >([]);
+  const [selectedCategories, setSelectedCategories] = React.useState<string[]>([]);
+  const [selectedSkillLevels, setSelectedSkillLevels] = React.useState<string[]>([]);
   const [searchTerm, setSearchTerm] = React.useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const coursesPerPage = 6;
+  const [totalCourses, setTotalCourses] = useState(0);
 
-  // Fetch courses from backend
+  const contentBoxRef = React.useRef<HTMLDivElement>(null);
+
+  // Fetch courses for the current page
   useEffect(() => {
     const fetchCourses = async () => {
       try {
         setLoading(true);
-        const fetchedCourses = await CoursesService.getAllCourses();
+        const offset = (currentPage - 1) * coursesPerPage;
+        const fetchedCourses = await CoursesService.getAllCourses(coursesPerPage, offset);
         setCourses(fetchedCourses);
-
-        // Calculate price range from actual course data
-        if (fetchedCourses.length > 0) {
-          const prices = fetchedCourses.map((course) => course.price);
-          const minPrice = Math.floor(Math.min(...prices));
-          const maxPrice = Math.ceil(Math.max(...prices));
-
-          setPriceRange({ min: minPrice, max: maxPrice });
+        // Optionally, fetch total count for pagination (if backend supports it)
+        // For now, setTotalCourses to a high number or fetchedCourses.length if last page
+        if (fetchedCourses.length < coursesPerPage && currentPage > 1) {
+          setTotalCourses(offset + fetchedCourses.length);
+        } else if (currentPage === 1 && fetchedCourses.length < coursesPerPage) {
+          setTotalCourses(fetchedCourses.length);
+        } else {
+          setTotalCourses(currentPage * coursesPerPage + 1); // Fake next page
         }
-
         setError(null);
       } catch (err) {
         setError("Failed to load courses. Please try again later.");
@@ -67,9 +66,8 @@ const CourseComponent: React.FC = () => {
         setLoading(false);
       }
     };
-
     fetchCourses();
-  }, []);
+  }, [currentPage]);
 
   // Filter courses based on price, category, skill level, and search term
   const filteredCourses = courses.filter((course) => {
@@ -210,6 +208,24 @@ const CourseComponent: React.FC = () => {
     }
   });
 
+  useEffect(() => {
+    scrollToContentBox();
+  }, [currentPage]);
+
+  // For rendering, use 'courses' directly instead of paginatedCourses
+  // For pagination, compute totalPages from totalCourses
+  const totalPages = Math.ceil(totalCourses / coursesPerPage);
+
+  const breadcrumbs = [{ label: "Home", path: "/" }, { label: "Course" }];
+
+  const scrollToContentBox = () => {
+    if (contentBoxRef.current) {
+      const headerOffset = 200;
+      const y = contentBoxRef.current.getBoundingClientRect().top + window.scrollY - headerOffset;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    }
+  };
+
   // Show loading state
   if (loading) {
     return (
@@ -246,8 +262,6 @@ const CourseComponent: React.FC = () => {
       </div>
     );
   }
-
-  const breadcrumbs = [{ label: "Home", path: "/" }, { label: "Course" }];
 
   return (
     <>
@@ -298,7 +312,7 @@ const CourseComponent: React.FC = () => {
                       </div>
                     </div>
                     <div className="course-grid__price-filter-free-and-paid-course">
-                    <label className="custom-radio">
+                      <label className="custom-radio">
                         <input
                           type="radio"
                           name="priceType"
@@ -442,12 +456,16 @@ const CourseComponent: React.FC = () => {
               <div className="course-grid__right">
                 <div className="course-list__right-top">
                   <p className="course-list__right-top-text">
-                    Showing {filteredCourses.length} out of {courses.length} Courses 
+                    Showing {filteredCourses.length} out of {totalCourses}{" "}
+                    Courses
                   </p>
                 </div>
-                <div className="course-grid__right-content-box">
+                <div
+                  className="course-grid__right-content-box"
+                  ref={contentBoxRef}
+                >
                   <div className="row">
-                    {filteredCourses.map((course) => (
+                    {courses.map((course) => (
                       <div className="col-xl-6" key={course.id}>
                         <div className="courses-two__single">
                           <div className="courses-two__img-box">
@@ -543,7 +561,60 @@ const CourseComponent: React.FC = () => {
                     ))}
                   </div>
                 </div>
-                {/* Pagination, etc. can go here */}
+                {/* Pagination */}
+                <div className="blog-list__pagination">
+                  <ul className="pg-pagination list-unstyled">
+                    <li
+                      className={`prev${currentPage === 1 ? " disabled" : ""}`}
+                    >
+                      <a
+                        href="#"
+                        aria-label="prev"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (currentPage > 1) setCurrentPage(currentPage - 1);
+                        }}
+                      >
+                        <i className="fas fa-arrow-left"></i>
+                      </a>
+                    </li>
+                    {[...Array(totalPages)].map((_, idx) => (
+                      <li
+                        key={idx + 1}
+                        className={`count${
+                          currentPage === idx + 1 ? " active" : ""
+                        }`}
+                      >
+                        <a
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setCurrentPage(idx + 1);
+                          }}
+                        >
+                          {idx + 1}
+                        </a>
+                      </li>
+                    ))}
+                    <li
+                      className={`next${
+                        currentPage === totalPages ? " disabled" : ""
+                      }`}
+                    >
+                      <a
+                        href="#"
+                        aria-label="next"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (currentPage < totalPages)
+                            setCurrentPage(currentPage + 1);
+                        }}
+                      >
+                        <i className="fas fa-arrow-right"></i>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
             {/* Course Grid Right End */}

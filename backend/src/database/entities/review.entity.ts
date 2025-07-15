@@ -10,15 +10,21 @@ import { User } from './user.entity';
 import { Course } from './course.entity';
 
 @Entity()
-export class Review  {
+export class Review {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
+  fullName: string;
+
+  @Column()
   rating: number;
 
+  @Column()
+  occupation: string;
+  
   @Column('text')
-  comment: string;
+  review: string;
 
   @ManyToOne(() => User, (user) => user.reviews, { onDelete: 'CASCADE' })
   user: User;

@@ -6,7 +6,8 @@ import {
   Param,
   Patch,
   Post,
-  UseGuards
+  UseGuards,
+  Query
 } from '@nestjs/common';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { AdminOnly, AdminOrInstructor } from 'src/auth/decorators/roles.decorator';
@@ -22,8 +23,10 @@ export class CoursesController {
 
   @Public()
   @Get()
-  getAllCourse() {
-    return this.coursesService.findAll();
+  getAllCourse(@Query('limit') limit?: string, @Query('offset') offset?: string) {
+    const parsedLimit = limit ? parseInt(limit, 10) : undefined;
+    const parsedOffset = offset ? parseInt(offset, 10) : undefined;
+    return this.coursesService.findAll(parsedLimit, parsedOffset);
   }
 
   @Public()

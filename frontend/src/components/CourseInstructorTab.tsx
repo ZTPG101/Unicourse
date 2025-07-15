@@ -42,9 +42,9 @@ const CourseInstructorTab: React.FC<CourseInstructorTabProps> = ({ course }) => 
                   </p>
                 </li>
               </ul>
+                <h4>VERGIL</h4> 
               <p className="course-details__Instructor-text">
-                <h4>VERGIL</h4> is an experienced Senior Python Developer with a
-                strong focus on building scalable and efficient solutions.
+              is an experienced Senior Python Developer with a strong focus on building scalable and efficient solutions.
                 <br />
                 With extensive knowledge in Python and backend development,
                 Jordan has a track record of leading successful projects,

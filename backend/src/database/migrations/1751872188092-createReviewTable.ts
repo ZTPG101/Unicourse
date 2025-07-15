@@ -5,8 +5,10 @@ export class CreateReviewTable1751872188092 implements MigrationInterface {
     await queryRunner.query(`
       CREATE TABLE [review] (
         [id] int IDENTITY(1,1) PRIMARY KEY,
+        [fullName] nvarchar(255) NOT NULL,
+        [occupation] nvarchar(255),
         [rating] int,
-        [comment] text,
+        [review] text,
         [userId] int,
         [courseId] int,
         CONSTRAINT [FK_review_user] FOREIGN KEY ([userId]) REFERENCES [user]([id]) ON DELETE CASCADE,

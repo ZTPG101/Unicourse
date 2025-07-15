@@ -10,7 +10,6 @@ import { formatDuration } from "../utils/formatters";
 import PageHeader from "../components/PageHeader";
 import { CartService, type Cart } from "../services/carts.service";
 
-
 const CourseDetails: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const location = useLocation();
@@ -88,7 +87,7 @@ const CourseDetails: React.FC = () => {
   const breadcrumbs = [
     { label: "Home", path: "/" },
     { label: "Course", path: "/course" },
-    { label: "Course Details" }
+    { label: "Course Details" },
   ];
   return (
     <div className="page-wrapper">
@@ -142,15 +141,15 @@ const CourseDetails: React.FC = () => {
                           <p>Last Update</p>
                           <h4>January 02, 2025</h4>
                         </li>
-                        <li>
+                        {/* <li>
                           <p>Available</p>
                           <h4>24 Students</h4>
-                        </li>
+                        </li> */}
                         <li>
                           <p>
                             ({course.rating} / {course.reviewCount} Reviews)
                           </p>
-                          <ul className="course-details__ratting list-unstyled">
+                          <ul className="course-details__review-ratting list-unstyled">
                             {[...Array(5)].map((_, index) => (
                               <li key={index}>
                                 <span
@@ -260,36 +259,53 @@ const CourseDetails: React.FC = () => {
                       ${course.price.toFixed(2)}
                     </h3>
                     <div className="course-details__doller-btn-box">
-                      <button
-                        className="thm-btn-two"
-                        onClick={async () => {
-                          if (!course) return;
-                          setPurchaseLoading(true);
-                          setPurchaseError(null);
-                          setPurchaseSuccess(false);
-                          try {
-                            await CartService.addItem(course.id);
-                            setPurchaseSuccess(true);
-                            setTimeout(() => navigate("/cart"), 1000);
-                          } catch (err) {
-                            setPurchaseError("Failed to add to cart. Please try again.");
-                          } finally {
-                            setPurchaseLoading(false);
-                          }
-                        }}
-                        type="button"
-                        disabled={purchaseLoading}
-                      >
-                        <span>
-                          {purchaseLoading ? "Processing..." : "Purchase Now"}
-                        </span>
-                        <i className="icon-angles-right"></i>
-                      </button>
+                      {course.price === 0 ? (
+                        <a
+                          className="thm-btn-two"
+                          onClick={() => setActiveTab("curriculum")}
+                          type="button"
+                        >
+                          <span>Start Now</span>
+                          <i className="icon-angles-right"></i>
+                        </a>
+                      ) : (
+                        <a
+                          className="thm-btn-two"
+                          onClick={async () => {
+                            if (!course) return;
+                            setPurchaseLoading(true);
+                            setPurchaseError(null);
+                            setPurchaseSuccess(false);
+                            try {
+                              await CartService.addItem(course.id);
+                              setPurchaseSuccess(true);
+                              setTimeout(() => navigate("/cart"), 1000);
+                            } catch (err) {
+                              setPurchaseError(
+                                "Failed to add to cart. Please try again."
+                              );
+                            } finally {
+                              setPurchaseLoading(false);
+                            }
+                          }}
+                          type="button"
+                          // disabled={purchaseLoading}
+                        >
+                          <span>
+                            {purchaseLoading ? "Processing..." : "Purchase Now"}
+                          </span>
+                          <i className="icon-angles-right"></i>
+                        </a>
+                      )}
                       {purchaseError && (
-                        <div className="alert alert-danger mt-2">{purchaseError}</div>
+                        <div className="alert alert-danger mt-2">
+                          {purchaseError}
+                        </div>
                       )}
                       {purchaseSuccess && (
-                        <div className="alert alert-success mt-2">Added to cart! Redirecting...</div>
+                        <div className="alert alert-success mt-2">
+                          Added to cart! Redirecting...
+                        </div>
                       )}
                     </div>
                   </div>

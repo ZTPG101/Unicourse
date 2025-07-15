@@ -11,5 +11,5 @@ export class UpdateReviewDto extends PartialType(CreateReviewDto) {
 
   @IsOptional()
   @IsString()
-  comment?: string;
+  review?: string;
 }

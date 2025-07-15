@@ -22,18 +22,24 @@ export interface RatingDistribution {
   oneStar: number;
 }
 
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = "http://localhost:3000";
 
 export class ReviewsService {
+  static getToken() {
+    return localStorage.getItem('token');
+  }
+  
   static async getReviewsByCourseId(courseId: number): Promise<Review[]> {
     try {
-      const response = await fetch(`${API_BASE_URL}/reviews?courseId=${courseId}`);
+      const response = await fetch(
+        `${API_BASE_URL}/reviews?courseId=${courseId}`
+      );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       return await response.json();
     } catch (error) {
-      console.error('Error fetching reviews:', error);
+      console.error("Error fetching reviews:", error);
       throw error;
     }
   }
@@ -47,7 +53,7 @@ export class ReviewsService {
       oneStar: 0,
     };
 
-    reviews.forEach(review => {
+    reviews.forEach((review) => {
       switch (review.rating) {
         case 5:
           distribution.fiveStar++;
@@ -97,5 +103,24 @@ export class ReviewsService {
       twoStarPercent: Math.round((distribution.twoStar / total) * 100),
       oneStarPercent: Math.round((distribution.oneStar / total) * 100),
     };
+  }
+  
+  static async createReview(data: {
+    fullName: string;
+    occupation?: string;
+    review: string;
+    rating: number;
+    courseId: number;
+  }) {
+    const token = this.getToken();
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    const res = await fetch(`${API_BASE_URL}/reviews`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error("Failed to create review");
+    return res.json();
   }
 }

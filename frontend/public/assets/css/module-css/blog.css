@@ -990,6 +990,15 @@
     color: #FFC224
 }
 
+.comment-form__ratting .icon-star {
+    color: transparent;
+    -webkit-text-stroke: 1px #FFC224;
+}
+
+.comment-form__ratting .icon-star.filled {
+    color: #FFC224;
+}
+
 .comment-form__input-box {
     position: relative;
     display: block;
