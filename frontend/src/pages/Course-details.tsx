@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useLocation, useNavigate } from "react-router-dom";
-import { CoursesService } from "../services/courses.service";
-import type { Course } from "../services/courses.service";
-import CourseOverviewTab from "../components/CourseOverviewTab";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import CourseCurriculumTab from "../components/CourseCurriculumTab";
 import CourseInstructorTab from "../components/CourseInstructorTab";
+import CourseOverviewTab from "../components/CourseOverviewTab";
 import CourseReviewTab from "../components/CourseReviewTab";
-import { formatDuration } from "../utils/formatters";
 import PageHeader from "../components/PageHeader";
-import { CartService, type Cart } from "../services/carts.service";
+import { CartService } from "../services/carts.service";
+import type { Course } from "../services/courses.service";
+import { CoursesService } from "../services/courses.service";
+import { formatDuration } from "../utils/formatters";
 
 const CourseDetails: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();

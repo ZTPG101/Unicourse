@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import PageHeader from "../components/PageHeader";
-import { CartService, type Cart, type Course } from "../services/carts.service";
+import { CartService, type Cart } from "../services/carts.service";
 
 const breadcrumbs = [{ label: "Home", path: "/" }, { label: "Cart" }];
 
@@ -13,7 +13,7 @@ const Cart: React.FC = () => {
     CartService.getCart().then(cart => {
       setCart(cart);
       setLoading(false);
-    }).catch(err => {
+    }).catch(_err => {
       setError("Failed to load cart.");
       setLoading(false);
     });

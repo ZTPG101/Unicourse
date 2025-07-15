@@ -122,7 +122,7 @@ const CourseComponent: React.FC = () => {
               min: priceRange.min,
               max: priceRange.max,
               values: [priceRange.min, priceRange.max],
-              slide: function (event: any, ui: any) {
+              slide: function (_event: any, ui: any) {
                 setPriceRange({ min: ui.values[0], max: ui.values[1] });
                 window
                   .$(".price-ranger .ranger-min-max-block .min")
