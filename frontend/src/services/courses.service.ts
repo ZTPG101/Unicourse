@@ -1,10 +1,16 @@
 // Types for the backend API response
+export interface BackendCategory {
+  id: number;
+  name: string;
+  description: string;
+}
+
 export interface BackendCourse {
   id: number;
   title: string;
   description: string;
   price: number;
-  category: string;
+  category: BackendCategory;
   imageUrl: string | null;
   level: string;
   durationMinutes: number;
@@ -25,6 +31,12 @@ export interface BackendCourse {
 }
 
 // Frontend course interface (mapped from backend)
+export interface Category {
+  id: number;
+  name: string;
+  description: string;
+}
+
 export interface Course {
   id: number;
   imageUrl: string;
@@ -36,7 +48,7 @@ export interface Course {
   level: string;
   lessonCount: number;
   duration: number; // in minutes
-  category: string;
+  category: Category;
   lessons: Lesson[];
   instructor: {
     name: string;
@@ -125,5 +137,15 @@ export class CoursesService {
       console.error('Error fetching course by ID:', error);
       throw error;
     }
+  }
+}
+
+export class CategoriesService {
+  static async getAllCategories(): Promise<Category[]> {
+    const response = await fetch(`${API_BASE_URL}/categories`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch categories');
+    }
+    return response.json();
   }
 }

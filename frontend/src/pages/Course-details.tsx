@@ -90,7 +90,7 @@ const CourseDetails: React.FC = () => {
     { label: "Course Details" },
   ];
   return (
-    <div className="page-wrapper">
+    <>
       <PageHeader title="Course Details" breadcrumbs={breadcrumbs} />
       {/* Course Details Start */}
       <section className="course-details">
@@ -109,7 +109,7 @@ const CourseDetails: React.FC = () => {
                   <div className="course-details__tag-box">
                     <div className="course-details__tag-shape"></div>
                     <span className="course-details__tag">
-                      {course.category}
+                      {course.category && course.category.name ? course.category.name : 'Uncategorized'}
                     </span>
                   </div>
                   <h3 className="course-details__title">{course.title}</h3>
@@ -226,7 +226,17 @@ const CourseDetails: React.FC = () => {
                         <CourseInstructorTab course={course} />
                       )}
                       {activeTab === "review" && (
-                        <CourseReviewTab course={course} />
+                        <CourseReviewTab
+                          course={course}
+                          onReviewSubmitted={async () => {
+                            try {
+                              const updatedCourse = await CoursesService.getCourseById(course.id);
+                              setCourse(updatedCourse);
+                            } catch (err) {
+                              console.error('Failed to refresh course data after review', err);
+                            }
+                          }}
+                        />
                       )}
                     </div>
                   </div>
@@ -398,7 +408,7 @@ const CourseDetails: React.FC = () => {
         </span>
         <span className="scroll-to-top__text"> Go Back Top</span>
       </a>
-    </div>
+    </>
   );
 };
 

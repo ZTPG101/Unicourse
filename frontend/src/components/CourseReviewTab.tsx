@@ -4,9 +4,10 @@ import { ReviewsService } from "../services/reviews.service";
 
 interface CourseReviewTabProps {
   course: Course;
+  onReviewSubmitted?: () => void; // Add this line
 }
 
-const CourseReviewTab: React.FC<CourseReviewTabProps> = ({ course }) => {
+const CourseReviewTab: React.FC<CourseReviewTabProps> = ({ course, onReviewSubmitted }) => {
   // Defensive: always treat reviews as array
   const [reviews, setReviews] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -454,6 +455,10 @@ const CourseReviewTab: React.FC<CourseReviewTabProps> = ({ course }) => {
                   const fetchedReviews =
                     await ReviewsService.getReviewsByCourseId(course.id);
                   setReviews(fetchedReviews);
+                  // Call the callback if provided
+                  if (typeof onReviewSubmitted === 'function') {
+                    onReviewSubmitted();
+                  }
                 } catch (err) {
                   setSubmitError("Failed to submit review. Don't forget to rate the course");
                 } finally {

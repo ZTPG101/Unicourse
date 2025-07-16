@@ -8,7 +8,7 @@ export class CreateCoursesTable1751452525705 implements MigrationInterface {
         [title] nvarchar(255) NOT NULL,
         [description] text,
         [price] decimal(10,2),
-        [category] nvarchar(255) DEFAULT 'general',
+        [categoryId] int,
         [imageUrl] nvarchar(255),
         [level] nvarchar(255) DEFAULT 'Beginner',
         [durationMinutes] int DEFAULT 0,
@@ -18,7 +18,8 @@ export class CreateCoursesTable1751452525705 implements MigrationInterface {
         [instructorId] int,
         [createdAt] DATETIME DEFAULT GETDATE(),
         [updatedAt] DATETIME DEFAULT GETDATE(),
-        CONSTRAINT [FK_course_instructor] FOREIGN KEY ([instructorId]) REFERENCES [user]([id]) ON DELETE CASCADE
+        CONSTRAINT [FK_course_instructor] FOREIGN KEY ([instructorId]) REFERENCES [user]([id]) ON DELETE CASCADE,
+        CONSTRAINT [FK_course_category] FOREIGN KEY ([categoryId]) REFERENCES [category]([id])
       )
     `);
   }

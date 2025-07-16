@@ -11,6 +11,7 @@ import { Enrollment } from './enrollment.entity';
 import { Lesson } from './lesson.entity';
 import { Review } from './review.entity';
 import { User } from './user.entity';
+import { Category } from './category.entity';
 
 @Entity()
 export class Course {
@@ -26,8 +27,8 @@ export class Course {
   @Column('decimal', { precision: 10, scale: 2 })
   price: number;
 
-  @Column({ default: 'general' })
-  category: string;
+  @ManyToOne(() => Category, (category) => category.courses, { eager: true })
+  category: Category;
 
   @Column({ nullable: true })
   imageUrl: string;

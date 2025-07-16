@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { CoursesService } from "../services/courses.service";
 import type { Course } from "../services/courses.service";
+import { CategoriesService } from '../services/courses.service';
+import type { Category } from "../services/courses.service";
 import PageHeader from "../components/PageHeader";
 
 // Declare jQuery types for TypeScript
@@ -38,6 +40,7 @@ const CourseComponent: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const coursesPerPage = 6;
   const [totalCourses, setTotalCourses] = useState(0);
+  const [allCategories, setAllCategories] = useState<Category[]>([]);
 
   const contentBoxRef = React.useRef<HTMLDivElement>(null);
 
@@ -69,6 +72,16 @@ const CourseComponent: React.FC = () => {
     fetchCourses();
   }, [currentPage]);
 
+  // Fetch all categories on mount
+  useEffect(() => {
+    CategoriesService.getAllCategories()
+      .then(setAllCategories)
+      .catch((err) => {
+        console.error('Failed to fetch categories', err);
+        setAllCategories([]);
+      });
+  }, []);
+
   // Filter courses based on price, category, skill level, and search term
   const filteredCourses = courses.filter((course) => {
     // Price filter
@@ -84,7 +97,7 @@ const CourseComponent: React.FC = () => {
     // Category filter
     const categoryMatch =
       selectedCategories.length === 0 ||
-      (course.category && selectedCategories.includes(course.category));
+      (course.category && selectedCategories.includes(course.category.name));
 
     // Skill level filter
     const skillMatch =
@@ -151,11 +164,11 @@ const CourseComponent: React.FC = () => {
   }, [courses, priceRange, sliderInitialized]);
 
   // Toggle category selection
-  const toggleCategory = (category: string) => {
+  const toggleCategory = (categoryName: string) => {
     setSelectedCategories((prev) =>
-      prev.includes(category)
-        ? prev.filter((cat) => cat !== category)
-        : [...prev, category]
+      prev.includes(categoryName)
+        ? prev.filter((cat) => cat !== categoryName)
+        : [...prev, categoryName]
     );
   };
 
@@ -168,30 +181,18 @@ const CourseComponent: React.FC = () => {
     );
   };
 
-  // Predefined categories
-  const categorys = [
-    "Technology & Programming",
-    "Business & Finance",
-    "Arts & Design",
-    "Personal Development",
-    "Language Learning",
-    "Academic Subjects",
-    "Lifestyle & Hobbies",
-  ];
-  // Initialize all counts to 0
+  // Build category count map from courses
   const categoryCounts: Record<string, number> = {};
-  categorys.forEach((cat) => {
-    categoryCounts[cat] = 0;
-  });
   courses.forEach((course) => {
-    if (course.category && categorys.includes(course.category)) {
-      categoryCounts[course.category] =
-        (categoryCounts[course.category] || 0) + 1;
+    if (course.category && course.category.name) {
+      categoryCounts[course.category.name] = (categoryCounts[course.category.name] || 0) + 1;
     }
   });
-  const categoryList = categorys.map((cat) => ({
-    name: cat,
-    count: categoryCounts[cat],
+  // Merge all categories with counts
+  const categoryList = allCategories.map((cat) => ({
+    id: cat.id,
+    name: cat.name,
+    count: categoryCounts[cat.name] || 0,
   }));
 
   // Compute skill level counts
@@ -502,7 +503,7 @@ const CourseComponent: React.FC = () => {
                                 fontWeight: 500,
                               }}
                             >
-                              {course.category}
+                              {course.category && course.category.name ? course.category.name : 'Uncategorized'}
                             </div>
                             <div className="courses-two__btn-and-client-box">
                               <div className="courses-two__btn-box">

@@ -5,7 +5,6 @@ export class CourseResponseDto {
   title: string;
   description: string;
   price: number;
-  category: string;
   rating: number;
   instructorName: string;
 
@@ -14,7 +13,6 @@ export class CourseResponseDto {
     this.title = course.title;
     this.description = course.description;
     this.price = +course.price;
-    this.category = course.category;
     this.rating = course.rating;
     this.instructorName = course.instructor?.name || 'Unknown';
   }

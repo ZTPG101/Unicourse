@@ -27,7 +27,7 @@ const CategoryOne: React.FC = () => {
       const categoryMap: Record<string, number> = {};
       courses.forEach((course) => {
         if (course.category) {
-          categoryMap[course.category] = (categoryMap[course.category] || 0) + 1;
+          categoryMap[course.category.name] = (categoryMap[course.category.id] || 0) + 1;
         }
       });
       const categoryList: Category[] = Object.entries(categoryMap).map(([name, count]) => ({ name, count }));

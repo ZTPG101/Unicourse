@@ -886,14 +886,20 @@ ul {
 }
 
 .main-menu__category-sub-menu li a {
-  position: relative;
+  width: 190px;      /* half of 420px minus padding/margin for 2 columns, or 100% for single column */
+  height: 75px;      /* or your preferred height */
   display: flex;
   align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  position: relative;
   flex-wrap: wrap;
   gap: 10px;
   border: 1px solid var(--fistudy-bdr-color);
   border-radius: 10px;
   padding: 10px 10px 10px;
+  font-size: 16px;
+  color: #0d0e14;
 }
 
 .main-menu__category-sub-menu li a:hover {

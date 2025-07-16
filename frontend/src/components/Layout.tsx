@@ -8,7 +8,6 @@ import ScrollToTopButton from './ScrollToTopButton';
 const Layout = () => {
   return (
     <div className="page-wrapper">
-      {/* This is where your converted header goes */}
       <Header />
 
       {/* The Outlet component renders the current route's element (e.g., Register, Login) */}
@@ -16,11 +15,9 @@ const Layout = () => {
         <Outlet />
       </main>
 
-      {/* This is where your converted footer goes */}
       <ContactInfo />
       <Footer />
       
-      {/* Scroll-to-top button here */}
       <ScrollToTopButton />
     </div>
   );

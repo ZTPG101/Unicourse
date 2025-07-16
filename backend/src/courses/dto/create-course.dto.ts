@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsNumber, IsOptional, IsString, Min } from "@nestjs/class-validator";
+import { IsInt } from "class-validator";
 
 export class CreateCourseDto {
   @IsString()
@@ -13,8 +14,8 @@ export class CreateCourseDto {
   @Min(0)
   price: number;
 
-  @IsString()
-  category: string;
+  @IsInt()
+  categoryId: number;
 
   @IsString()
   @IsOptional()

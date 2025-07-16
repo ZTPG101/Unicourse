@@ -1,24 +1,24 @@
-import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom'; // Import Link for navigation
-import { useAuth } from '../context/AuthContext';
+import React, { useEffect } from "react";
+import { Link } from "react-router-dom"; // Import Link for navigation
+import { useAuth } from "../context/AuthContext";
 
 const Header = () => {
   const { isLoggedIn, logout, user } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
-      const stickyHeader = document.querySelector('.stricky-header');
+      const stickyHeader = document.querySelector(".stricky-header");
       if (stickyHeader) {
         if (window.scrollY > 100) {
-          stickyHeader.classList.add('stricky-fixed');
+          stickyHeader.classList.add("stricky-fixed");
         } else {
-          stickyHeader.classList.remove('stricky-fixed');
+          stickyHeader.classList.remove("stricky-fixed");
         }
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
@@ -33,7 +33,11 @@ const Header = () => {
                     <i className="icon-email"></i>
                   </div>
                   <div className="text">
-                    <p><a href="mailto:pobborisut@gmail.com">pobborisut@gmail.com</a></p>
+                    <p>
+                      <a href="mailto:pobborisut@gmail.com">
+                        pobborisut@gmail.com
+                      </a>
+                    </p>
                   </div>
                 </li>
                 <li>
@@ -41,7 +45,9 @@ const Header = () => {
                     <i className="icon-contact"></i>
                   </div>
                   <div className="text">
-                    <p><a href="tel:1212345678900">+12 (123) 456 78900</a></p>
+                    <p>
+                      <a href="tel:1212345678900">+12 (123) 456 78900</a>
+                    </p>
                   </div>
                 </li>
               </ul>
@@ -81,35 +87,73 @@ const Header = () => {
                     </div>
                     {/* Dropdown menu content here... */}
                     <ul className="list-unstyled main-menu__category-sub-menu">
-                      {/* ... category list items ... */}
+                      {[
+                        "Technology & Programming",
+                        "Business & Finance",
+                        "Arts & Design",
+                        "Personal Development",
+                        "Language Learning",
+                        "Academic Subjects",
+                        "Lifestyle & Hobbies",
+                        "Career & Professional Skills",
+                      ].map((cat) => (
+                        <li key={cat}>
+                          <Link
+                            to={`/course?category=${encodeURIComponent(cat)}`}
+                          >
+                            {cat}
+                          </Link>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 </div>
                 <div className="main-menu__main-menu-box">
-                  <a href="#" className="mobile-nav__toggler"><i className="fa fa-bars"></i></a>
+                  <a href="#" className="mobile-nav__toggler">
+                    <i className="fa fa-bars"></i>
+                  </a>
                   <ul className="main-menu__list">
                     {/* Main navigation links */}
                     <li className="dropdown megamenu">
                       <Link to="/">Home</Link>
                       {/* ... Home dropdown content ... */}
                     </li>
-                    <li><Link to="/about">About</Link></li>
+                    <li>
+                      <Link to="/about">About</Link>
+                    </li>
                     <li className="dropdown">
                       <Link to="/pages">Pages</Link>
                       <ul className="shadow-box">
-                        <li><Link to="/instructor">Instructors</Link></li>
-                        <li><Link to="/review">Reviews</Link></li>
-                        <li><Link to="/cart">Cart</Link></li>
+                        <li>
+                          <Link to="/instructor">Instructors</Link>
+                        </li>
+                        <li>
+                          <Link to="/instructor-details">
+                            Instructor details
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="/review">Reviews</Link>
+                        </li>
+                        <li>
+                          <Link to="/cart">Cart</Link>
+                        </li>
                         {/* ... other page links ... */}
                       </ul>
                     </li>
                     <li className="dropdown">
                       <Link to="/course">Course</Link>
-                       <ul className="shadow-box">
-                            <li><Link to="/course">Course</Link></li>
-                            <li><Link to="/course-carousel">Course Carousel</Link></li>
-                            <li><Link to="/course-details">Course Details</Link></li>
-                        </ul>
+                      <ul className="shadow-box">
+                        <li>
+                          <Link to="/course">Course</Link>
+                        </li>
+                        <li>
+                          <Link to="/course-carousel">Course Carousel</Link>
+                        </li>
+                        <li>
+                          <Link to="/course-details">Course Details</Link>
+                        </li>
+                      </ul>
                     </li>
                     {/* <li className="dropdown">
                        <Link to="/shop">Shop</Link>
@@ -120,6 +164,9 @@ const Header = () => {
                         </ul>
                     </li> */}
                     <li>
+                      <Link to="/wishlist">Wishlist</Link>
+                    </li>
+                    <li>
                       <Link to="/contact">Contact</Link>
                     </li>
                   </ul>
@@ -127,28 +174,58 @@ const Header = () => {
                 <div className="main-menu__right">
                   <div className="main-menu__search-cart-box">
                     <div className="main-menu__search-box">
-                      <a href="#" className="main-menu__search searcher-toggler-box icon-search"></a>
+                      <a
+                        href="#"
+                        className="main-menu__search searcher-toggler-box icon-search"
+                      ></a>
                     </div>
                     <div className="main-menu__cart">
-                      <a href="/cart"><span className="fas fa-shopping-cart"></span></a>
+                      <a href="/cart">
+                        <span className="fas fa-shopping-cart"></span>
+                      </a>
                     </div>
                   </div>
                   <div className="main-menu__btn-boxes">
                     {isLoggedIn && user ? (
-                      <div className="main-menu__user-info" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div
+                        className="main-menu__user-info"
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "10px",
+                        }}
+                      >
                         {user.avatar && (
-                          <img src={user.avatar} alt="avatar" style={{ width: 32, height: 32, borderRadius: '50%' }} />
+                          <img
+                            src={user.avatar}
+                            alt="avatar"
+                            style={{
+                              width: 32,
+                              height: 32,
+                              borderRadius: "50%",
+                            }}
+                          />
                         )}
                         <span>{user.name}</span>
-                        <button onClick={logout} className="thm-btn" style={{ marginLeft: 8 }}>Logout</button>
+                        <button
+                          onClick={logout}
+                          className="thm-btn"
+                          style={{ marginLeft: 8 }}
+                        >
+                          Logout
+                        </button>
                       </div>
                     ) : (
                       <>
                         <div className="main-menu__btn-box-1">
-                          <Link to="/login" className="thm-btn">Login</Link>
+                          <Link to="/login" className="thm-btn">
+                            Login
+                          </Link>
                         </div>
                         <div className="main-menu__btn-box-2">
-                          <Link to="/Register" className="thm-btn">Register</Link>
+                          <Link to="/Register" className="thm-btn">
+                            Register
+                          </Link>
                         </div>
                       </>
                     )}
@@ -159,7 +236,7 @@ const Header = () => {
           </div>
         </nav>
       </header>
-      
+
       {/* This is the "sticky" header that appears on scroll */}
       <div className="stricky-header stricked-menu main-menu">
         <div className="sticky-header__content">
@@ -177,26 +254,45 @@ const Header = () => {
                 </div>
               </div>
               <div className="main-menu__main-menu-box">
-                <a href="#" className="mobile-nav__toggler"><i className="fa fa-bars"></i></a>
+                <a href="#" className="mobile-nav__toggler">
+                  <i className="fa fa-bars"></i>
+                </a>
                 <ul className="main-menu__list">
                   <li className="dropdown megamenu">
                     <Link to="/">Home</Link>
                   </li>
-                  <li><Link to="/about">About</Link></li>
+                  <li>
+                    <Link to="/about">About</Link>
+                  </li>
                   <li className="dropdown">
                     <Link to="/pages">Pages</Link>
                     <ul className="shadow-box">
-                      <li><Link to="/instructor">Instructors</Link></li>
-                      <li><Link to="/review">Reviews</Link></li>
-                      <li><Link to="/cart">Cart</Link></li>
+                      <li>
+                        <Link to="/instructor">Instructors</Link>
+                      </li>
+                      <li>
+                        <Link to="/instructor-details">Instructor details</Link>
+                      </li>
+                      <li>
+                        <Link to="/review">Reviews</Link>
+                      </li>
+                      <li>
+                        <Link to="/cart">Cart</Link>
+                      </li>
                     </ul>
                   </li>
                   <li className="dropdown">
                     <Link to="/course">Course</Link>
                     <ul className="shadow-box">
-                      <li><Link to="/course">Course</Link></li>
-                      <li><Link to="/course-carousel">Course Carousel</Link></li>
-                      <li><Link to="/course-details">Course Details</Link></li>
+                      <li>
+                        <Link to="/course">Course</Link>
+                      </li>
+                      <li>
+                        <Link to="/course-carousel">Course Carousel</Link>
+                      </li>
+                      <li>
+                        <Link to="/course-details">Course Details</Link>
+                      </li>
                     </ul>
                   </li>
                   {/* <li className="dropdown">
@@ -215,6 +311,9 @@ const Header = () => {
                     </ul>
                   </li> */}
                   <li>
+                    <Link to="/wishlist">Wishlist</Link>
+                  </li>
+                  <li>
                     <Link to="/contact">Contact</Link>
                   </li>
                 </ul>
@@ -222,28 +321,54 @@ const Header = () => {
               <div className="main-menu__right">
                 <div className="main-menu__search-cart-box">
                   <div className="main-menu__search-box">
-                    <a href="#" className="main-menu__search searcher-toggler-box icon-search"></a>
+                    <a
+                      href="#"
+                      className="main-menu__search searcher-toggler-box icon-search"
+                    ></a>
                   </div>
                   <div className="main-menu__cart">
-                    <a href="/cart"><span className="fas fa-shopping-cart"></span></a>
+                    <a href="/cart">
+                      <span className="fas fa-shopping-cart"></span>
+                    </a>
                   </div>
                 </div>
                 <div className="main-menu__btn-boxes">
                   {isLoggedIn && user ? (
-                    <div className="main-menu__user-info" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div
+                      className="main-menu__user-info"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "10px",
+                      }}
+                    >
                       {user.avatar && (
-                        <img src={user.avatar} alt="avatar" style={{ width: 32, height: 32, borderRadius: '50%' }} />
+                        <img
+                          src={user.avatar}
+                          alt="avatar"
+                          style={{ width: 32, height: 32, borderRadius: "50%" }}
+                        />
                       )}
                       <span>{user.name}</span>
-                      <button onClick={logout} className="thm-btn" style={{ marginLeft: 8 }}>Logout</button>
+                      <button
+                        onClick={logout}
+                        className="thm-btn"
+                        style={{ marginLeft: 8 }}
+                      >
+                        Logout
+                      </button>
                     </div>
                   ) : (
                     <>
                       <div className="main-menu__btn-box-1">
-                        <Link to="/login" className="thm-btn">Login</Link>
+                        <Link to="/login" className="thm-btn">
+                          Login
+                        </Link>
                       </div>
                       <div className="main-menu__btn-box-2">
-                        <Link to="/Register" className="thm-btn">Register</Link>
+                        <Link to="/Register" className="thm-btn">
+                          Register
+                        </Link>
                       </div>
                     </>
                   )}
