@@ -12,6 +12,7 @@ import Cart from "./pages/Cart";
 import Wishlist from "./pages/Wishlist";
 import Instructor from "./pages/Instructor";
 import InstructorDetails from "./pages/Instructor-details";
+import Checkout from "./pages/Checkout";
 
 const App: React.FC = () => {
   return (
@@ -29,6 +30,7 @@ const App: React.FC = () => {
           <Route path="/wishlist" element={<Wishlist />} />
           <Route path="/instructor" element={<Instructor />} />
           <Route path="/instructor-details" element={<InstructorDetails />} />
+          <Route path="/checkout" element={<Checkout />} />
           {/* Define other routes for your application here */}
         </Route>
       </Routes>

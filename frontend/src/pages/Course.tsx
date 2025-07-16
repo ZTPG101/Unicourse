@@ -39,28 +39,30 @@ const CourseComponent: React.FC = () => {
   const [searchTerm, setSearchTerm] = React.useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const coursesPerPage = 6;
-  const [totalCourses, setTotalCourses] = useState(0);
   const [allCategories, setAllCategories] = useState<Category[]>([]);
+  const [metadata, setMetadata] = useState<any>(null);
 
   const contentBoxRef = React.useRef<HTMLDivElement>(null);
 
-  // Fetch courses for the current page
+  // When filters change, reset to first page
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, priceRange, selectedCategories, selectedSkillLevels]);
+
+  // Fetch all filtered courses (no offset/limit)
   useEffect(() => {
     const fetchCourses = async () => {
       try {
         setLoading(true);
-        const offset = (currentPage - 1) * coursesPerPage;
-        const fetchedCourses = await CoursesService.getAllCourses(coursesPerPage, offset);
+        // Fetch all filtered courses (no pagination on backend)
+        const fetchedCourses = await CoursesService.getAllCourses(undefined, undefined, {
+          search: searchTerm,
+          priceMin: priceRange.min,
+          priceMax: priceRange.max,
+          categories: selectedCategories.join(','),
+          skillLevels: selectedSkillLevels.join(','),
+        });
         setCourses(fetchedCourses);
-        // Optionally, fetch total count for pagination (if backend supports it)
-        // For now, setTotalCourses to a high number or fetchedCourses.length if last page
-        if (fetchedCourses.length < coursesPerPage && currentPage > 1) {
-          setTotalCourses(offset + fetchedCourses.length);
-        } else if (currentPage === 1 && fetchedCourses.length < coursesPerPage) {
-          setTotalCourses(fetchedCourses.length);
-        } else {
-          setTotalCourses(currentPage * coursesPerPage + 1); // Fake next page
-        }
         setError(null);
       } catch (err) {
         setError("Failed to load courses. Please try again later.");
@@ -70,7 +72,7 @@ const CourseComponent: React.FC = () => {
       }
     };
     fetchCourses();
-  }, [currentPage]);
+  }, [searchTerm, priceRange, selectedCategories, selectedSkillLevels]);
 
   // Fetch all categories on mount
   useEffect(() => {
@@ -81,6 +83,17 @@ const CourseComponent: React.FC = () => {
         setAllCategories([]);
       });
   }, []);
+
+  // Fetch metadata when filters change
+  useEffect(() => {
+    CoursesService.getCoursesMetadata({
+      search: searchTerm,
+      priceMin: priceRange.min,
+      priceMax: priceRange.max,
+      categories: selectedCategories.join(','),
+      skillLevels: selectedSkillLevels.join(','),
+    }).then(setMetadata).catch(() => setMetadata(null));
+  }, [searchTerm, priceRange, selectedCategories, selectedSkillLevels]);
 
   // Filter courses based on price, category, skill level, and search term
   const filteredCourses = courses.filter((course) => {
@@ -116,6 +129,20 @@ const CourseComponent: React.FC = () => {
           .includes(searchTerm.toLowerCase()));
 
     return priceMatch && categoryMatch && skillMatch && searchMatch;
+  });
+
+  // Paginate filtered courses on the frontend
+  const paginatedCourses = filteredCourses.slice((currentPage - 1) * coursesPerPage, currentPage * coursesPerPage);
+  const totalPages = Math.ceil(filteredCourses.length / coursesPerPage);
+
+  // Compute filtered count per category
+  const filteredCategoryCounts: Record<string, number> = {};
+  const isAnyCategoryFilter = selectedCategories.length > 0 || searchTerm || selectedSkillLevels.length > 0 || priceRange.min !== 0 || priceRange.max !== 250;
+  const sourceCourses = isAnyCategoryFilter ? filteredCourses : paginatedCourses;
+  sourceCourses.forEach((course) => {
+    if (course.category && course.category.name) {
+      filteredCategoryCounts[course.category.name] = (filteredCategoryCounts[course.category.name] || 0) + 1;
+    }
   });
 
   // Initialize slider when courses are loaded and price range is calculated
@@ -165,57 +192,42 @@ const CourseComponent: React.FC = () => {
 
   // Toggle category selection
   const toggleCategory = (categoryName: string) => {
-    setSelectedCategories((prev) =>
-      prev.includes(categoryName)
+    setSelectedCategories((prev) => {
+      const updated = prev.includes(categoryName)
         ? prev.filter((cat) => cat !== categoryName)
-        : [...prev, categoryName]
-    );
+        : [...prev, categoryName];
+      setTimeout(scrollToContentBox, 0);
+      return updated;
+    });
   };
 
   // Toggle skill level selection
   const toggleSkillLevel = (level: string) => {
-    setSelectedSkillLevels((prev) =>
-      prev.includes(level)
+    setSelectedSkillLevels((prev) => {
+      const updated = prev.includes(level)
         ? prev.filter((skill) => skill !== level)
-        : [...prev, level]
-    );
+        : [...prev, level];
+      setTimeout(scrollToContentBox, 0);
+      return updated;
+    });
   };
 
-  // Build category count map from courses
-  const categoryCounts: Record<string, number> = {};
-  courses.forEach((course) => {
-    if (course.category && course.category.name) {
-      categoryCounts[course.category.name] = (categoryCounts[course.category.name] || 0) + 1;
-    }
+  // Always show all categories from allCategories, merging with metadata counts
+  const categoryList: { id: number; name: string; count: number }[] = allCategories.map(cat => {
+    const meta = metadata?.categories?.find((c: any) => c.name === cat.name);
+    return { id: cat.id, name: cat.name, count: meta ? Number(meta.count) : 0 };
   });
-  // Merge all categories with counts
-  const categoryList = allCategories.map((cat) => ({
-    id: cat.id,
-    name: cat.name,
-    count: categoryCounts[cat.name] || 0,
-  }));
-
-  // Compute skill level counts
   const skillLevels = ["Beginner", "Intermediate", "Advanced"];
-  const skillLevelCounts: Record<string, number> = {
-    Beginner: 0,
-    Intermediate: 0,
-    Advanced: 0,
-  };
-  courses.forEach((course) => {
-    if (skillLevels.includes(course.level)) {
-      skillLevelCounts[course.level] =
-        (skillLevelCounts[course.level] || 0) + 1;
-    }
+  const skillLevelCounts: Record<string, number> = {};
+  skillLevels.forEach(level => {
+    const found = metadata?.skillLevels?.find((s: any) => s.level === level);
+    skillLevelCounts[level] = found ? Number(found.count) : 0;
   });
+  const totalCourses = metadata?.totalCourses || 0;
 
   useEffect(() => {
     scrollToContentBox();
   }, [currentPage]);
-
-  // For rendering, use 'courses' directly instead of paginatedCourses
-  // For pagination, compute totalPages from totalCourses
-  const totalPages = Math.ceil(totalCourses / coursesPerPage);
 
   const breadcrumbs = [{ label: "Home", path: "/" }, { label: "Course" }];
 
@@ -347,7 +359,7 @@ const CourseComponent: React.FC = () => {
                         <span className="radio-text">Free Courses</span>
                       </label>
                     </div>
-                    <div className="course-grid__price-filter-ranger">
+                    {/* <div className="course-grid__price-filter-ranger">
                       <p className="course-grid__price-filter-title">
                         Price: ${priceRange.min} - ${priceRange.max}
                       </p>
@@ -371,7 +383,7 @@ const CourseComponent: React.FC = () => {
                             type="button"
                             className="btn btn-sm btn-outline-secondary ms-2"
                             onClick={() => {
-                              const prices = courses.map(
+                              const prices = filteredCourses.map(
                                 (course) => course.price
                               );
                               const minPrice = Math.floor(Math.min(...prices));
@@ -384,7 +396,7 @@ const CourseComponent: React.FC = () => {
                           </button>
                         </div>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                   {/* Categories */}
                   <div className="course-grid__categories course-grid__single">
@@ -398,22 +410,25 @@ const CourseComponent: React.FC = () => {
                       </div>
                     </div>
                     <ul className="list-unstyled course-grid__list-item">
-                      {categoryList.map(({ name, count }) => (
-                        <li
-                          key={name}
-                          onClick={() => toggleCategory(name)}
-                          style={{ cursor: "pointer" }}
-                        >
-                          <div
-                            className={`course-grid__list-check ${
-                              selectedCategories.includes(name) ? "checked" : ""
-                            }`}
-                          ></div>
-                          <p className="course-grid__list-text">
-                            {name} ({count})
-                          </p>
-                        </li>
-                      ))}
+                      {categoryList.map(({ name, count }: { name: string; count: number }) => {
+                        const filteredCount = filteredCategoryCounts[name] || 0;
+                        return (
+                          <li
+                            key={name}
+                            onClick={() => toggleCategory(name)}
+                            style={{ cursor: "pointer" }}
+                          >
+                            <div
+                              className={`course-grid__list-check ${
+                                selectedCategories.includes(name) ? "checked" : ""
+                              }`}
+                            ></div>
+                            <p className="course-grid__list-text">
+                              {name} ({filteredCount} out of {count})
+                            </p>
+                          </li>
+                        );
+                      })}
                     </ul>
                   </div>
                   {/* Skills Level */}
@@ -466,7 +481,7 @@ const CourseComponent: React.FC = () => {
                   ref={contentBoxRef}
                 >
                   <div className="row">
-                    {courses.map((course) => (
+                    {paginatedCourses.map((course) => (
                       <div className="col-xl-6" key={course.id}>
                         <div className="courses-two__single">
                           <div className="courses-two__img-box">
@@ -474,7 +489,7 @@ const CourseComponent: React.FC = () => {
                               <img src={course.imageUrl} alt={course.title} />
                             </div>
                             <div className="courses-two__heart">
-                              <a href="#">
+                              <a href="/wishlist">
                                 <span className="icon-heart"></span>
                               </a>
                             </div>

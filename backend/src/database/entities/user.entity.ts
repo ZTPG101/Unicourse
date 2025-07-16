@@ -16,6 +16,7 @@ import * as bcrypt from 'bcrypt';
 import { Session } from './session.entity';
 import { UserRole, UserRoleType } from 'src/auth/types/roles.enum';
 import { Cart } from './cart.entity';
+import { Order } from './order.entity';
 
 @Entity()
 export class User {
@@ -71,6 +72,9 @@ export class User {
 
   @OneToMany(() => Review, (review) => review.user)
   reviews: Review[];
+
+  @OneToMany(() => Order, (order) => order.user)
+  orders: Review[];
 
   @CreateDateColumn()
   createdAt: Date;

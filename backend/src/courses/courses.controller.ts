@@ -30,6 +30,22 @@ export class CoursesController {
   }
 
   @Public()
+  @Get('metadata')
+  getCoursesMetadata(
+    @Query('search') search?: string,
+    @Query('priceMin') priceMin?: string,
+    @Query('priceMax') priceMax?: string
+  ) {
+    // Convert query params to appropriate types
+    const filters = {
+      search: search || undefined,
+      priceMin: priceMin ? Number(priceMin) : undefined,
+      priceMax: priceMax ? Number(priceMax) : undefined,
+    };
+    return this.coursesService.getCoursesMetadata(filters);
+  }
+
+  @Public()
   @Get(':id')
   getCourse(@Param('id') id: string) {
     return this.coursesService.findById(+id);

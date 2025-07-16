@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom"; // Import Link for navigation
 import { useAuth } from "../context/AuthContext";
 
@@ -114,7 +114,7 @@ const Header = () => {
                   </a>
                   <ul className="main-menu__list">
                     {/* Main navigation links */}
-                    <li className="dropdown megamenu">
+                    <li>
                       <Link to="/">Home</Link>
                       {/* ... Home dropdown content ... */}
                     </li>
@@ -141,28 +141,9 @@ const Header = () => {
                         {/* ... other page links ... */}
                       </ul>
                     </li>
-                    <li className="dropdown">
+                    <li>
                       <Link to="/course">Course</Link>
-                      <ul className="shadow-box">
-                        <li>
-                          <Link to="/course">Course</Link>
-                        </li>
-                        <li>
-                          <Link to="/course-carousel">Course Carousel</Link>
-                        </li>
-                        <li>
-                          <Link to="/course-details">Course Details</Link>
-                        </li>
-                      </ul>
                     </li>
-                    {/* <li className="dropdown">
-                       <Link to="/shop">Shop</Link>
-                       <ul className="shadow-box">
-                            <li><Link to="/products">Products</Link></li>
-                            <li><Link to="/sign-up">Sign Up</Link></li>
-                            <li><Link to="/login">Login</Link></li>
-                        </ul>
-                    </li> */}
                     <li>
                       <Link to="/wishlist">Wishlist</Link>
                     </li>
@@ -258,7 +239,7 @@ const Header = () => {
                   <i className="fa fa-bars"></i>
                 </a>
                 <ul className="main-menu__list">
-                  <li className="dropdown megamenu">
+                  <li>
                     <Link to="/">Home</Link>
                   </li>
                   <li>
@@ -281,35 +262,9 @@ const Header = () => {
                       </li>
                     </ul>
                   </li>
-                  <li className="dropdown">
-                    <Link to="/course">Course</Link>
-                    <ul className="shadow-box">
-                      <li>
-                        <Link to="/course">Course</Link>
-                      </li>
-                      <li>
-                        <Link to="/course-carousel">Course Carousel</Link>
-                      </li>
-                      <li>
-                        <Link to="/course-details">Course Details</Link>
-                      </li>
-                    </ul>
-                  </li>
-                  {/* <li className="dropdown">
-                    <Link to="/shop">Shop</Link>
-                    <ul className="shadow-box">
-                      <li><Link to="/products">Products</Link></li>
-                      <li><Link to="/sign-up">Sign Up</Link></li>
-                      <li><Link to="/login">Login</Link></li>
-                    </ul>
-                  </li> */}
-                  {/* <li className="dropdown">
-                    <Link to="/blog">Blog</Link>
-                    <ul className="shadow-box">
-                      <li><Link to="/blog">Blog</Link></li>
-                      <li><Link to="/blog-details">Blog Details</Link></li>
-                    </ul>
-                  </li> */}
+                  <li>
+                      <Link to="/course">Course</Link>
+                    </li>
                   <li>
                     <Link to="/wishlist">Wishlist</Link>
                   </li>

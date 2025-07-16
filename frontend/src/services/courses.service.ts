@@ -69,12 +69,16 @@ export interface Lesson {
 const API_BASE_URL = 'http://localhost:3000';
 
 export class CoursesService {
-  static async getAllCourses(limit?: number, offset?: number): Promise<Course[]> {
+  static async getAllCourses(limit?: number, offset?: number, filters: Record<string, any> = {}): Promise<Course[]> {
     try {
       let url = `${API_BASE_URL}/courses`;
-      const params = [];
+      const params: string[] = [];
       if (limit !== undefined) params.push(`limit=${limit}`);
       if (offset !== undefined) params.push(`offset=${offset}`);
+      // Add filters as query params
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== "") params.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
+      });
       if (params.length > 0) url += `?${params.join('&')}`;
       const response = await fetch(url);
       if (!response.ok) {
@@ -137,6 +141,13 @@ export class CoursesService {
       console.error('Error fetching course by ID:', error);
       throw error;
     }
+  }
+
+  static async getCoursesMetadata(params = {}): Promise<any> {
+    const query = new URLSearchParams(params as any).toString();
+    const response = await fetch(`${API_BASE_URL}/courses/metadata?${query}`);
+    if (!response.ok) throw new Error('Failed to fetch metadata');
+    return response.json();
   }
 }
 

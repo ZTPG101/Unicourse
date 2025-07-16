@@ -1562,15 +1562,16 @@ Product Details
 }
 
 .cart-page__buttons {
-    position: relative;
+    position:relative;
     display: flex;
-    align-items: center;
+    align-items: right;
     justify-content: flex-end;
 }
 
 .cart-page__buttons-1 {
+    margin-left: 10px;
     position: relative;
-    display: block;
+    display: inline-flexbox;
 }
 
 .cart-page__buttons-1 .thm-btn {

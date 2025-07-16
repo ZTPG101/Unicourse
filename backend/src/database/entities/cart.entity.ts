@@ -19,7 +19,7 @@ export class Cart {
   user: User;
 
   @ManyToMany(() => Course)
-  @JoinTable({ name: 'cart_courses_course' })
+  @JoinTable({ name: 'cart_courses' })
   items: Course[];
 
   @Column({ default: 'pending' })

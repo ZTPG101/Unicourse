@@ -78,4 +78,46 @@ export class CoursesService {
     }
     return { message: 'Course deleted successfully.' };
   }
+
+  async getCoursesMetadata(filters: { search?: string; priceMin?: number; priceMax?: number }) {
+    const query = this.CourseRepo.createQueryBuilder('course')
+      .leftJoin('course.category', 'category');
+
+    // Apply filters if provided
+    if (filters.search) {
+      query.andWhere('course.title LIKE :search OR course.description LIKE :search', { search: `%${filters.search}%` });
+    }
+    if (filters.priceMin !== undefined) {
+      query.andWhere('course.price >= :min', { min: filters.priceMin });
+    }
+    if (filters.priceMax !== undefined) {
+      query.andWhere('course.price <= :max', { max: filters.priceMax });
+    }
+
+    // Get total count
+    const totalCourses = await query.getCount();
+
+    // Get counts per category
+    const categoryCounts = await this.CourseRepo.createQueryBuilder('course')
+      .leftJoin('course.category', 'category')
+      .select('category.id', 'id')
+      .addSelect('category.name', 'name')
+      .addSelect('COUNT(course.id)', 'count')
+      .groupBy('category.id')
+      .addGroupBy('category.name')
+      .getRawMany();
+
+    // Get counts per skill level
+    const skillLevelCounts = await this.CourseRepo.createQueryBuilder('course')
+      .select('course.level', 'level')
+      .addSelect('COUNT(course.id)', 'count')
+      .groupBy('course.level')
+      .getRawMany();
+
+    return {
+      totalCourses,
+      categories: categoryCounts,
+      skillLevels: skillLevelCounts,
+    };
+  }
 }
