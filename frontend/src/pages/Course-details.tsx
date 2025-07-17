@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import CourseCurriculumTab from "../components/CourseCurriculumTab";
 import CourseInstructorTab from "../components/CourseInstructorTab";
 import CourseOverviewTab from "../components/CourseOverviewTab";
@@ -23,6 +23,7 @@ const CourseDetails: React.FC = () => {
   const [purchaseLoading, setPurchaseLoading] = useState(false);
   const [purchaseError, setPurchaseError] = useState<string | null>(null);
   const [purchaseSuccess, setPurchaseSuccess] = useState(false);
+  const tabContentRef = useRef<HTMLDivElement>(null);
 
   // Fetch course details
   useEffect(() => {
@@ -215,7 +216,7 @@ const CourseDetails: React.FC = () => {
                         </p>
                       </li>
                     </ul>
-                    <div className="tabs-content">
+                    <div className="tabs-content" ref={tabContentRef}>
                       {activeTab === "overview" && (
                         <CourseOverviewTab course={course} />
                       )}
@@ -272,7 +273,12 @@ const CourseDetails: React.FC = () => {
                       {course.price === 0 ? (
                         <a
                           className="thm-btn-two"
-                          onClick={() => setActiveTab("curriculum")}
+                          onClick={() => {
+                            setActiveTab("curriculum");
+                            setTimeout(() => {
+                              tabContentRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+                            }, 100); // Wait for tab to render
+                          }}
                           type="button"
                         >
                           <span>Start Now</span>
@@ -292,7 +298,8 @@ const CourseDetails: React.FC = () => {
                               setTimeout(() => navigate("/cart"), 1000);
                             } catch (err) {
                               setPurchaseError(
-                                "Failed to add to cart. Please try again."
+                                "Please login to purchase the course."
+                                // "Failed to add to cart. Please try again."
                               );
                             } finally {
                               setPurchaseLoading(false);

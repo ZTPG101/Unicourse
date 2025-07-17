@@ -3,7 +3,6 @@ import { BillingDetails } from "./billingDetails.entity";
 import { OrderItem } from "./orderItem.entity";
 import { User } from "./user.entity";
 
-// order.entity.ts (NestJS/TypeORM example)
 @Entity()
 export class Order {
   @PrimaryGeneratedColumn()
@@ -16,7 +15,7 @@ export class Order {
   items: OrderItem[];
 
   @Column()
-  status: string; // e.g. 'pending', 'paid', 'shipped'
+  status: string;
 
   @Column({ type: 'decimal' })
   total: number;

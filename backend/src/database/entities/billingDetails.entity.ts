@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne } from "typeorm";
+import { User } from "./user.entity";
 
-@Entity()
+@Entity('billingDetails')
 export class BillingDetails {
   @PrimaryGeneratedColumn()
   id: number;
@@ -28,6 +29,12 @@ export class BillingDetails {
 
   @Column({ length: 20 })
   phone: string;
+
+  @Column({nullable: true})
+  note: string
+
+  @ManyToOne(() => User, (user) => user.billingDetails)
+  user: User;
 
   @CreateDateColumn()
   createdAt: Date;

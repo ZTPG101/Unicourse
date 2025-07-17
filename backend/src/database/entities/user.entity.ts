@@ -17,6 +17,7 @@ import { Session } from './session.entity';
 import { UserRole, UserRoleType } from 'src/auth/types/roles.enum';
 import { Cart } from './cart.entity';
 import { Order } from './order.entity';
+import { BillingDetails } from './billingDetails.entity';
 
 @Entity()
 export class User {
@@ -74,7 +75,10 @@ export class User {
   reviews: Review[];
 
   @OneToMany(() => Order, (order) => order.user)
-  orders: Review[];
+  orders: Order[];
+
+  @OneToMany(() => BillingDetails, (billingDetails) => billingDetails.user)
+  billingDetails: BillingDetails[];
 
   @CreateDateColumn()
   createdAt: Date;

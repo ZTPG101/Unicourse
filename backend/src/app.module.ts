@@ -12,6 +12,9 @@ import { EnrollmentsModule } from './enrollments/enrollments.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { CartsModule } from './carts/carts.module';
 import { CategoryModule } from './categories/categories.module';
+import { BillingDetailsModule } from './billing-details/billing-details.module';
+import { OrdersModule } from './orders/orders.module';
+import { OrderItemsModule } from './order-items/order-items.module';
 
 @Module({
   imports: [
@@ -29,6 +32,9 @@ import { CategoryModule } from './categories/categories.module';
     ReviewsModule,
     CartsModule,
     CategoryModule,
+    BillingDetailsModule,
+    OrdersModule,
+    OrderItemsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

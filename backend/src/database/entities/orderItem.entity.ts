@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, ManyToOne, Column, CreateDateColumn } f
 import { Order } from "./order.entity";
 import { Course } from "./course.entity";
 
-@Entity()
+@Entity('orderItem')
 export class OrderItem {
   @PrimaryGeneratedColumn()
   id: number;

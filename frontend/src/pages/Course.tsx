@@ -37,6 +37,7 @@ const CourseComponent: React.FC = () => {
   const [selectedCategories, setSelectedCategories] = React.useState<string[]>([]);
   const [selectedSkillLevels, setSelectedSkillLevels] = React.useState<string[]>([]);
   const [searchTerm, setSearchTerm] = React.useState("");
+  const [searchInput, setSearchInput] = React.useState(""); // <-- new state
   const [currentPage, setCurrentPage] = useState(1);
   const coursesPerPage = 6;
   const [allCategories, setAllCategories] = useState<Category[]>([]);
@@ -301,15 +302,15 @@ const CourseComponent: React.FC = () => {
                     <p className="course-grid__search-text">
                       There was a random sentence here, so I write this one.
                     </p>
-                    <form onSubmit={(e) => e.preventDefault()}>
+                    <form onSubmit={(e) => { e.preventDefault(); setSearchTerm(searchInput); }}>
                       <input
                         type="search"
                         placeholder="Search by typing here"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                        value={searchInput}
+                        onChange={(e) => setSearchInput(e.target.value)}
                       />
                       <button type="submit">
-                        <i className="icon-search"></i>
+                        <i className="icon-search"></i>Search
                       </button>
                     </form>
                   </div>
