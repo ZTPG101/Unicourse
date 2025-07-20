@@ -6,15 +6,14 @@ import {
   Param,
   Patch,
   Post,
-  Query,
-  UseGuards,
+  UseGuards
 } from '@nestjs/common';
-import { CategoryService } from './categories.service';
-import { Category } from 'src/database/entities/category.entity';
 import { Public } from 'src/auth/decorators/public.decorator';
+import { AdminOrInstructor } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles/roles.guard';
-import { AdminOrInstructor } from 'src/auth/decorators/roles.decorator';
+import { Category } from 'src/database/entities/category.entity';
+import { CategoryService } from './categories.service';
 
 @Controller('categories')
 export class CategoryController {
@@ -29,7 +28,7 @@ export class CategoryController {
   @Public()
   @Get(':id')
   async findById(@Param('id') id: number): Promise<Category> {
-    return this.categoryService.findById(Number(id));
+    return this.categoryService.findById(+id);
   }
 
   @Public()
@@ -52,13 +51,13 @@ export class CategoryController {
     @Param('id') id: number,
     @Body() data: Partial<Category>,
   ): Promise<Category> {
-    return this.categoryService.update(Number(id), data);
+    return this.categoryService.update(+id, data);
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @AdminOrInstructor()
   async remove(@Param('id') id: number): Promise<{ message: string }> {
-    return this.categoryService.remove(Number(id));
+    return this.categoryService.remove(+id);
   }
 }

@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   Entity,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -18,6 +19,7 @@ import { UserRole, UserRoleType } from 'src/auth/types/roles.enum';
 import { Cart } from './cart.entity';
 import { Order } from './order.entity';
 import { BillingDetails } from './billingDetails.entity';
+import { Instructor } from './instructor.entity';
 
 @Entity()
 export class User {
@@ -36,13 +38,16 @@ export class User {
   @Column({ nullable: true })
   avatar: string;
 
-  @Column({ 
+  @Column({
     type: 'varchar',
     length: 20,
     default: UserRole.STUDENT,
-    nullable: true 
+    nullable: true,
   })
   role: UserRoleType;
+
+  @OneToOne(() => Instructor, (instructor) => instructor.user)
+  instructor: Instructor;
 
   @Column({ nullable: true })
   phone: string;
@@ -50,17 +55,8 @@ export class User {
   @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   balance: number;
 
-  @Column({ type: 'int', nullable: true, default: 0 })
-  experience: number;
-
-  // @Column({ nullable: true })
-  // provider: 'google' | 'facebook' | null;
-
-  // @Column({ nullable: true })
-  // providerId: string;
-
-  @OneToMany(()=> Cart, (cart)=> cart.user)
-  carts: Cart[]
+  @OneToMany(() => Cart, (cart) => cart.user)
+  carts: Cart[];
 
   @OneToMany(() => Session, (session) => session.user)
   sessions: Session[];

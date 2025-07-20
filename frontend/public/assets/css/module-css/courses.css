@@ -212,7 +212,7 @@
     background-color: var(--fistudy-base);
 }
 
-.courses-one__btn-and-doller-box {
+.courses-one__btn-and-dollar-box {
     position: relative;
     display: flex;
     align-items: center;
@@ -224,7 +224,7 @@
     display: block;
 }
 
-.courses-one__btn-and-doller-box>span {
+.courses-one__btn-and-dollar-box>span {
     font-size: 24px;
     font-weight: 600;
     line-height: 34px;
@@ -437,19 +437,19 @@
     margin-top: 14px;
 }
 
-.courses-two__doller-and-review {
+.courses-two__dollar-and-review {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-.courses-two__doller {
+.courses-two__dollar {
     position: relative;
     display: block;
 }
 
-.courses-two__doller p {
+.courses-two__dollar p {
     font-size: 24px;
     font-weight: 600;
     line-height: 34px;
@@ -1883,7 +1883,7 @@
     position: absolute;
 }
 
-.course-details__doller-and-btn-box {
+.course-details__dollar-and-btn-box {
     position: relative;
     display: flex;
     align-items: center;
@@ -1892,14 +1892,14 @@
     margin-bottom: 20px;
 }
 
-.course-details__doller {
+.course-details__dollar {
     font-size: 24px;
     font-weight: 500;
     line-height: 34px;
     color: var(--fistudy-base);
 }
 
-.course-details__doller-btn-box {
+.course-details__dollar-btn-box {
     position: relative;
     display: block;
 }
@@ -2802,19 +2802,19 @@
     flex: 1;
 }
 
-.course-list__doller-and-heart {
+.course-list__dollar-and-heart {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-.course-list__doller {
+.course-list__dollar {
     position: relative;
     display: block;
 }
 
-.course-list__doller p {
+.course-list__dollar p {
     font-size: 28px;
     font-weight: 600;
     line-height: 38px;

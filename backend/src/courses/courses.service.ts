@@ -7,26 +7,23 @@ import { User } from 'src/database/entities/user.entity';
 import { Category } from 'src/database/entities/category.entity';
 import { BadRequestException } from '@nestjs/common';
 import { UserRole } from 'src/auth/types/roles.enum';
+import { Instructor } from 'src/database/entities/instructor.entity';
 
 @Injectable()
 export class CoursesService {
   constructor(
     @Inject('COURSE_REPOSITORY') private CourseRepo: Repository<Course>,
-    @Inject('USER_REPOSITORY') private UserRepo: Repository<User>,
+    @Inject('INSTRUCTOR_REPOSITORY') private InstructorRepo: Repository<Instructor>,
     @Inject('CATEGORY_REPOSITORY') private CategoryRepo: Repository<Category>,
   ) {}
 
   async create(createCourseDto: CreateCourseDto): Promise<Course | null> {
-    const instructor = await this.UserRepo.findOne({
+    const instructor = await this.InstructorRepo.findOne({
       where: { id: createCourseDto.instructorId }
     });
 
     if (!instructor) {
       throw new NotFoundException(`Instructor with id ${createCourseDto.instructorId} not found`);
-    }
-
-    if (instructor.role !== UserRole.INSTRUCTOR) {
-      throw new BadRequestException(`User with id ${createCourseDto.instructorId} is not an instructor`);
     }
 
     const category = await this.CategoryRepo.findOne({ where: { id: createCourseDto.categoryId } });
@@ -47,13 +44,13 @@ export class CoursesService {
   async findById(id: number): Promise<Course | null> {
     return this.CourseRepo.findOne({
       where: { id },
-      relations: ['instructor', 'lessons', 'reviews', 'category'],
+      relations: ['instructor', 'instructor.user', 'lessons', 'reviews', 'category'],
     });
   }
 
   findAll(limit?: number, offset?: number): Promise<Course[]> {
     return this.CourseRepo.find({
-      relations: ['instructor', 'category'],
+      relations: ['instructor', 'instructor.user', 'category'],
       take: limit,
       skip: offset,
     });

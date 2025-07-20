@@ -120,7 +120,20 @@ export class ReviewsService {
       headers,
       body: JSON.stringify(data),
     });
-    if (!res.ok) throw new Error("Failed to create review");
+    if (!res.ok) {
+      let errorMsg = "Failed to create review";
+      try {
+        const errorData = await res.json();
+        if (errorData && errorData.message) {
+          errorMsg = errorData.message;
+        }
+      } catch (e) {
+        // ignore JSON parse error
+      }
+      const error: any = new Error(errorMsg);
+      error.status = res.status;
+      throw error;
+    }
     return res.json();
   }
 }

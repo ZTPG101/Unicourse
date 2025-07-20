@@ -1,18 +1,18 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Layout from "./components/Layout";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Course from "./pages/Course";
 import CustomCursor from "./components/CustomCursor";
-import Home from "./pages/Home";
-import CourseDetails from "./pages/Course-details";
-import LessonPage from "./pages/lesson";
+import Layout from "./components/Layout";
 import Cart from "./pages/Cart";
-import Wishlist from "./pages/Wishlist";
+import Checkout from "./pages/Checkout";
+import Course from "./pages/Course";
+import CourseDetails from "./pages/Course-details";
+import Home from "./pages/Home";
 import Instructor from "./pages/Instructor";
 import InstructorDetails from "./pages/Instructor-details";
-import Checkout from "./pages/Checkout";
+import LessonPage from "./pages/lesson";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import MyCourse from "./pages/MyCourse";
 
 const App: React.FC = () => {
   return (
@@ -27,7 +27,7 @@ const App: React.FC = () => {
           <Route path="/course-details/:courseId" element={<CourseDetails />} />
           <Route path="/lesson/:lessonId" element={<LessonPage />} />
           <Route path="/cart" element={<Cart />} />
-          <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/my-course" element={<MyCourse />} />
           <Route path="/instructor" element={<Instructor />} />
           <Route path="/instructor-details" element={<InstructorDetails />} />
           <Route path="/checkout" element={<Checkout />} />

@@ -28,11 +28,24 @@ export class CartService {
           headers: { Authorization: `Bearer ${token}` },
         }),
       });
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      if (!response.ok) {
+        let errorMsg = `HTTP error! status: ${response.status}`;
+        try {
+          const errorData = await response.json();
+          if (errorData && errorData.message) {
+            errorMsg = errorData.message;
+          }
+        } catch (e) {
+          // ignore JSON parse error
+        }
+        const error: any = new Error(errorMsg);
+        error.status = response.status;
+        throw error;
+      }
       return await response.json();
     } catch (error) {
       console.error('Error fetching cart:', error);
-      return null;
+      throw error;
     }
   }
 

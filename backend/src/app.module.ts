@@ -15,6 +15,7 @@ import { CategoryModule } from './categories/categories.module';
 import { BillingDetailsModule } from './billing-details/billing-details.module';
 import { OrdersModule } from './orders/orders.module';
 import { OrderItemsModule } from './order-items/order-items.module';
+import { InstructorsModule } from './instructors/instructors.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { OrderItemsModule } from './order-items/order-items.module';
     BillingDetailsModule,
     OrdersModule,
     OrderItemsModule,
+    InstructorsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

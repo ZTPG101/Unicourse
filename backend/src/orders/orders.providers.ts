@@ -1,5 +1,6 @@
 import { BillingDetails } from 'src/database/entities/billingDetails.entity';
 import { Cart } from 'src/database/entities/cart.entity';
+import { Enrollment } from 'src/database/entities/enrollment.entity';
 import { Order } from 'src/database/entities/order.entity';
 import { OrderItem } from 'src/database/entities/orderItem.entity';
 import { DataSource } from 'typeorm';

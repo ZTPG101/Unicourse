@@ -38,7 +38,7 @@ export class EnrollmentsService {
   }
 
   findAll(): Promise<Enrollment[]> {
-    return this.EnrollmentRepo.find();
+    return this.EnrollmentRepo.find({ relations: ["course", "user"] });
   }
 
   async update(

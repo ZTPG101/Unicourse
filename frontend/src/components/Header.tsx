@@ -122,7 +122,7 @@ const Header = () => {
                       <Link to="/about">About</Link>
                     </li>
                     <li className="dropdown">
-                      <Link to="/pages">Pages</Link>
+                      <Link to="/">Pages</Link>
                       <ul className="shadow-box">
                         <li>
                           <Link to="/instructor">Instructors</Link>
@@ -145,7 +145,7 @@ const Header = () => {
                       <Link to="/course">Course</Link>
                     </li>
                     <li>
-                      <Link to="/wishlist">Wishlist</Link>
+                      <Link to="/my-course">My course</Link>
                     </li>
                     <li>
                       <Link to="/contact">Contact</Link>
@@ -246,7 +246,7 @@ const Header = () => {
                     <Link to="/about">About</Link>
                   </li>
                   <li className="dropdown">
-                    <Link to="/pages">Pages</Link>
+                    <Link to="/">Pages</Link>
                     <ul className="shadow-box">
                       <li>
                         <Link to="/instructor">Instructors</Link>
@@ -266,7 +266,7 @@ const Header = () => {
                       <Link to="/course">Course</Link>
                     </li>
                   <li>
-                    <Link to="/wishlist">Wishlist</Link>
+                    <Link to="/my-course">My Course</Link>
                   </li>
                   <li>
                     <Link to="/contact">Contact</Link>

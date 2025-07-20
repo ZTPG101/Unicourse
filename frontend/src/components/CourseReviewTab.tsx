@@ -1,6 +1,7 @@
 import React from "react";
 import type { Course } from "../services/courses.service";
 import { ReviewsService } from "../services/reviews.service";
+import { CoursesService } from "../services/courses.service";
 
 interface CourseReviewTabProps {
   course: Course;
@@ -20,6 +21,7 @@ const CourseReviewTab: React.FC<CourseReviewTabProps> = ({ course, onReviewSubmi
   });
   const [submitting, setSubmitting] = React.useState(false);
   const [submitError, setSubmitError] = React.useState<string | null>(null);
+  const [localCourse, setLocalCourse] = React.useState(course);
 
   // Initial fetch with loading state
   React.useEffect(() => {
@@ -44,6 +46,10 @@ const CourseReviewTab: React.FC<CourseReviewTabProps> = ({ course, onReviewSubmi
 
     fetchInitialReviews();
   }, [course.id]);
+
+  React.useEffect(() => {
+    setLocalCourse(course);
+  }, [course]);
 
   // Background refresh every 5 seconds
   React.useEffect(() => {
@@ -206,7 +212,7 @@ const CourseReviewTab: React.FC<CourseReviewTabProps> = ({ course, onReviewSubmi
                 try {
                   await ReviewsService.createReview({
                     ...form,
-                    courseId: course.id,
+                    courseId: localCourse.id,
                   });
                   setForm({
                     fullName: "",
@@ -215,12 +221,26 @@ const CourseReviewTab: React.FC<CourseReviewTabProps> = ({ course, onReviewSubmi
                     rating: 0,
                   });
                   const fetchedReviews =
-                    await ReviewsService.getReviewsByCourseId(course.id);
+                    await ReviewsService.getReviewsByCourseId(localCourse.id);
                   setReviews(fetchedReviews);
-                } catch (err) {
-                  setSubmitError(
-                    "Failed to submit review. Don't forget to rate the course"
-                  );
+                  // Refetch course data to update reviewCount and rating
+                  const updatedCourse = await CoursesService.getCourseById(localCourse.id);
+                  setLocalCourse(updatedCourse);
+                  if (typeof onReviewSubmitted === 'function') {
+                    onReviewSubmitted();
+                  }
+                } catch (err: any) {
+                  if (err && typeof err === 'object' && 'status' in err) {
+                    if (err.status === 401) {
+                      setSubmitError("Please login to rate the course");
+                    } else if (err.status === 400) {
+                      setSubmitError("Please rate the course");
+                    } else {
+                      setSubmitError(err.message || "Failed to submit review.");
+                    }
+                  } else {
+                    setSubmitError("Failed to submit review.");
+                  }
                 } finally {
                   setSubmitting(false);
                 }
@@ -322,17 +342,17 @@ const CourseReviewTab: React.FC<CourseReviewTabProps> = ({ course, onReviewSubmi
             </ul>
             <div className="course-details__review-box">
               <div className="course-details__review-count">
-                <span>{course.rating.toFixed(1)}</span>
+                <span>{localCourse.rating.toFixed(1)}</span>
                 {/* <span className="odometer" data-count={course.rating}>00</span> */}
               </div>
               <div className="course-details__review-content">
-                <p>{course.reviewCount} Reviews</p>
+                <p>{localCourse.reviewCount} Reviews</p>
                 <ul className="course-details__review-ratting list-unstyled">
                   {[...Array(5)].map((_, index) => (
                     <li key={index}>
                       <span
                         className={`icon-star ${
-                          index < Math.floor(course.rating) ? "filled" : ""
+                          index < Math.floor(localCourse.rating) ? "filled" : ""
                         }`}
                       ></span>
                     </li>
@@ -341,13 +361,13 @@ const CourseReviewTab: React.FC<CourseReviewTabProps> = ({ course, onReviewSubmi
                 <div className="course-details__review-text">
                   <p>
                     <span className="icon-star"></span>
-                    {course.rating >= 4.5
+                    {localCourse.rating >= 4.5
                       ? "Excellent"
-                      : course.rating >= 4.0
+                      : localCourse.rating >= 4.0
                       ? "Very Good"
-                      : course.rating >= 3.5
+                      : localCourse.rating >= 3.5
                       ? "Good"
-                      : course.rating >= 3.0
+                      : localCourse.rating >= 3.0
                       ? "Average"
                       : "Poor"}
                   </p>
@@ -359,7 +379,7 @@ const CourseReviewTab: React.FC<CourseReviewTabProps> = ({ course, onReviewSubmi
           {/* Start of Total Reviews */}
           <div className="comment-one">
             <h3 className="comment-one__title">
-              Total Reviews ({course.reviewCount})
+              Total Reviews ({localCourse.reviewCount})
             </h3>
             <ul className="comment-one__single-list list-unstyled">
               {reviews.map((review, idx) => (
@@ -442,7 +462,7 @@ const CourseReviewTab: React.FC<CourseReviewTabProps> = ({ course, onReviewSubmi
                   // Call your backend API (adjust endpoint as needed)
                   await ReviewsService.createReview({
                     ...form,
-                    courseId: course.id,
+                    courseId: localCourse.id,
                   });
                   // Optionally, refetch reviews or optimistically add the new review
                   setForm({
@@ -453,14 +473,26 @@ const CourseReviewTab: React.FC<CourseReviewTabProps> = ({ course, onReviewSubmi
                   });
                   // Refetch reviews
                   const fetchedReviews =
-                    await ReviewsService.getReviewsByCourseId(course.id);
+                    await ReviewsService.getReviewsByCourseId(localCourse.id);
                   setReviews(fetchedReviews);
-                  // Call the callback if provided
+                  // Refetch course data to update reviewCount and rating
+                  const updatedCourse = await CoursesService.getCourseById(localCourse.id);
+                  setLocalCourse(updatedCourse);
                   if (typeof onReviewSubmitted === 'function') {
                     onReviewSubmitted();
                   }
-                } catch (err) {
-                  setSubmitError("Failed to submit review. Don't forget to rate the course");
+                } catch (err: any) {
+                  if (err && typeof err === 'object' && 'status' in err) {
+                    if (err.status === 401) {
+                      setSubmitError("Please login to rate the course");
+                    } else if (err.status === 400) {
+                      setSubmitError("Please rate the course");
+                    } else {
+                      setSubmitError(err.message || "Failed to submit review. Don't forget to login and rate the course");
+                    }
+                  } else {
+                    setSubmitError("Failed to submit review. Don't forget to login and rate the course");
+                  }
                 } finally {
                   setSubmitting(false);
                 }

@@ -95,7 +95,17 @@ const Checkout: React.FC = () => {
       await OrderService.placeOrder(billingDetails.id);
       setOrderSuccess(true);
     } catch (err: any) {
-      setOrderError(err.message || "Failed to place order.");
+      if (err && typeof err === 'object' && 'status' in err) {
+        if (err.status === 401) {
+          setOrderError("Please login to place order");
+        } else if (err.status === 500) {
+          setOrderError("The cart is empty!");
+        } else {
+          setOrderError(err.message || "Failed to place order.");
+        }
+      } else {
+        setOrderError(err.message || "Failed to place order.");
+      }
       console.error('Order error:', err);
     } finally {
       setPlacingOrder(false);

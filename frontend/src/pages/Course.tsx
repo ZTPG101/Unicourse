@@ -146,6 +146,15 @@ const CourseComponent: React.FC = () => {
     }
   });
 
+  // Compute filtered count per skill level
+  const filteredSkillLevelCounts: Record<string, number> = {};
+  const sourceCoursesForSkill = isAnyCategoryFilter ? filteredCourses : paginatedCourses;
+  sourceCoursesForSkill.forEach((course) => {
+    if (course.level) {
+      filteredSkillLevelCounts[course.level] = (filteredSkillLevelCounts[course.level] || 0) + 1;
+    }
+  });
+
   // Initialize slider when courses are loaded and price range is calculated
   useEffect(() => {
     if (courses.length > 0 && !sliderInitialized) {
@@ -234,7 +243,7 @@ const CourseComponent: React.FC = () => {
 
   const scrollToContentBox = () => {
     if (contentBoxRef.current) {
-      const headerOffset = 200;
+      const headerOffset = 220;
       const y = contentBoxRef.current.getBoundingClientRect().top + window.scrollY - headerOffset;
       window.scrollTo({ top: y, behavior: "smooth" });
     }
@@ -458,7 +467,7 @@ const CourseComponent: React.FC = () => {
                             }`}
                           ></div>
                           <p className="course-grid__list-text">
-                            {level} ({skillLevelCounts[level]})
+                            {level} ({filteredSkillLevelCounts[level] || 0} out of {skillLevelCounts[level]})
                           </p>
                         </li>
                       ))}
@@ -489,15 +498,15 @@ const CourseComponent: React.FC = () => {
                             <div className="courses-two__img">
                               <img src={course.imageUrl} alt={course.title} />
                             </div>
-                            <div className="courses-two__heart">
+                            {/* <div className="courses-two__heart">
                               <a href="/wishlist">
                                 <span className="icon-heart"></span>
                               </a>
-                            </div>
+                            </div> */}
                           </div>
                           <div className="courses-two__content">
-                            <div className="courses-two__doller-and-review">
-                              <div className="courses-two__doller">
+                            <div className="courses-two__dollar-and-review">
+                              <div className="courses-two__dollar">
                                 <p>${course.price.toFixed(2)}</p>
                               </div>
                               <div className="courses-two__review">
@@ -508,7 +517,7 @@ const CourseComponent: React.FC = () => {
                               </div>
                             </div>
                             <h3 className="courses-two__title">
-                              <a href="#">{course.title}</a>
+                              <a href={`/course-details/${course.id}`}>{course.title}</a>
                             </h3>
                             {/* Show course category as a badge or line below the title */}
                             <div

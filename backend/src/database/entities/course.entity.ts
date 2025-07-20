@@ -5,13 +5,14 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
 } from 'typeorm';
 import { Enrollment } from './enrollment.entity';
 import { Lesson } from './lesson.entity';
 import { Review } from './review.entity';
 import { User } from './user.entity';
 import { Category } from './category.entity';
+import { Instructor } from './instructor.entity';
 
 @Entity()
 export class Course {
@@ -39,8 +40,10 @@ export class Course {
   @Column({ type: 'int', default: 0 })
   durationMinutes: number;
 
-  @ManyToOne(() => User, (user) => user.courses, { eager: true })
-  instructor: User;
+  @ManyToOne(() => Instructor, (instructor) => instructor.courses, {
+    eager: true,
+  })
+  instructor: Instructor;
 
   @OneToMany(() => Enrollment, (enrollment) => enrollment.course, {
     cascade: true,

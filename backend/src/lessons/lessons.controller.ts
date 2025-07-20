@@ -14,6 +14,7 @@ import { UpdateLessonDto } from './dto/update-lesson.dto';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { RolesGuard } from 'src/auth/guards/roles/roles.guard';
 import { AdminOnly, AdminOrInstructor, Roles } from 'src/auth/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth/jwt-auth.guard';
 
 @Controller('lessons')
 export class LessonsController {
@@ -32,21 +33,21 @@ export class LessonsController {
   }
 
   @Post()
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @AdminOrInstructor()
   create(@Body() dto: CreateLessonDto) {
     return this.lessonsService.create(dto);
   }
 
   @Patch(':id')
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @AdminOrInstructor()
   update(@Param('id') id: string, @Body() updateLessonDto: UpdateLessonDto) {
     return this.lessonsService.update(+id, updateLessonDto);
   }
 
   @Delete(':id')
-  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @AdminOnly()
   remove(@Param('id') id: string) {
     return this.lessonsService.remove(+id);

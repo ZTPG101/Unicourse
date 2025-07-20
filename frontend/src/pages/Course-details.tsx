@@ -9,6 +9,7 @@ import { CartService } from "../services/carts.service";
 import type { Course } from "../services/courses.service";
 import { CoursesService } from "../services/courses.service";
 import { formatDuration } from "../utils/formatters";
+import { EnrollmentService } from "../services/enrollment.service";
 
 const CourseDetails: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
@@ -23,7 +24,12 @@ const CourseDetails: React.FC = () => {
   const [purchaseLoading, setPurchaseLoading] = useState(false);
   const [purchaseError, setPurchaseError] = useState<string | null>(null);
   const [purchaseSuccess, setPurchaseSuccess] = useState(false);
+  const [enrollLoading, setEnrollLoading] = useState(false);
+  const [enrollError, setEnrollError] = useState<string | null>(null);
+  const [enrollSuccess, setEnrollSuccess] = useState(false);
+  const [alreadyEnrolled, setAlreadyEnrolled] = useState(false);
   const tabContentRef = useRef<HTMLDivElement>(null);
+  const curriculumTabRef = useRef<HTMLDivElement>(null);
 
   // Fetch course details
   useEffect(() => {
@@ -51,6 +57,43 @@ const CourseDetails: React.FC = () => {
 
     fetchCourseDetails();
   }, [courseId]);
+
+  // Check if already enrolled in this course
+  useEffect(() => {
+    const checkEnrollment = async () => {
+      if (!courseId) return;
+      try {
+        const enrollments = await EnrollmentService.getAllEnrollments();
+        const enrolled = enrollments.some(
+          (enrollment) =>
+            enrollment.course && enrollment.course.id === parseInt(courseId)
+        );
+        setAlreadyEnrolled(enrolled);
+      } catch (err) {
+        // Optionally handle error
+        setAlreadyEnrolled(false);
+      }
+    };
+    checkEnrollment();
+  }, [courseId]);
+
+  // Handle scroll to tab on navigation
+  useEffect(() => {
+    if (
+      location.state?.scrollToTab &&
+      activeTab === "curriculum" &&
+      curriculumTabRef.current
+    ) {
+      setTimeout(() => {
+        curriculumTabRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 200); // Slightly longer delay
+    }
+
+    // eslint-disable-next-line
+  }, [activeTab, location.state, curriculumTabRef.current]);
 
   // Show loading state
   if (loading) {
@@ -110,7 +153,9 @@ const CourseDetails: React.FC = () => {
                   <div className="course-details__tag-box">
                     <div className="course-details__tag-shape"></div>
                     <span className="course-details__tag">
-                      {course.category && course.category.name ? course.category.name : 'Uncategorized'}
+                      {course.category && course.category.name
+                        ? course.category.name
+                        : "Uncategorized"}
                     </span>
                   </div>
                   <h3 className="course-details__title">{course.title}</h3>
@@ -221,7 +266,9 @@ const CourseDetails: React.FC = () => {
                         <CourseOverviewTab course={course} />
                       )}
                       {activeTab === "curriculum" && (
-                        <CourseCurriculumTab course={course} />
+                        <div ref={curriculumTabRef}>
+                          <CourseCurriculumTab course={course} />
+                        </div>
                       )}
                       {activeTab === "instructor" && (
                         <CourseInstructorTab course={course} />
@@ -231,10 +278,14 @@ const CourseDetails: React.FC = () => {
                           course={course}
                           onReviewSubmitted={async () => {
                             try {
-                              const updatedCourse = await CoursesService.getCourseById(course.id);
+                              const updatedCourse =
+                                await CoursesService.getCourseById(course.id);
                               setCourse(updatedCourse);
                             } catch (err) {
-                              console.error('Failed to refresh course data after review', err);
+                              console.error(
+                                "Failed to refresh course data after review",
+                                err
+                              );
                             }
                           }}
                         />
@@ -265,30 +316,80 @@ const CourseDetails: React.FC = () => {
                       </div>
                     </a>
                   </div>
-                  <div className="course-details__doller-and-btn-box">
-                    <h3 className="course-details__doller">
+                  <div className="course-details__dollar-and-btn-box">
+                    <h3 className="course-details__dollar">
                       ${course.price.toFixed(2)}
                     </h3>
-                    <div className="course-details__doller-btn-box">
+                    <div className="course-details__dollar-btn-box">
                       {course.price === 0 ? (
                         <a
-                          className="thm-btn-two"
-                          onClick={() => {
-                            setActiveTab("curriculum");
-                            setTimeout(() => {
-                              tabContentRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-                            }, 100); // Wait for tab to render
+                          className={`thm-btn-two${
+                            alreadyEnrolled ? " disabled" : ""
+                          }`}
+                          onClick={async () => {
+                            if (!course) return;
+                            if (alreadyEnrolled) {
+                              setActiveTab("curriculum");
+                              setTimeout(() => {
+                                tabContentRef.current?.scrollIntoView({
+                                  behavior: "smooth",
+                                  block: "start",
+                                });
+                              }, 100);
+                              return;
+                            }
+                            setEnrollLoading(true);
+                            setEnrollError(null);
+                            setEnrollSuccess(false);
+                            try {
+                              await EnrollmentService.createEnrollment(
+                                course.id
+                              );
+                              setEnrollSuccess(true);
+                              setActiveTab("curriculum");
+                              setTimeout(() => {
+                                tabContentRef.current?.scrollIntoView({
+                                  behavior: "smooth",
+                                  block: "start",
+                                });
+                              }, 100);
+                              setAlreadyEnrolled(true); // update state after successful enrollment
+                            } catch (err) {
+                              setEnrollError(
+                                "Please login to enroll in the course."
+                              );
+                            } finally {
+                              setEnrollLoading(false);
+                            }
                           }}
                           type="button"
                         >
-                          <span>Start Now</span>
+                          <span>
+                            {alreadyEnrolled
+                              ? "See contents"
+                              : enrollLoading
+                              ? "Processing..."
+                              : "Start Now"}
+                          </span>
                           <i className="icon-angles-right"></i>
                         </a>
                       ) : (
                         <a
-                          className="thm-btn-two"
+                          className={`thm-btn-two${
+                            alreadyEnrolled ? " disabled" : ""
+                          }`}
                           onClick={async () => {
                             if (!course) return;
+                            if (alreadyEnrolled) {
+                              setActiveTab("curriculum");
+                              setTimeout(() => {
+                                tabContentRef.current?.scrollIntoView({
+                                  behavior: "smooth",
+                                  block: "start",
+                                });
+                              }, 100);
+                              return;
+                            }
                             setPurchaseLoading(true);
                             setPurchaseError(null);
                             setPurchaseSuccess(false);
@@ -299,33 +400,50 @@ const CourseDetails: React.FC = () => {
                             } catch (err) {
                               setPurchaseError(
                                 "Please login to purchase the course."
-                                // "Failed to add to cart. Please try again."
                               );
                             } finally {
                               setPurchaseLoading(false);
                             }
                           }}
                           type="button"
-                          // disabled={purchaseLoading}
                         >
                           <span>
-                            {purchaseLoading ? "Processing..." : "Purchase Now"}
+                            {alreadyEnrolled
+                              ? "See contents"
+                              : purchaseLoading
+                              ? "Processing..."
+                              : "Purchase Now"}
                           </span>
                           <i className="icon-angles-right"></i>
                         </a>
                       )}
-                      {purchaseError && (
-                        <div className="alert alert-danger mt-2">
-                          {purchaseError}
-                        </div>
-                      )}
-                      {purchaseSuccess && (
-                        <div className="alert alert-success mt-2">
-                          Added to cart! Redirecting...
-                        </div>
-                      )}
                     </div>
-                  </div>
+                    </div>
+                    {purchaseError && (
+                      <div className="alert alert-danger">
+                        {purchaseError}
+                      </div>
+                    )}
+                    {purchaseSuccess && (
+                      <div className="alert alert-success">
+                        Added to cart! Redirecting...
+                      </div>
+                    )}
+                    {enrollError && (
+                      <div className="alert alert-danger">
+                        {enrollError}
+                      </div>
+                    )}
+                    {enrollSuccess && (
+                      <div className="alert alert-success">
+                        Enrolled successfully!
+                      </div>
+                    )}
+                    {alreadyEnrolled && !enrollSuccess && !purchaseSuccess && (
+                      <div className="alert alert-info">
+                        You are already enrolled in this course.
+                      </div>
+                    )}
                   <div className="course-details__social-box">
                     <h5 className="course-details__social-title">
                       Share Course

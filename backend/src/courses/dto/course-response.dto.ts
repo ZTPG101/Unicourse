@@ -6,7 +6,6 @@ export class CourseResponseDto {
   description: string;
   price: number;
   rating: number;
-  instructorName: string;
 
   constructor(course: Course) {
     this.id = course.id;
@@ -14,6 +13,5 @@ export class CourseResponseDto {
     this.description = course.description;
     this.price = +course.price;
     this.rating = course.rating;
-    this.instructorName = course.instructor?.name || 'Unknown';
   }
 }

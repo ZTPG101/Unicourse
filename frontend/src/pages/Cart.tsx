@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PageHeader from "../components/PageHeader";
 import { CartService, type Cart as CartType } from "../services/carts.service";
+import { useNavigate } from "react-router-dom";
 
 const breadcrumbs = [{ label: "Home", path: "/" }, { label: "Cart" }];
 
@@ -8,6 +9,7 @@ const Cart: React.FC = () => {
   const [carts, setCart] = useState<CartType | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     CartService.getCart()
@@ -15,8 +17,19 @@ const Cart: React.FC = () => {
         setCart(cart);
         setLoading(false);
       })
-      .catch((_err) => {
-        setError("Failed to load cart.");
+      .catch((err) => {
+        if (
+          err &&
+          typeof err === "object" &&
+          "status" in err &&
+          err.status === 401
+        ) {
+          // Not logged in, treat as empty cart (no error)
+          setCart({ id: 0, items: [], status: "", createdAt: "" });
+          setError(null);
+        } else {
+          setError("Failed to load cart.");
+        }
         setLoading(false);
       });
   }, []);
@@ -110,24 +123,38 @@ const Cart: React.FC = () => {
                   </span>
                 </li>
               </ul>
-            
-            <div className="cart-page__buttons">
-              <div className="cart-page__buttons-1">
-                <a href="/course" className="thm-btn">
-                  Browse more
-                </a>
+
+              <div className="cart-page__buttons">
+                <div className="cart-page__buttons-1">
+                  <a href="/course" className="thm-btn">
+                    Browse more
+                  </a>
+                </div>
+                <div className="cart-page__buttons-1">
+                  <a className="thm-btn" href="#" onClick={handleClear}>
+                    Clear Cart
+                  </a>
+                </div>
+                <div className="cart-page__buttons-2">
+                  <a
+                    href="/checkout"
+                    className="thm-btn"
+                    onClick={e => {
+                      e.preventDefault();
+                      if (!localStorage.getItem("token")) {
+                        const loginPrompt = window.confirm("You need to login to checkout. Go to login page?");
+                        if (loginPrompt) {
+                          navigate("/login", { state: { from: "/checkout" } });
+                        }
+                      } else {
+                        navigate("/checkout");
+                      }
+                    }}
+                  >
+                    Checkout
+                  </a>
+                </div>
               </div>
-              <div className="cart-page__buttons-1">
-                <a className="thm-btn" href="#" onClick={handleClear}>
-                  Clear Cart
-                </a>
-              </div>
-              <div className="cart-page__buttons-2">
-                <a href="/checkout" className="thm-btn">
-                  Checkout
-                </a>
-              </div>
-            </div>
             </div>
           </div>
         </div>

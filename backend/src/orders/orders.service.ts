@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Order } from '../database/entities/order.entity';
 import { OrderItem } from '../database/entities/orderItem.entity';
@@ -8,6 +8,8 @@ import { Course } from '../database/entities/course.entity';
 import { User } from '../database/entities/user.entity';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { EnrollmentsService } from '../enrollments/enrollments.service';
+import { CreateEnrollmentDto } from '../enrollments/dto/create-enrollment.dto';
 
 @Injectable()
 export class OrdersService {
@@ -22,6 +24,7 @@ export class OrdersService {
     private readonly cartRepo: Repository<Cart>,
     // @Inject('COURSE_REPOSITORY')
     // private readonly courseRepo: Repository<Course>,
+    private readonly enrollmentsService: EnrollmentsService,
   ) {}
 
   async create(user: User, dto: CreateOrderDto): Promise <Order | null> {
@@ -46,6 +49,12 @@ export class OrdersService {
         price: Number(course.price || 0),
       });
       await this.orderItemRepo.save(orderItem);
+
+      try {
+        await this.enrollmentsService.create({ courseId: course.id }, user.id);
+      } catch (err) {
+        throw new ConflictException('The course is already enrolled');
+      }
     }
 
     cart.items = [];
