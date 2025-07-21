@@ -10,6 +10,7 @@ export class CreateOrderTable1752723362270 implements MigrationInterface {
         [billingDetailsId] int NOT NULL,
         [status] nvarchar(255),
         [total] decimal(10,2),
+        [paypalOrderId] nvarchar(255),
         [createdAt] DATETIME DEFAULT GETDATE(),
         CONSTRAINT FK_order_user FOREIGN KEY ([userId]) REFERENCES [user](id) ON DELETE CASCADE,
         CONSTRAINT FK_order_billingDetails FOREIGN KEY ([billingDetailsId]) REFERENCES [billingDetails](id)

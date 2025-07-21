@@ -17,7 +17,7 @@ const MyCourse: React.FC = () => {
     EnrollmentService.getAllEnrollments()
       .then(setCourses)
       .catch((err) => {
-        setError("Please login to see your courses.");
+        setError("Please login to see your enrolled courses.");
         console.error(err);
       });
   }, []);

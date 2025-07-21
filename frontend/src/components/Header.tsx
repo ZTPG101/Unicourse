@@ -1,9 +1,21 @@
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom"; // Import Link for navigation
 import { useAuth } from "../context/AuthContext";
+import { InstructorService } from "../services/instructor.service";
 
 const Header = () => {
   const { isLoggedIn, logout, user } = useAuth();
+  const [firstInstructorId, setFirstInstructorId] = useState<number | null>(null);
+
+  useEffect(() => {
+    InstructorService.getAllInstructors()
+      .then((instructors) => {
+        if (instructors && instructors.length > 0) {
+          setFirstInstructorId(instructors[0].id);
+        }
+      })
+      .catch(() => setFirstInstructorId(null));
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -125,15 +137,12 @@ const Header = () => {
                       <Link to="/">Pages</Link>
                       <ul className="shadow-box">
                         <li>
-                          <Link to="/instructor">Instructors</Link>
+                          <Link to="/instructors">Instructors</Link>
                         </li>
                         <li>
-                          <Link to="/instructor-details">
+                          <Link to={firstInstructorId ? `/instructors/${firstInstructorId}` : "#"}>
                             Instructor details
                           </Link>
-                        </li>
-                        <li>
-                          <Link to="/review">Reviews</Link>
                         </li>
                         <li>
                           <Link to="/cart">Cart</Link>
@@ -249,13 +258,10 @@ const Header = () => {
                     <Link to="/">Pages</Link>
                     <ul className="shadow-box">
                       <li>
-                        <Link to="/instructor">Instructors</Link>
+                        <Link to="/instructors">Instructors</Link>
                       </li>
                       <li>
-                        <Link to="/instructor-details">Instructor details</Link>
-                      </li>
-                      <li>
-                        <Link to="/review">Reviews</Link>
+                        <Link to={firstInstructorId ? `/instructors/${firstInstructorId}` : "#"}>Instructor details</Link>
                       </li>
                       <li>
                         <Link to="/cart">Cart</Link>

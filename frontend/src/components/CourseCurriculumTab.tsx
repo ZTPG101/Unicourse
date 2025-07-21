@@ -19,9 +19,9 @@ const CourseCurriculumTab: React.FC<CourseCurriculumTabProps> = ({
               Course Curriculum
             </h3>
             <p className="course-details__curriculam-text">
-              Through engaging lessons and hands-on projects, you’ll learn
+              Through engaging lessons and hands-on projects, you'll learn
               Python fundamentals, data structures, object-oriented programming,
-              and popular libraries like NumPy and pandas. You’ll also tackle
+              and popular libraries like NumPy and pandas. You'll also tackle
               real-world applications such as data analysis and web scraping.
             </p>
             <div className="course-details__curriculam-faq">

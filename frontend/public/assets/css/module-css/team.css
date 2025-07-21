@@ -27,6 +27,8 @@
 }
 
 .team-one__img {
+    width: 305px;
+    height: 360px;
     position: relative;
     display: block;
     border-radius: 10px;
@@ -53,6 +55,8 @@
 
 .team-one__img img {
     width: 100%;
+    height: 100%;
+    object-fit: cover;
     border-radius: 10px;
     transform: scale3d(1, 1, 1);
     transition: transform 1s ease-in-out;
@@ -510,12 +514,16 @@
 }
 
 .team-details__img {
+    width: 480px;
+    height: 550px;
     position: relative;
     display: block;
 }
 
 .team-details__img img {
     width: 100%;
+    height: 100%;
+    object-fit: cover;
     border-radius: 20px;
     border: 1px solid var(--fistudy-base);
 }
@@ -630,6 +638,35 @@
     line-height: 26px !important;
     font-family: var(--fistudy-font) !important;
     letter-spacing: 0.03em;
+}
+
+.team-details__meta.list-unstyled {
+    display: flex;
+    flex-direction: row;
+    gap: 32px; /* or whatever spacing you want between items */
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 0; /* remove default ul padding */
+    margin-bottom: 24px; /* optional: adjust as needed */
+}
+  
+.team-details__meta.list-unstyled > li {
+    margin-bottom: 0; /* remove vertical spacing between items */
+}
+
+.team-details__meta > li .content {
+    display: flex;
+    align-items: center;
+    gap: 6px; /* adjust as needed for spacing between number and text */
+}
+  
+.team-details__meta > li .content p {
+  
+    margin-bottom: 0;
+}
+
+.team-details__meta > li .content span {
+    font-weight: normal;
 }
 
 .team-details__title {

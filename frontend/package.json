@@ -10,19 +10,24 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@paypal/react-paypal-js": "^8.8.3",
     "axios": "^1.10.0",
     "paypal-checkout": "^4.0.344",
     "react": "^19.1.0",
+    "react-countup": "^6.5.3",
     "react-dom": "^19.1.0",
     "react-fast-marquee": "^1.6.5",
     "react-nice-select": "^1.0.6",
     "react-router-dom": "^7.6.3",
-    "react-select": "^5.10.2"
+    "react-select": "^5.10.2",
+    "react-slick": "^0.30.3",
+    "slick-carousel": "^1.8.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
+    "@types/react-slick": "^0.23.13",
     "@vitejs/plugin-react": "^4.5.2",
     "eslint": "^9.29.0",
     "eslint-plugin-react-hooks": "^5.2.0",

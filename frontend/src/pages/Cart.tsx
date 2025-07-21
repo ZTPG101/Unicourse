@@ -25,6 +25,7 @@ const Cart: React.FC = () => {
           err.status === 401
         ) {
           // Not logged in, treat as empty cart (no error)
+          localStorage.removeItem("token");
           setCart({ id: 0, items: [], status: "", createdAt: "" });
           setError(null);
         } else {

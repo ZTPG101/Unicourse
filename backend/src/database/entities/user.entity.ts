@@ -52,9 +52,6 @@ export class User {
   @Column({ nullable: true })
   phone: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
-  balance: number;
-
   @OneToMany(() => Cart, (cart) => cart.user)
   carts: Cart[];
 

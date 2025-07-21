@@ -1,17 +1,21 @@
-import React, { useState, useEffect } from "react";
+import { FUNDING } from "@paypal/react-paypal-js";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import PageHeader from "../components/PageHeader";
-import { CartService, type Cart as CartType } from "../services/carts.service";
+import PayPalButton from "../components/PayPalButton";
 import {
   BillingDetailsService,
   type BillingDetails,
 } from "../services/billing-details.service";
-import { OrderService } from "../services/order.service";
-import { Link } from "react-router-dom";
+import { CartService, type Cart as CartType } from "../services/carts.service";
+
 const breadcrumbs = [{ label: "Home", path: "/" }, { label: "checkout" }];
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = "http://localhost:3000";
 
 const Checkout: React.FC = () => {
-  const [activePayment, setActivePayment] = useState<"bank" | "paypal">("bank");
+  const [activePayment, setActivePayment] = useState<"paypal" | "card">(
+    "paypal"
+  );
   const [cart, setCart] = useState<CartType | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -31,6 +35,7 @@ const Checkout: React.FC = () => {
   const [orderError, setOrderError] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [billingId, setBillingId] = useState<number | null>(null);
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
   useEffect(() => {
     setIsLoggedIn(!!localStorage.getItem("token"));
@@ -39,8 +44,17 @@ const Checkout: React.FC = () => {
         setCart(cart);
         setLoading(false);
       })
-      .catch((_err) => {
-        setError("Failed to load cart.");
+      .catch((err) => {
+        if (
+          err &&
+          typeof err === "object" &&
+          "status" in err &&
+          err.status === 401
+        ) {
+          setError("Please login to checkout");
+        } else {
+          setError("Failed to load cart.");
+        }
         setLoading(false);
       });
     // Fetch billing details (assume GET /billing-details returns array, use first if exists)
@@ -80,33 +94,24 @@ const Checkout: React.FC = () => {
     setBilling((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Place order logic as a separate function
-  const placeOrder = async () => {
+  const saveBillingDetails = async () => {
     setPlacingOrder(true);
     setOrderError(null);
     try {
       let billingDetails;
       if (billingId) {
-        billingDetails = await BillingDetailsService.updateBillingDetails(billingId, billing);
+        billingDetails = await BillingDetailsService.updateBillingDetails(
+          billingId,
+          billing
+        );
       } else {
-        billingDetails = await BillingDetailsService.createBillingDetails(billing);
+        billingDetails = await BillingDetailsService.createBillingDetails(
+          billing
+        );
       }
-      console.log('Placing order with billingDetailsId:', billingDetails.id);
-      await OrderService.placeOrder(billingDetails.id);
-      setOrderSuccess(true);
+      setBillingId(billingDetails.id); // Set the billingId after creating/updating
     } catch (err: any) {
-      if (err && typeof err === 'object' && 'status' in err) {
-        if (err.status === 401) {
-          setOrderError("Please login to place order");
-        } else if (err.status === 500) {
-          setOrderError("The cart is empty!");
-        } else {
-          setOrderError(err.message || "Failed to place order.");
-        }
-      } else {
-        setOrderError(err.message || "Failed to place order.");
-      }
-      console.error('Order error:', err);
+      setOrderError(err.message || "Failed to save billing details.");
     } finally {
       setPlacingOrder(false);
     }
@@ -114,7 +119,7 @@ const Checkout: React.FC = () => {
 
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
-    await placeOrder();
+    await saveBillingDetails(); // Always save billing details first
   };
 
   return (
@@ -126,7 +131,6 @@ const Checkout: React.FC = () => {
             <div className="col-xl-6 col-lg-6">
               <div className="billing_details">
                 <div className="billing_title">
-                  {/* Only show if not logged in */}
                   {!isLoggedIn && (
                     <p>
                       Returning Customer?{" "}
@@ -264,7 +268,7 @@ const Checkout: React.FC = () => {
                           name="phone"
                           pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                           required
-                          placeholder="Phone"
+                          placeholder="Phone (XXX-XXX-XXXX)"
                           value={billing.phone}
                           onChange={handleBillingChange}
                         />
@@ -273,17 +277,15 @@ const Checkout: React.FC = () => {
                   </div>
                   <div className="row">
                     <div className="col-xl-12">
-                      <div className="checked-box">
-                        <input
-                          type="checkbox"
-                          name="skipper1"
-                          id="skipper"
-                          defaultChecked
-                        />
-                        <label htmlFor="skipper">
-                          <span></span>Create an account?
-                        </label>
-                      </div>
+                      <button
+                        type="submit"
+                        className="thm-btn"
+                        disabled={placingOrder}
+                      >
+                        {placingOrder
+                          ? "Saving..."
+                          : "Save Billing Details"}
+                      </button>
                     </div>
                   </div>
                 </form>
@@ -332,47 +334,64 @@ const Checkout: React.FC = () => {
                 </div>
                 <div className="checkout__payment">
                   <div
-                    className={`checkout__payment__item${
-                      activePayment === "bank"
-                        ? " checkout__payment__item--active"
-                        : ""
-                    }`}
-                  >
-                    <h3
-                      className="checkout__payment__title"
-                      style={{ cursor: "pointer" }}
-                      onClick={() => setActivePayment("bank")}
-                    >
-                      Direct bank transfer (not implemented yet)
-                    </h3>
-                    {/* {activePayment === 'bank' && (
-                      <div className="checkout__payment__content">
-                        Make your payment directly into our bank account. Please
-                        use your Order ID as the payment reference. Your order
-                        won't be completed until the funds have cleared.
-                      </div>
-                    )} */}
-                  </div>
-                  <div
-                    className={`checkout__payment__item${
+                    className={`checkout__payment__item ${
                       activePayment === "paypal"
-                        ? " checkout__payment__item--active"
+                        ? "checkout__payment__item--active"
                         : ""
                     }`}
                   >
                     <h3
                       className="checkout__payment__title"
-                      style={{ cursor: "pointer" }}
                       onClick={() => setActivePayment("paypal")}
                     >
-                      Paypal payment{" "}
-                      <img src="assets/images/shop/paypal-1.jpg" alt="" />
+                      Pay with PayPal
                     </h3>
                     {activePayment === "paypal" && (
                       <div className="checkout__payment__content">
-                        Make your payment directly into our bank account. Please
-                        use your Order ID as the payment reference. Your order
-                        won't be completed until the funds have cleared.
+                        {isLoggedIn ? (
+                          <PayPalButton
+                            total={total}
+                            billingDetails={billing}
+                            billingId={billingId}
+                            onSuccess={() => setOrderSuccess(true)}
+                            onError={(message) => setOrderError(message)}
+                            onProcessing={setIsProcessingPayment}
+                            fundingSource={FUNDING.PAYPAL}
+                          />
+                        ) : (
+                          <p>Please login to use PayPal.</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <div
+                    className={`checkout__payment__item ${
+                      activePayment === "card"
+                        ? "checkout__payment__item--active"
+                        : ""
+                    }`}
+                  >
+                    <h3
+                      className="checkout__payment__title"
+                      onClick={() => setActivePayment("card")}
+                    >
+                      Pay with Credit Card
+                    </h3>
+                    {activePayment === "card" && (
+                      <div className="checkout__payment__content">
+                        {isLoggedIn ? (
+                          <PayPalButton
+                            total={total}
+                            billingDetails={billing}
+                            billingId={billingId}
+                            onSuccess={() => setOrderSuccess(true)}
+                            onError={(message) => setOrderError(message)}
+                            onProcessing={setIsProcessingPayment}
+                            fundingSource={FUNDING.CARD}
+                          />
+                        ) : (
+                          <p>Please login to pay with a credit card.</p>
+                        )}
                       </div>
                     )}
                   </div>
@@ -380,14 +399,7 @@ const Checkout: React.FC = () => {
               </div>
               <div className="row">
                 <div className="col-xl-12 col-lg-12 d-flex justify-content-end">
-                  <button
-                    className="thm-btn"
-                    type="button"
-                    disabled={placingOrder}
-                    onClick={handlePlaceOrder}
-                  >
-                    {placingOrder ? "Placing Order..." : "Place your order"}
-                  </button>
+                  {/* This button is now for bank transfers only, or can be removed */}
                 </div>
               </div>
               {orderError && (

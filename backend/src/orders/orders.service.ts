@@ -36,9 +36,10 @@ export class OrdersService {
 
     const order = this.orderRepo.create({
       user,
-      status: 'pending',
+      status: 'completed',
       billingDetails,
       total: cart.items.reduce((sum, course) => sum + Number(course.price || 0), 0),
+      paypalOrderId: dto.paypalOrderId,
     });
     await this.orderRepo.save(order);
 

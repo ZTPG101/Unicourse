@@ -20,6 +20,9 @@ export class Order {
   @Column({ type: 'decimal' })
   total: number;
 
+  @Column({ unique: true, nullable: true })
+  paypalOrderId: string;
+
   @OneToOne(() => BillingDetails)
   @JoinColumn()
   billingDetails: BillingDetails;

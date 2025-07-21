@@ -14,7 +14,10 @@ export class OrderService {
     return localStorage.getItem('token');
   }
 
-  static async placeOrder(billingDetailsId: number): Promise<Order> {
+  static async placeOrder(
+    billingDetailsId: number,
+    paypalOrderId: string,
+  ): Promise<Order> {
     const token = this.getToken();
     const response = await fetch(`${API_BASE_URL}/orders/me`, {
       method: 'POST',
@@ -22,7 +25,7 @@ export class OrderService {
         'Content-Type': 'application/json',
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
-      body: JSON.stringify({ billingDetailsId }),
+      body: JSON.stringify({ billingDetailsId, paypalOrderId }),
     });
     if (!response.ok) {
       let errorMsg = `HTTP error! status: ${response.status}`;

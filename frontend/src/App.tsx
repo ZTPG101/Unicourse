@@ -7,12 +7,14 @@ import Checkout from "./pages/Checkout";
 import Course from "./pages/Course";
 import CourseDetails from "./pages/Course-details";
 import Home from "./pages/Home";
-import Instructor from "./pages/Instructor";
+import Instructor from "./pages/Instructors";
 import InstructorDetails from "./pages/Instructor-details";
 import LessonPage from "./pages/lesson";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import MyCourse from "./pages/MyCourse";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
 
 const App: React.FC = () => {
   return (
@@ -28,9 +30,11 @@ const App: React.FC = () => {
           <Route path="/lesson/:lessonId" element={<LessonPage />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/my-course" element={<MyCourse />} />
-          <Route path="/instructor" element={<Instructor />} />
-          <Route path="/instructor-details" element={<InstructorDetails />} />
+          <Route path="/instructors" element={<Instructor />} />
+          <Route path="/instructors/:id" element={<InstructorDetails />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
           {/* Define other routes for your application here */}
         </Route>
       </Routes>
