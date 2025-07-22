@@ -473,10 +473,9 @@
   border: none;
   border-left: 1px solid var(--fistudy-bdr-color);
   outline: none;
-  padding: 0 20px 0;
+  padding: 0 30px 0;
   padding-right: 133px;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
+  border-radius: 13px;
 }
 
 .banner-one__category-btn {

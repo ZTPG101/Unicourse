@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import CustomCursor from "./components/CustomCursor";
-import Layout from "./components/Layout";
+import Layout from "./components/layout/Layout";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import Course from "./pages/Course";
@@ -15,6 +15,7 @@ import Register from "./pages/Register";
 import MyCourse from "./pages/MyCourse";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import Testimonial from "./pages/Testimonial";
 
 const App: React.FC = () => {
   return (
@@ -35,6 +36,7 @@ const App: React.FC = () => {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/testimonial" element={<Testimonial />} />
           {/* Define other routes for your application here */}
         </Route>
       </Routes>

@@ -1,10 +1,10 @@
-import PageHeader from "../components/PageHeader";
-import React, { useState, useRef } from "react";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import Marquee from "react-fast-marquee";
+import React, { useRef, useState } from "react";
 import CountUp from "react-countup";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick-theme.css";
+import "slick-carousel/slick/slick.css";
+import PageHeader from "../components/PageHeader";
+import SlidingTextThree from "../components/SlidingTextThree";
 
 const breadcrumbs = [{ label: "Home", path: "/" }, { label: "About" }];
 
@@ -614,74 +614,7 @@ const About: React.FC = () => {
       </section>
 
       {/* Sliding Text Three Section */}
-      <section className="sliding-text-three sliding-text-four">
-        <div className="sliding-text-three__wrap">
-          <Marquee gradient={false} speed={50}>
-            <ul className="sliding-text__list list-unstyled">
-              <li>
-                <h2
-                  data-hover="20+ Instructor "
-                  className="sliding-text-three__title count-box"
-                >
-                  Testimonial
-                  <img
-                    src="/assets/images/shapes/sliding-text-three-shape-1.png"
-                    alt=""
-                  />
-                </h2>
-              </li>
-              <li>
-                <h2
-                  data-hover="20+ Instructor "
-                  className="sliding-text-three__title count-box"
-                >
-                  Testimonial
-                  <img
-                    src="/assets/images/shapes/sliding-text-three-shape-1.png"
-                    alt=""
-                  />
-                </h2>
-              </li>
-              <li>
-                <h2
-                  data-hover="20+ Instructor "
-                  className="sliding-text-three__title count-box"
-                >
-                  Testimonial
-                  <img
-                    src="/assets/images/shapes/sliding-text-three-shape-1.png"
-                    alt=""
-                  />
-                </h2>
-              </li>
-              <li>
-                <h2
-                  data-hover="20+ Instructor "
-                  className="sliding-text-three__title count-box"
-                >
-                  Testimonial
-                  <img
-                    src="/assets/images/shapes/sliding-text-three-shape-1.png"
-                    alt=""
-                  />
-                </h2>
-              </li>
-              <li>
-                <h2
-                  data-hover="20+ Instructor "
-                  className="sliding-text-three__title count-box"
-                >
-                  Testimonial
-                  <img
-                    src="/assets/images/shapes/sliding-text-three-shape-1.png"
-                    alt=""
-                  />
-                </h2>
-              </li>
-            </ul>
-          </Marquee>
-        </div>
-      </section>
+      <SlidingTextThree/>
     </>
   );
 };

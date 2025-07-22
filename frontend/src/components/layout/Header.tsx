@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom"; // Import Link for navigation
-import { useAuth } from "../context/AuthContext";
-import { InstructorService } from "../services/instructor.service";
+import { useAuth } from "../../context/AuthContext";
+import { InstructorService } from "../../services/instructor.service";
 
 const Header = () => {
   const { isLoggedIn, logout, user } = useAuth();
-  const [firstInstructorId, setFirstInstructorId] = useState<number | null>(null);
+  const [firstInstructorId, setFirstInstructorId] = useState<number | null>(
+    null
+  );
 
   useEffect(() => {
     InstructorService.getAllInstructors()
@@ -140,9 +142,18 @@ const Header = () => {
                           <Link to="/instructors">Instructors</Link>
                         </li>
                         <li>
-                          <Link to={firstInstructorId ? `/instructors/${firstInstructorId}` : "#"}>
+                          <Link
+                            to={
+                              firstInstructorId
+                                ? `/instructors/${firstInstructorId}`
+                                : "#"
+                            }
+                          >
                             Instructor details
                           </Link>
+                        </li>
+                        <li>
+                          <Link to="/testimonial">Testimonials</Link>
                         </li>
                         <li>
                           <Link to="/cart">Cart</Link>
@@ -163,12 +174,6 @@ const Header = () => {
                 </div>
                 <div className="main-menu__right">
                   <div className="main-menu__search-cart-box">
-                    <div className="main-menu__search-box">
-                      <a
-                        href="#"
-                        className="main-menu__search searcher-toggler-box icon-search"
-                      ></a>
-                    </div>
                     <div className="main-menu__cart">
                       <a href="/cart">
                         <span className="fas fa-shopping-cart"></span>
@@ -261,16 +266,27 @@ const Header = () => {
                         <Link to="/instructors">Instructors</Link>
                       </li>
                       <li>
-                        <Link to={firstInstructorId ? `/instructors/${firstInstructorId}` : "#"}>Instructor details</Link>
+                        <Link
+                          to={
+                            firstInstructorId
+                              ? `/instructors/${firstInstructorId}`
+                              : "#"
+                          }
+                        >
+                          Instructor details
+                        </Link>
                       </li>
+                      <li>
+                          <Link to="/testimonial">Testimonials</Link>
+                        </li>
                       <li>
                         <Link to="/cart">Cart</Link>
                       </li>
                     </ul>
                   </li>
                   <li>
-                      <Link to="/course">Course</Link>
-                    </li>
+                    <Link to="/course">Course</Link>
+                  </li>
                   <li>
                     <Link to="/my-course">My Course</Link>
                   </li>
@@ -281,12 +297,6 @@ const Header = () => {
               </div>
               <div className="main-menu__right">
                 <div className="main-menu__search-cart-box">
-                  <div className="main-menu__search-box">
-                    <a
-                      href="#"
-                      className="main-menu__search searcher-toggler-box icon-search"
-                    ></a>
-                  </div>
                   <div className="main-menu__cart">
                     <a href="/cart">
                       <span className="fas fa-shopping-cart"></span>
