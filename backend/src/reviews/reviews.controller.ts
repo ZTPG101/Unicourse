@@ -25,10 +25,14 @@ export class ReviewsController {
 
   @Public()
   @Get()
-  getAllReview(@Query('limit') limit: string, @Query('offset') offset: string) {
+  getAllReview(
+    @Query('limit') limit: string,
+    @Query('offset') offset: string,
+    @Query('rating') rating: string,
+  ) {
     const limitNum = limit ? parseInt(limit, 10) : 10;
     const offsetNum = offset ? parseInt(offset, 10) : 0;
-    return this.reviewsService.findAll(limitNum, offsetNum);
+    return this.reviewsService.findAll(limitNum, offsetNum, rating ? parseInt(rating, 10) : undefined);
   }
 
   @Public()

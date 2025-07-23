@@ -2,7 +2,7 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { Review } from 'src/database/entities/review.entity';
-import { Repository } from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 import { Course } from 'src/database/entities/course.entity';
 
 @Injectable()
@@ -77,15 +77,20 @@ export class ReviewsService {
     });
   }
 
-  findAll(limit: number, offset: number): Promise<Review[]> {
-    return this.ReviewRepo.find({
+  findAll(limit: number, offset: number, rating?: number): Promise<Review[]> {
+    const findOptions: FindManyOptions<Review> = {
       relations: ['user'],
       take: limit,
       skip: offset,
-      order: {
-        createdAt: 'DESC',
-      },
-    });
+      order: { createdAt: 'DESC' },
+      where: {},
+    };
+
+    if (rating !== undefined) {
+      findOptions.where = { rating: rating };
+    }
+
+    return this.ReviewRepo.find(findOptions);
   }
 
   async update(

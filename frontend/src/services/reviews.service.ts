@@ -50,11 +50,13 @@ export class ReviewsService {
     }
   }
 
-  static async getAllReviews(limit: number, offset: number): Promise<Review[]> {
+  static async getAllReviews(limit: number, offset: number, rating?: number): Promise<Review[]> {
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/reviews?limit=${limit}&offset=${offset}`
-      );
+      let url = `${API_BASE_URL}/reviews?limit=${limit}&offset=${offset}`;
+      if (rating !== undefined) {
+        url += `&rating=${rating}`;
+      }
+      const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

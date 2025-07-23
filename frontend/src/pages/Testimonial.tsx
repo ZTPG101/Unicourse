@@ -14,33 +14,30 @@ const Testimonial: React.FC = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
-  const fetchAndSetReviews = async (pageToFetch: number) => {
+  const fetchFiveStarReviews = async (pageToFetch: number) => {
     const isFirstPage = pageToFetch === 1;
     if (isFirstPage) setLoading(true);
     else setLoadingMore(true);
-    
+
     try {
       const offset = (pageToFetch - 1) * REVIEWS_PER_PAGE;
-      const newReviewsFromApi = await ReviewsService.getAllReviews(REVIEWS_PER_PAGE, offset);
+      const newReviews = await ReviewsService.getAllReviews(
+        REVIEWS_PER_PAGE,
+        offset,
+        5
+      );
 
-      if (newReviewsFromApi.length < REVIEWS_PER_PAGE) {
+      if (newReviews.length < REVIEWS_PER_PAGE) {
         setHasMore(false);
       }
 
-      const newFiveStarReviews = newReviewsFromApi.filter(review => review.rating === 5);
-
       if (isFirstPage) {
-        setReviews(newFiveStarReviews);
+        setReviews(newReviews);
       } else {
-        setReviews(prevReviews => {
-          const existingIds = new Set(prevReviews.map(r => r.id));
-          const uniqueNewReviews = newFiveStarReviews.filter(r => !existingIds.has(r.id));
-          return [...prevReviews, ...uniqueNewReviews];
-        });
+        setReviews((prev) => [...prev, ...newReviews]);
       }
-      
-      setPage(pageToFetch);
 
+      setPage(pageToFetch);
     } catch (err) {
       setError("Failed to load testimonials. Please try again later.");
     } finally {
@@ -50,32 +47,36 @@ const Testimonial: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchAndSetReviews(1);
+    fetchFiveStarReviews(1);
   }, []);
 
   const handleLoadMore = () => {
-    fetchAndSetReviews(page + 1);
+    fetchFiveStarReviews(page + 1);
   };
-  
+
   if (loading) {
     return (
       <>
         <PageHeader title="Testimonials" breadcrumbs={breadcrumbs} />
         <div className="container mt-5 text-center">
-          <div className="spinner-border" role="status"><span className="visually-hidden">Loading...</span></div>
+          <div className="spinner-border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
           <p className="mt-3">Loading testimonials...</p>
         </div>
       </>
     );
   }
-  
+
   if (error) {
     return (
       <>
         <PageHeader title="Testimonials" breadcrumbs={breadcrumbs} />
-        <div className="container mt-5"><div className="alert alert-danger">{error}</div></div>
+        <div className="container mt-5">
+          <div className="alert alert-danger">{error}</div>
+        </div>
       </>
-    )
+    );
   }
 
   return (
@@ -87,15 +88,29 @@ const Testimonial: React.FC = () => {
             {reviews.map((review) => (
               <div className="col-lg-6 col-md-6" key={review.id}>
                 <div className="testimonial-three__single">
-                  <div className="testimonial-three__rating">{[...Array(5)].map((_, i) => <span className="icon-star" key={i}></span>)}</div>
+                  <div className="testimonial-three__rating">
+                    {[...Array(5)].map((_, i) => (
+                      <span className="icon-star" key={i}></span>
+                    ))}
+                  </div>
                   <p className="testimonial-three__text">{review.review}</p>
                   <div className="testimonial-three__client-info">
                     <div className="testimonial-three__client-img">
-                      <img src={review.user?.avatar || "assets/images/testimonial/testimonial-3-1.jpg"} alt={review.fullName} />
+                      <img
+                        src={
+                          review.user?.avatar ||
+                          "assets/images/testimonial/testimonial-3-1.jpg"
+                        }
+                        alt={review.fullName}
+                      />
                     </div>
                     <div className="testimonial-three__client-content">
-                      <h4 className="testimonial-three__client-name">{review.fullName}</h4>
-                      <p className="testimonial-three__client-sub-title">{review.occupation}</p>
+                      <h4 className="testimonial-three__client-name">
+                        {review.fullName}
+                      </h4>
+                      <p className="testimonial-three__client-sub-title">
+                        {review.occupation}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -109,21 +124,22 @@ const Testimonial: React.FC = () => {
               {!loading && reviews.length === 0 && (
                 <div>
                   <h3>No 5-Star Testimonials Yet</h3>
-                  <p>Be the first to leave a great review on one of our courses!</p>
+                  <p>
+                    Be the first to leave a great review on one of our courses!
+                  </p>
                 </div>
               )}
               {hasMore && reviews.length > 0 && (
-                <button 
-                  className="thm-btn" 
-                  onClick={handleLoadMore} 
+                <button
+                  className="thm-btn"
+                  onClick={handleLoadMore}
                   disabled={loadingMore}
                 >
-                  {loadingMore ? 'Loading...' : 'Load More Testimonials'}
+                  {loadingMore ? "Loading..." : "Load More Testimonials"}
                 </button>
               )}
             </div>
           </div>
-
         </div>
       </section>
     </>
