@@ -1,5 +1,7 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString, Min } from "@nestjs/class-validator";
+import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString, Min, ValidateNested } from "@nestjs/class-validator";
+import { Type } from "class-transformer";
 import { IsInt } from "class-validator";
+import { RequirementDto } from "./requirement.dto";
 
 export class CreateCourseDto {
   @IsString()
@@ -40,4 +42,15 @@ export class CreateCourseDto {
   @IsNumber()
   @IsNotEmpty()
   instructorId: number;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  learningObjectives?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => RequirementDto)
+  requirements?: RequirementDto[];
 }

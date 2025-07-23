@@ -1,46 +1,58 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { CoursesService } from "../services/courses.service";
-import type { Course } from "../services/courses.service";
 
-interface Category {
+interface CategoryWithCount {
+  id: number;
   name: string;
-  count: number;
+  count: string;
 }
 
 const categoryIcons: Record<string, string> = {
-  "Tech & Programming": "/assets/images/icon/categoyr-two-icon-1.png",
-  "Creative Art": "/assets/images/icon/categoyr-two-icon-2.png",
+  "Technology & Programming": "/assets/images/icon/categoyr-two-icon-1.png",
   "Business & Finance": "/assets/images/icon/categoyr-two-icon-3.png",
-  "Health & Wellness": "/assets/images/icon/categoyr-two-icon-4.png",
-  "Writing & Communication": "/assets/images/icon/categoyr-two-icon-5.png",
-  "User Research & Analytics": "/assets/images/icon/categoyr-two-icon-6.png",
-  "Digital Marketing": "/assets/images/icon/categoyr-two-icon-7.png",
-  "Lifestyle & Productivity": "/assets/images/icon/categoyr-two-icon-8.png",
+  "Arts & Design": "/assets/images/icon/categoyr-two-icon-2.png",
+  "Personal Development": "/assets/images/icon/categoyr-two-icon-6.png",
+  "Language Learning": "/assets/images/icon/categoyr-two-icon-5.png",
+  "Academic Subjects": "/assets/images/icon/categoyr-two-icon-7.png",
+  "Lifestyle & Hobbies": "/assets/images/icon/categoyr-two-icon-4.png",
+  "Career & Professional Skills": "/assets/images/icon/categoyr-two-icon-8.png",
 };
 
 const CategoryOne: React.FC = () => {
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<CategoryWithCount[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    CoursesService.getAllCourses().then((courses: Course[]) => {
-      const categoryMap: Record<string, number> = {};
-      courses.forEach((course) => {
-        if (course.category) {
-          categoryMap[course.category.name] = (categoryMap[course.category.id] || 0) + 1;
+    CoursesService.getCoursesMetadata()
+      .then((metadata) => {
+        if (metadata && Array.isArray(metadata.categories)) {
+          setCategories(metadata.categories);
         }
+      })
+      .catch((err) => {
+        setError("Failed to load course categories.");
+        console.error("Error fetching metadata:", err);
+      })
+      .finally(() => {
+        setLoading(false);
       });
-      const categoryList: Category[] = Object.entries(categoryMap).map(([name, count]) => ({ name, count }));
-      setCategories(categoryList);
-      setLoading(false);
-    });
   }, []);
+
+  const handleCategoryClick = (categoryName: string) => {
+    navigate(`/course?categories=${encodeURIComponent(categoryName)}`);
+  };
 
   return (
     <section className="category-one">
       <div
         className="category-one__bg-shape"
-        style={{ backgroundImage: "url(/assets/images/shapes/category-one-bg-shape.png)" }}
+        style={{
+          backgroundImage:
+            "url(/assets/images/shapes/category-one-bg-shape.png)",
+        }}
       ></div>
       <div className="container">
         <div className="row">
@@ -52,33 +64,61 @@ const CategoryOne: React.FC = () => {
                   <span className="section-title__tagline">Category</span>
                 </div>
                 <h2 className="section-title__title title-animation">
-                  Browse Our Categories To<br /> Find Exactly <span>Courses <img src="/assets/images/shapes/section-title-shape-2.png" alt="" /></span>
+                  Browse Our Categories To
+                  <br /> Find Exactly{" "}
+                  <span>
+                    Courses{" "}
+                    <img
+                      src="/assets/images/shapes/section-title-shape-2.png"
+                      alt=""
+                    />
+                  </span>
                 </h2>
               </div>
-              {loading ? (
-                <p>Loading categories...</p>
-              ) : (
+
+              {/* Handle Loading and Error States */}
+              {loading && <p>Loading categories...</p>}
+              {error && <div className="alert alert-danger">{error}</div>}
+
+              {!loading && !error && (
                 <ul className="category-one__category-list list-unstyled">
-                  {categories.map((cat, idx) => (
-                    <li key={idx}>
-                      <div className="category-one__count-and-arrow">
-                        <div className="category-one__count-box">
-                          <div className="category-one__count">
-                            {categoryIcons[cat.name] && (
-                              <img src={categoryIcons[cat.name]} alt={cat.name} style={{ width: 32, height: 32 }} />
-                            )}
+                  {/* We slice to show a max of 4 categories for a clean look */}
+                  {categories.slice(0, 4).map((cat) => {
+                    const courseCount = Number(cat.count); // Convert count from string to number
+                    return (
+                      <li
+                        key={cat.id}
+                        onClick={() => handleCategoryClick(cat.name)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        <div className="category-one__count-and-arrow">
+                          <div className="category-one__count-box">
+                            <div className="category-one__count">
+                              {categoryIcons[cat.name] && (
+                                <img
+                                  src={categoryIcons[cat.name]}
+                                  alt={cat.name}
+                                  style={{ width: 32, height: 32 }}
+                                />
+                              )}
+                            </div>
+                            <div className="category-one__count-content">
+                              <h3>{cat.name}</h3>
+                              <p>
+                                {courseCount} Course
+                                {courseCount !== 1 ? "s" : ""}
+                              </p>
+                            </div>
                           </div>
-                          <div className="category-one__count-content">
-                            <h3>{cat.name}</h3>
-                            <p>{cat.count} Course{cat.count > 1 ? 's' : ''}</p>
+                          <div className="category-one__count-arrow">
+                            <a>
+                              <span className="icon-arrow-up-right-2"></span>
+                            </a>
                           </div>
                         </div>
-                        <div className="category-one__count-arrow">
-                          <a href="/course-details"><span className="icon-arrow-up-right-2"></span></a>
-                        </div>
-                      </div>
-                    </li>
-                  ))}
+                      </li>
+                    );
+                  })}
                 </ul>
               )}
             </div>
@@ -86,7 +126,10 @@ const CategoryOne: React.FC = () => {
           <div className="col-xl-6 col-lg-5">
             <div className="category-one__right">
               <div className="category-one__img">
-                <img src="/assets/images/resources/category-one-img-1.png" alt="" />
+                <img
+                  src="/assets/images/resources/category-one-img-1.png"
+                  alt=""
+                />
               </div>
             </div>
           </div>

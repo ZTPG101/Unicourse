@@ -2,13 +2,15 @@
 export interface Review {
   id: number;
   rating: number;
-  comment: string;
-  user: {
+  fullName: string;
+  occupation?: string;
+  review: string;
+  user?: {
     id: number;
     name: string;
     avatar?: string;
   };
-  course: {
+  course?: {
     id: number;
   };
   createdAt: string;
@@ -26,13 +28,17 @@ const API_BASE_URL = "http://localhost:3000";
 
 export class ReviewsService {
   static getToken() {
-    return localStorage.getItem('token');
+    return localStorage.getItem("token");
   }
-  
-  static async getReviewsByCourseId(courseId: number): Promise<Review[]> {
+
+  static async getReviewsByCourseId(
+    courseId: number,
+    limit: number,
+    offset: number
+  ): Promise<Review[]> {
     try {
       const response = await fetch(
-        `${API_BASE_URL}/reviews?courseId=${courseId}`
+        `${API_BASE_URL}/reviews/by-course/${courseId}?limit=${limit}&offset=${offset}`
       );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -40,6 +46,21 @@ export class ReviewsService {
       return await response.json();
     } catch (error) {
       console.error("Error fetching reviews:", error);
+      throw error;
+    }
+  }
+
+  static async getAllReviews(limit: number, offset: number): Promise<Review[]> {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/reviews?limit=${limit}&offset=${offset}`
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching all reviews:", error);
       throw error;
     }
   }
@@ -104,7 +125,7 @@ export class ReviewsService {
       oneStarPercent: Math.round((distribution.oneStar / total) * 100),
     };
   }
-  
+
   static async createReview(data: {
     fullName: string;
     occupation?: string;
@@ -113,27 +134,34 @@ export class ReviewsService {
     courseId: number;
   }) {
     const token = this.getToken();
-    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-    if (token) headers['Authorization'] = `Bearer ${token}`;
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+
     const res = await fetch(`${API_BASE_URL}/reviews`, {
       method: "POST",
       headers,
       body: JSON.stringify(data),
     });
+
     if (!res.ok) {
       let errorMsg = "Failed to create review";
+
       try {
         const errorData = await res.json();
-        if (errorData && errorData.message) {
+        if (errorData?.message) {
           errorMsg = errorData.message;
         }
-      } catch (e) {
-        // ignore JSON parse error
+      } catch (_) {
+        // Ignore JSON parse errors
       }
-      const error: any = new Error(errorMsg);
+
+      const error = new Error(errorMsg) as Error & { status?: number };
       error.status = res.status;
       throw error;
     }
+
     return res.json();
   }
 }

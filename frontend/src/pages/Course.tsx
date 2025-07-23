@@ -5,7 +5,7 @@ import { CategoriesService } from "../services/courses.service";
 import type { Category } from "../services/courses.service";
 import PageHeader from "../components/PageHeader";
 import { useLocation } from "react-router-dom";
-import CourseSidebar from "../components/layout/CourseSidebar";
+import CourseSidebar from "../components/CourseSidebar";
 import CourseCard from "../components/CourseCard";
 import Pagination from "../components/Pagination";
 

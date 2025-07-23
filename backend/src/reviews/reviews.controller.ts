@@ -25,11 +25,23 @@ export class ReviewsController {
 
   @Public()
   @Get()
-  getAllReview(@Query('courseId') courseId?: string) {
-    if (courseId) {
-      return this.reviewsService.findByCourseId(+courseId);
-    }
-    return this.reviewsService.findAll();
+  getAllReview(@Query('limit') limit: string, @Query('offset') offset: string) {
+    const limitNum = limit ? parseInt(limit, 10) : 10;
+    const offsetNum = offset ? parseInt(offset, 10) : 0;
+    return this.reviewsService.findAll(limitNum, offsetNum);
+  }
+
+  @Public()
+  @Get('by-course/:courseId')
+  findByCourse(
+    @Param('courseId') courseId: string,
+    @Query('limit') limit: string,
+    @Query('offset') offset: string,
+  ) {
+    const courseIdNum = parseInt(courseId, 10);
+    const limitNum = limit ? parseInt(limit, 10) : 5;
+    const offsetNum = offset ? parseInt(offset, 10) : 0;
+    return this.reviewsService.findByCourseId(courseIdNum, limitNum, offsetNum);
   }
 
   @Public()
@@ -40,10 +52,7 @@ export class ReviewsController {
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard, SelfOrAdminGuard)
-  create(
-    @Body() dto: CreateReviewDto,
-    @CurrentUser() user: User,
-  ) {
+  create(@Body() dto: CreateReviewDto, @CurrentUser() user: User) {
     return this.reviewsService.create(dto, user.id, dto.courseId);
   }
 

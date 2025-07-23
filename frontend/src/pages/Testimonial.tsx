@@ -1,64 +1,129 @@
+import React, { useEffect, useState } from "react";
 import PageHeader from "../components/PageHeader";
+import { ReviewsService } from "../services/reviews.service";
+import type { Review } from "../services/reviews.service";
 
-const reviews = [
-  {
-    id: 1,
-    fullName: "Mitchel Watson",
-    occupation: "UI/UX Design",
-    review: "It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release.",
-    rating: 5,
-    image: "assets/images/testimonial/testimonial-3-1.jpg"
-  },
-  {
-    id: 2,
-    fullName: "Jessica Brown",
-    occupation: "UI/UX Design",
-    review: "It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release.",
-    rating: 5,
-    image: "assets/images/testimonial/testimonial-3-2.jpg"
-  },
-  // Add more reviews, some with rating < 5 to test filtering
-];
-
-const breadcrumbs = [{ label: "Home", path: "/" }, { label: "Testimonial" }];
+const breadcrumbs = [{ label: "Home", path: "/" }, { label: "Testimonials" }];
+const REVIEWS_PER_PAGE = 6;
 
 const Testimonial: React.FC = () => {
-  const fiveStarReviews = reviews.filter(review => review.rating === 5);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
+  const fetchAndSetReviews = async (pageToFetch: number) => {
+    const isFirstPage = pageToFetch === 1;
+    if (isFirstPage) setLoading(true);
+    else setLoadingMore(true);
+    
+    try {
+      const offset = (pageToFetch - 1) * REVIEWS_PER_PAGE;
+      const newReviewsFromApi = await ReviewsService.getAllReviews(REVIEWS_PER_PAGE, offset);
+
+      if (newReviewsFromApi.length < REVIEWS_PER_PAGE) {
+        setHasMore(false);
+      }
+
+      const newFiveStarReviews = newReviewsFromApi.filter(review => review.rating === 5);
+
+      if (isFirstPage) {
+        setReviews(newFiveStarReviews);
+      } else {
+        setReviews(prevReviews => {
+          const existingIds = new Set(prevReviews.map(r => r.id));
+          const uniqueNewReviews = newFiveStarReviews.filter(r => !existingIds.has(r.id));
+          return [...prevReviews, ...uniqueNewReviews];
+        });
+      }
+      
+      setPage(pageToFetch);
+
+    } catch (err) {
+      setError("Failed to load testimonials. Please try again later.");
+    } finally {
+      if (isFirstPage) setLoading(false);
+      else setLoadingMore(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAndSetReviews(1);
+  }, []);
+
+  const handleLoadMore = () => {
+    fetchAndSetReviews(page + 1);
+  };
+  
+  if (loading) {
+    return (
+      <>
+        <PageHeader title="Testimonials" breadcrumbs={breadcrumbs} />
+        <div className="container mt-5 text-center">
+          <div className="spinner-border" role="status"><span className="visually-hidden">Loading...</span></div>
+          <p className="mt-3">Loading testimonials...</p>
+        </div>
+      </>
+    );
+  }
+  
+  if (error) {
+    return (
+      <>
+        <PageHeader title="Testimonials" breadcrumbs={breadcrumbs} />
+        <div className="container mt-5"><div className="alert alert-danger">{error}</div></div>
+      </>
+    )
+  }
 
   return (
     <>
-      <PageHeader title="Testimonial" breadcrumbs={breadcrumbs} />
+      <PageHeader title="Testimonials" breadcrumbs={breadcrumbs} />
       <section className="testimonials-page">
         <div className="container">
           <div className="row">
-            {fiveStarReviews.length === 0 ? (
-              <div className="col-12">
-                <p>No 5-star testimonials yet.</p>
-              </div>
-            ) : (
-              fiveStarReviews.map((review) => (
-                <div className="col-lg-6 col-md-6" key={review.id}>
-                  <div className="testimonial-three__single">
-                    <div className="testimonial-three__rating">
-                      {[...Array(5)].map((_, i) => (
-                        <span className="icon-star" key={i}></span>
-                      ))}
+            {reviews.map((review) => (
+              <div className="col-lg-6 col-md-6" key={review.id}>
+                <div className="testimonial-three__single">
+                  <div className="testimonial-three__rating">{[...Array(5)].map((_, i) => <span className="icon-star" key={i}></span>)}</div>
+                  <p className="testimonial-three__text">{review.review}</p>
+                  <div className="testimonial-three__client-info">
+                    <div className="testimonial-three__client-img">
+                      <img src={review.user?.avatar || "assets/images/testimonial/testimonial-3-1.jpg"} alt={review.fullName} />
                     </div>
-                    <p className="testimonial-three__text">{review.review}</p>
-                    <div className="testimonial-three__client-info">
-                      <div className="testimonial-three__client-img">
-                        <img src={review.image} alt={review.fullName} />
-                      </div>
-                      <div className="testimonial-three__client-content">
-                        <h4 className="testimonial-three__client-name">{review.fullName}</h4>
-                        <p className="testimonial-three__client-sub-title">{review.occupation}</p>
-                      </div>
+                    <div className="testimonial-three__client-content">
+                      <h4 className="testimonial-three__client-name">{review.fullName}</h4>
+                      <p className="testimonial-three__client-sub-title">{review.occupation}</p>
                     </div>
                   </div>
                 </div>
-              ))
-            )}
+              </div>
+            ))}
           </div>
+
+          <div className="row">
+            <div className="col-12 text-center mt-4">
+              {loading && <div className="spinner-border" role="status" />}
+              {!loading && reviews.length === 0 && (
+                <div>
+                  <h3>No 5-Star Testimonials Yet</h3>
+                  <p>Be the first to leave a great review on one of our courses!</p>
+                </div>
+              )}
+              {hasMore && reviews.length > 0 && (
+                <button 
+                  className="thm-btn" 
+                  onClick={handleLoadMore} 
+                  disabled={loadingMore}
+                >
+                  {loadingMore ? 'Loading...' : 'Load More Testimonials'}
+                </button>
+              )}
+            </div>
+          </div>
+
         </div>
       </section>
     </>

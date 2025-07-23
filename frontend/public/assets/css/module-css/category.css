@@ -161,6 +161,7 @@
 }
 
 .category-one__count-arrow {
+    color: #FCFCFC;
     position: relative;
     display: block;
 }

@@ -143,23 +143,6 @@ const Checkout: React.FC = () => {
                   className="billing_details_form"
                   onSubmit={handlePlaceOrder}
                 >
-                  <div className="row">
-                    <div className="col-xl-12">
-                      <div className="billing_input_box">
-                        <div className="select-box">
-                          <select className="wide" disabled>
-                            <option data-display="Select a country">
-                              Select a country
-                            </option>
-                            <option value="1">Canada</option>
-                            <option value="2">England</option>
-                            <option value="3">Australia</option>
-                            <option value="3">USA</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
                   <div className="row bs-gutter-x-20">
                     <div className="col-xl-6">
                       <div className="billing_input_box">

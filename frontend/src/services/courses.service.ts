@@ -21,6 +21,8 @@ export interface BackendCourse {
   lessonCount: number;
   createdAt: string;
   updatedAt: string;
+  learningObjectives: string[];
+  requirements: Requirement[];
 }
 
 // Frontend course interface (mapped from backend)
@@ -28,6 +30,12 @@ export interface Category {
   id: number;
   name: string;
   description: string;
+}
+
+export interface Requirement {
+  icon?: string;
+  title: string;
+  text: string;
 }
 
 export interface Course {
@@ -44,6 +52,7 @@ export interface Course {
   category: Category;
   lessons: Lesson[];
   instructor: {
+    id: number;
     name: string;
     image: string;
     experience: number;
@@ -57,6 +66,8 @@ export interface Course {
     instagram?: string;
     pinterest?: string;
   };
+  learningObjectives: string[];
+  requirements: Requirement[];
 }
 
 export interface Lesson {
@@ -104,6 +115,7 @@ export class CoursesService {
         duration: course.durationMinutes,
         category: course.category,
         instructor: {
+          id: course.instructor.id,
           name: course.instructor?.user?.name || 'Unknown',
           image: course.instructor?.user?.avatar || '/assets/images/resources/courses-two-client-img-1.jpg',
           occupation: course.instructor?.occupation,
@@ -117,6 +129,8 @@ export class CoursesService {
           facebook: course.instructor?.facebook,
           instagram: course.instructor?.instagram,
         },
+        learningObjectives: course.learningObjectives || [],
+        requirements: course.requirements || [],
       }));
     } catch (error) {
       console.error('Error fetching courses:', error);
@@ -145,6 +159,7 @@ export class CoursesService {
         duration: course.durationMinutes,
         category: course.category,
         instructor: {
+          id: course.instructor.id,
           name: course.instructor?.user?.name || 'Unknown',
           image: course.instructor?.user?.avatar || '/assets/images/resources/courses-two-client-img-1.jpg',
           occupation: course.instructor?.occupation,
@@ -158,6 +173,8 @@ export class CoursesService {
           facebook: course.instructor?.facebook,
           instagram: course.instructor?.instagram,
         },
+        learningObjectives: course.learningObjectives || [],
+        requirements: course.requirements || [], 
       };
     } catch (error) {
       console.error('Error fetching course by ID:', error);

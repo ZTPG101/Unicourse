@@ -72,6 +72,23 @@ export class Course {
   @Column({ default: 0 })
   lessonCount: number;
 
+  @Column({
+    type: 'simple-json',
+    nullable: true,
+    default: '[]', // Default to an empty JSON array string
+    comment:
+      'Stores an array of strings detailing what the student will learn.',
+  })
+  learningObjectives: string[];
+
+  @Column({
+    type: 'simple-json',
+    nullable: true,
+    default: '[]', // Default to an empty JSON array string
+    comment: 'Stores an array of objects for course requirements.',
+  })
+  requirements: { title: string; text: string; icon?: string }[];
+
   @CreateDateColumn()
   createdAt: Date;
 

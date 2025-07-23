@@ -838,7 +838,7 @@
     display: block;
     background: linear-gradient(180deg, #FFFFFF 0%, #F6F8FF 18%, #F6F8FF 100%);
     padding: 120px 0 120px;
-    margin-bottom: 100px;
+    /* margin-bottom: 100px; */
     z-index: 1;
 }
 
@@ -2614,30 +2614,47 @@
 
 .course-details__points-list-icon {
     position: relative;
-    display: inline-block;
+    display: flex;             /* make it a flex container */
+    align-items: center;       /* center icon vertically */
+    justify-content: center;   /* center icon horizontally */
+    width: 43px;
+    height: 43px;
+    z-index: 1; /* ensures icon is above the pseudo element */
 }
 
 .course-details__points-list-icon::before {
     content: "";
     position: absolute;
-    top: -6px;
-    left: -6px;
+    top: 0;
+    left: 0;
     width: 43px;
     height: 43px;
-    background-color: rgba(80, 246, 14, .11);
+    background-color: rgba(80, 246, 14, 0.11);
     border-radius: 50%;
+    z-index: 0;
 }
 
 .course-details__points-list-icon img {
-    width: auto;
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
 }
 
 .course-details__points-list-title {
     font-size: 24px;
     font-weight: 500;
     line-height: 31px;
-    margin-top: 30px;
-    margin-bottom: 12px;
+    margin: 0;
+}
+
+.course-details__icon-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.course-details__points-list-text {
+    margin-top: 5px;
 }
 
 /*--------------------------------------------------------------
@@ -3013,7 +3030,27 @@
     opacity: 1;
 }
 
+.cross-icon {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 2;
+}
 
+.cross-icon button {
+  background: #fff;
+  border: none;
+  cursor: pointer;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  color: #ff4d4d;
+  font-size: 16px;
+}
 
 /*--------------------------------------------------------------
 # End

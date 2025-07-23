@@ -10,7 +10,6 @@ const Layout = () => {
     <div className="page-wrapper">
       <Header />
 
-      {/* The Outlet component renders the current route's element (e.g., Register, Login) */}
       <main>
         <Outlet />
       </main>

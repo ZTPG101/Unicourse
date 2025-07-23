@@ -58,12 +58,34 @@ export class ReviewsService {
   async findById(id: number): Promise<Review | null> {
     return this.ReviewRepo.findOne({
       where: { id },
-      
     });
   }
 
-  findAll(): Promise<Review[]> {
-    return this.ReviewRepo.find();
+  async findByCourseId(
+    courseId: number,
+    limit: number,
+    offset: number,
+  ): Promise<Review[]> {
+    return this.ReviewRepo.find({
+      where: { course: { id: courseId } },
+      relations: ['user'],
+      take: limit,
+      skip: offset,
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+  }
+
+  findAll(limit: number, offset: number): Promise<Review[]> {
+    return this.ReviewRepo.find({
+      relations: ['user'],
+      take: limit,
+      skip: offset,
+      order: {
+        createdAt: 'DESC',
+      },
+    });
   }
 
   async update(
@@ -105,12 +127,5 @@ export class ReviewsService {
     await this.updateCourseRating(courseId);
 
     return { message: 'Review deleted successfully.' };
-  }
-
-  async findByCourseId(courseId: number): Promise<Review[]> {
-    return this.ReviewRepo.find({
-      where: { course: { id: courseId } },
-      relations: ['user'],
-    });
   }
 }

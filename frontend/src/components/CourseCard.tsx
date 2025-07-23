@@ -1,14 +1,27 @@
 // src/components/CourseCard.tsx
 
-import React from 'react';
-import type { Course } from '../services/courses.service';
-import { formatDuration } from '../utils/formatters';
+import React from "react";
+import type { Course } from "../services/courses.service";
+import { formatDuration } from "../utils/formatters";
 
 interface CourseCardProps {
   course: Course;
+  actionText?: string;
+  onActionClick?: (e: React.MouseEvent) => void;
 }
 
-const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
+const CourseCard: React.FC<CourseCardProps> = ({
+  course,
+  actionText,
+  onActionClick,
+}) => {
+  const handleAction = (e: React.MouseEvent) => {
+    if (onActionClick) {
+      e.preventDefault(); // Prevent the link from navigating
+      onActionClick(e);
+    }
+  };
+
   return (
     <div className="courses-two__single">
       <div className="courses-two__img-box">
@@ -33,14 +46,18 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
         </h3>
         <div
           className="courses-two__category"
-          style={{ marginBottom: '8px', color: '#3D59F9', fontWeight: 500 }}
+          style={{ marginBottom: "8px", color: "#3D59F9", fontWeight: 500 }}
         >
-          {course.category?.name || 'Uncategorized'}
+          {course.category?.name || "Uncategorized"}
         </div>
         <div className="courses-two__btn-and-client-box">
           <div className="courses-two__btn-box">
-            <a href={`/course-details/${course.id}`} className="thm-btn-two">
-              <span>Enroll Now</span>
+            <a
+              href={`/course-details/${course.id}`}
+              onClick={handleAction}
+              className="thm-btn-two"
+            >
+              <span>{actionText || 'Enroll Now'}</span>
               <i className="icon-angles-right"></i>
             </a>
           </div>
@@ -51,7 +68,10 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
             <div className="courses-two__client-content">
               <h4>{course.instructor.name}</h4>
               <p>
-                <span className="odometer" data-count={course.instructor.experience}>
+                <span
+                  className="odometer"
+                  data-count={course.instructor.experience}
+                >
                   {course.instructor.experience}
                 </span>
                 <i>+</i> Years Experience
@@ -61,15 +81,21 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
         </div>
         <ul className="courses-two__meta list-unstyled">
           <li>
-            <div className="icon"><span className="icon-chart-simple"></span></div>
+            <div className="icon">
+              <span className="icon-chart-simple"></span>
+            </div>
             <p>{course.level}</p>
           </li>
           <li>
-            <div className="icon"><span className="icon-book"></span></div>
+            <div className="icon">
+              <span className="icon-book"></span>
+            </div>
             <p>{course.lessonCount} Lesson</p>
           </li>
           <li>
-            <div className="icon"><span className="icon-clock"></span></div>
+            <div className="icon">
+              <span className="icon-clock"></span>
+            </div>
             <p>{formatDuration(course.duration)}</p>
           </li>
         </ul>
