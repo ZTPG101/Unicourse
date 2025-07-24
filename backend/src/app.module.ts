@@ -16,6 +16,8 @@ import { BillingDetailsModule } from './billing-details/billing-details.module';
 import { OrdersModule } from './orders/orders.module';
 import { OrderItemsModule } from './order-items/order-items.module';
 import { InstructorsModule } from './instructors/instructors.module';
+import { ContactService } from './contacts/contacts.service';
+import { ContactModule } from './contacts/contacts.module';
 
 @Module({
   imports: [
@@ -37,8 +39,9 @@ import { InstructorsModule } from './instructors/instructors.module';
     OrdersModule,
     OrderItemsModule,
     InstructorsModule,
+    ContactModule
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  // controllers: [AppController],
+  providers: [ContactService],
 })
 export class AppModule {}

@@ -1,5 +1,5 @@
 import React from "react";
-import type { Course, Requirement } from "../services/courses.service";
+import type { Course, Requirement } from "../../services/courses.service";
 
 const LearningObjectiveItem: React.FC<{ objective: string }> = ({
   objective,

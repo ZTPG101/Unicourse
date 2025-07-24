@@ -68,6 +68,7 @@ export interface Course {
   };
   learningObjectives: string[];
   requirements: Requirement[];
+  updatedAt: string;
 }
 
 export interface Lesson {
@@ -79,12 +80,16 @@ export interface Lesson {
   courseId: Course;
 }
 
-import type { Instructor } from './instructor.service';
+import type { Instructor } from "./instructor.service";
 
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = "http://localhost:3000";
 
 export class CoursesService {
-  static async getAllCourses(limit?: number, offset?: number, filters: Record<string, any> = {}): Promise<Course[]> {
+  static async getAllCourses(
+    limit?: number,
+    offset?: number,
+    filters: Record<string, any> = {}
+  ): Promise<Course[]> {
     try {
       let url = `${API_BASE_URL}/courses`;
       const params: string[] = [];
@@ -92,18 +97,21 @@ export class CoursesService {
       if (offset !== undefined) params.push(`offset=${offset}`);
       // Add filters as query params
       Object.entries(filters).forEach(([key, value]) => {
-        if (value !== undefined && value !== "") params.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
+        if (value !== undefined && value !== "")
+          params.push(
+            `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+          );
       });
-      if (params.length > 0) url += `?${params.join('&')}`;
+      if (params.length > 0) url += `?${params.join("&")}`;
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const backendCourses: BackendCourse[] = await response.json();
       // Map backend data to frontend format
-      return backendCourses.map(course => ({
+      return backendCourses.map((course) => ({
         id: course.id,
-        imageUrl: course.imageUrl || '/assets/images/resources/courses-2-1.jpg',
+        imageUrl: course.imageUrl || "/assets/images/resources/courses-2-1.jpg",
         title: course.title,
         description: course.description,
         price: course.price,
@@ -116,8 +124,10 @@ export class CoursesService {
         category: course.category,
         instructor: {
           id: course.instructor.id,
-          name: course.instructor?.user?.name || 'Unknown',
-          image: course.instructor?.user?.avatar || '/assets/images/resources/courses-two-client-img-1.jpg',
+          name: course.instructor?.user?.name || "Unknown",
+          image:
+            course.instructor?.user?.avatar ||
+            "/assets/images/resources/courses-two-client-img-1.jpg",
           occupation: course.instructor?.occupation,
           bio: course.instructor?.bio,
           education: course.instructor?.education,
@@ -131,9 +141,10 @@ export class CoursesService {
         },
         learningObjectives: course.learningObjectives || [],
         requirements: course.requirements || [],
+        updatedAt: course.updatedAt,
       }));
     } catch (error) {
-      console.error('Error fetching courses:', error);
+      console.error("Error fetching courses:", error);
       throw error;
     }
   }
@@ -147,7 +158,7 @@ export class CoursesService {
       const course: BackendCourse = await response.json();
       return {
         id: course.id,
-        imageUrl: course.imageUrl || '/assets/images/resources/courses-2-1.jpg',
+        imageUrl: course.imageUrl || "/assets/images/resources/courses-2-1.jpg",
         title: course.title,
         description: course.description,
         price: course.price,
@@ -160,8 +171,10 @@ export class CoursesService {
         category: course.category,
         instructor: {
           id: course.instructor.id,
-          name: course.instructor?.user?.name || 'Unknown',
-          image: course.instructor?.user?.avatar || '/assets/images/resources/courses-two-client-img-1.jpg',
+          name: course.instructor?.user?.name || "Unknown",
+          image:
+            course.instructor?.user?.avatar ||
+            "/assets/images/resources/courses-two-client-img-1.jpg",
           occupation: course.instructor?.occupation,
           bio: course.instructor?.bio,
           education: course.instructor?.education,
@@ -174,10 +187,11 @@ export class CoursesService {
           instagram: course.instructor?.instagram,
         },
         learningObjectives: course.learningObjectives || [],
-        requirements: course.requirements || [], 
+        requirements: course.requirements || [],
+        updatedAt: course.updatedAt,
       };
     } catch (error) {
-      console.error('Error fetching course by ID:', error);
+      console.error("Error fetching course by ID:", error);
       throw error;
     }
   }
@@ -185,7 +199,7 @@ export class CoursesService {
   static async getCoursesMetadata(params = {}): Promise<any> {
     const query = new URLSearchParams(params as any).toString();
     const response = await fetch(`${API_BASE_URL}/courses/metadata?${query}`);
-    if (!response.ok) throw new Error('Failed to fetch metadata');
+    if (!response.ok) throw new Error("Failed to fetch metadata");
     return response.json();
   }
 }
@@ -194,7 +208,7 @@ export class CategoriesService {
   static async getAllCategories(): Promise<Category[]> {
     const response = await fetch(`${API_BASE_URL}/categories`);
     if (!response.ok) {
-      throw new Error('Failed to fetch categories');
+      throw new Error("Failed to fetch categories");
     }
     return response.json();
   }

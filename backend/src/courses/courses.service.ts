@@ -13,30 +13,37 @@ import { Instructor } from 'src/database/entities/instructor.entity';
 export class CoursesService {
   constructor(
     @Inject('COURSE_REPOSITORY') private CourseRepo: Repository<Course>,
-    @Inject('INSTRUCTOR_REPOSITORY') private InstructorRepo: Repository<Instructor>,
+    @Inject('INSTRUCTOR_REPOSITORY')
+    private InstructorRepo: Repository<Instructor>,
     @Inject('CATEGORY_REPOSITORY') private CategoryRepo: Repository<Category>,
   ) {}
 
   async create(createCourseDto: CreateCourseDto): Promise<Course | null> {
     const instructor = await this.InstructorRepo.findOne({
-      where: { id: createCourseDto.instructorId }
+      where: { id: createCourseDto.instructorId },
     });
 
     if (!instructor) {
-      throw new NotFoundException(`Instructor with id ${createCourseDto.instructorId} not found`);
+      throw new NotFoundException(
+        `Instructor with id ${createCourseDto.instructorId} not found`,
+      );
     }
 
-    const category = await this.CategoryRepo.findOne({ where: { id: createCourseDto.categoryId } });
+    const category = await this.CategoryRepo.findOne({
+      where: { id: createCourseDto.categoryId },
+    });
     if (!category) {
-      throw new NotFoundException(`Category with id ${createCourseDto.categoryId} not found`);
+      throw new NotFoundException(
+        `Category with id ${createCourseDto.categoryId} not found`,
+      );
     }
 
     const coursePayload = this.CourseRepo.create({
       ...createCourseDto,
       instructor: instructor,
-      category: category
+      category: category,
     });
-    
+
     const course = await this.CourseRepo.save(coursePayload);
     return this.findById(course.id);
   }
@@ -44,7 +51,13 @@ export class CoursesService {
   async findById(id: number): Promise<Course | null> {
     return this.CourseRepo.findOne({
       where: { id },
-      relations: ['instructor', 'instructor.user', 'lessons', 'reviews', 'category'],
+      relations: [
+        'instructor',
+        'instructor.user',
+        'lessons',
+        'reviews',
+        'category'
+      ],
     });
   }
 
@@ -76,13 +89,22 @@ export class CoursesService {
     return { message: 'Course deleted successfully.' };
   }
 
-  async getCoursesMetadata(filters: { search?: string; priceMin?: number; priceMax?: number }) {
-    const query = this.CourseRepo.createQueryBuilder('course')
-      .leftJoin('course.category', 'category');
+  async getCoursesMetadata(filters: {
+    search?: string;
+    priceMin?: number;
+    priceMax?: number;
+  }) {
+    const query = this.CourseRepo.createQueryBuilder('course').leftJoin(
+      'course.category',
+      'category',
+    );
 
     // Apply filters if provided
     if (filters.search) {
-      query.andWhere('course.title LIKE :search OR course.description LIKE :search', { search: `%${filters.search}%` });
+      query.andWhere(
+        'course.title LIKE :search OR course.description LIKE :search',
+        { search: `%${filters.search}%` },
+      );
     }
     if (filters.priceMin !== undefined) {
       query.andWhere('course.price >= :min', { min: filters.priceMin });

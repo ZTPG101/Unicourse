@@ -260,6 +260,15 @@
     left: 0;
 }
 
+.course-carousel-item {
+  padding: 0 15px;
+}
+
+.course-carousel-item .courses-one__single {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100%;
+}
 
 /*--------------------------------------------------------------
 # Courses Two

@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import CourseCurriculumTab from "../components/CourseCurriculumTab";
-import CourseDetailsSidebar from "../components/CourseDetailsSidebar";
+import CourseCurriculumTab from "../components/CourseDetailsPage/CourseCurriculumTab";
+import CourseDetailsSidebar from "../components/CourseDetailsPage/CourseDetailsSidebar";
 import CourseInstructorTab from "../components/CourseInstructorTab";
-import CourseOverviewTab from "../components/CourseOverviewTab";
-import CourseReviewTab from "../components/CourseReviewTab";
+import CourseOverviewTab from "../components/CourseDetailsPage/CourseOverviewTab";
+import CourseReviewTab from "../components/CourseDetailsPage/CourseReviewTab";
 import PageHeader from "../components/PageHeader";
 import { CartService } from "../services/carts.service";
 import type { Course } from "../services/courses.service";
@@ -162,6 +162,14 @@ const CourseDetails: React.FC = () => {
     }
   };
 
+  const formattedDate = course
+    ? new Date(course.updatedAt).toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      })
+    : "";
+
   // Show loading state
   if (loading) {
     return (
@@ -252,12 +260,8 @@ const CourseDetails: React.FC = () => {
                       <ul className="course-details__ratting-list-1 list-unstyled">
                         <li>
                           <p>Last Update</p>
-                          <h4>January 02, 2025</h4>
+                          <h4>{formattedDate}</h4>
                         </li>
-                        {/* <li>
-                          <p>Available</p>
-                          <h4>24 Students</h4>
-                        </li> */}
                         <li>
                           <p>
                             ({course.rating} / {course.reviewCount} Reviews)

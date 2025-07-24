@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { CategoriesService } from "../services/courses.service";
-import type { Category } from "../services/courses.service";
+import { CategoriesService } from "../../services/courses.service";
+import type { Category } from "../../services/courses.service";
 
 const BannerOne: React.FC = () => {
   const navigate = useNavigate();
   const [searchInput, setSearchInput] = useState("");
   const [categories, setCategories] = useState<Category[]>([]);
 
-  // Fetch categories on component mount
   useEffect(() => {
     CategoriesService.getAllCategories()
       .then(setCategories)
@@ -18,7 +17,6 @@ const BannerOne: React.FC = () => {
       });
   }, []);
 
-  // Handle search form submission
   const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (searchInput.trim()) {
@@ -28,7 +26,6 @@ const BannerOne: React.FC = () => {
     }
   };
 
-  // Handle category tag click
   const handleCategoryClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
     categoryName: string

@@ -514,6 +514,7 @@
     position: relative;
     display: block;
     width: 100%;
+    height: 100%;
 }
 
 .testimonial-two__img-holder {
@@ -530,6 +531,7 @@
     transition: all 300ms ease;
     border: 1px solid var(--fistudy-bdr-color);
     z-index: 1;
+    aspect-ratio: 1/1;
 }
 
 .testimonial-two__img-holder>img {

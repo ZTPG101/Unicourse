@@ -1080,6 +1080,11 @@
     z-index: -1;
 }
 
+.why-choose-three__ceo-speech li {
+  list-style-type: none;
+}
+
+
 .why-choose-three__ceo-img-two {
     position: absolute;
     top: -25px;

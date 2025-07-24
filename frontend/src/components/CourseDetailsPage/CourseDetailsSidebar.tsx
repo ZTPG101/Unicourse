@@ -1,8 +1,8 @@
 // src/components/CourseDetailsSidebar.tsx
 
 import React from "react";
-import type { Course } from "../services/courses.service";
-import { formatDuration } from "../utils/formatters";
+import type { Course } from "../../services/courses.service";
+import { formatDuration } from "../../utils/formatters";
 
 interface CourseDetailsSidebarProps {
   course: Course;

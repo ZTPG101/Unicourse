@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { CoursesService } from "../services/courses.service";
+import { CoursesService } from "../../services/courses.service";
 
 interface CategoryWithCount {
   id: number;
