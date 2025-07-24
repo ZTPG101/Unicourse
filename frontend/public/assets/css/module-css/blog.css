@@ -810,11 +810,11 @@
     display: block;
 }
 
-.comment-one__single-list li:nth-child(2) .comment-one__single {
+/* .comment-one__single-list li:nth-child(2) .comment-one__single {
     padding-bottom: 0;
     margin-bottom: 0;
     border-bottom: 0;
-}
+} */
 
 .comment-one__single-list-2 li .comment-one__single {
     padding-bottom: 0;
@@ -952,7 +952,7 @@
     border-bottom: none;
 }
 
-.comment-form__text-and-ratting {
+.comment-form__text-and-rating {
     position: relative;
     display: flex;
     align-items: center;
@@ -967,35 +967,35 @@
     line-height: 26px;
 }
 
-.comment-form__ratting {
+.comment-form__rating {
     position: relative;
     display: flex;
     align-items: center;
     gap: 5px;
 }
 
-.comment-form__ratting li {
+.comment-form__rating li {
     position: relative;
     display: block;
 }
 
-.comment-form__ratting li span {
+.comment-form__rating li span {
     position: relative;
     display: inline-block;
     font-size: 16px;
     color: var(--fistudy-bdr-color);
 }
 
-.comment-form__ratting li:first-child span {
+.comment-form__rating li:first-child span {
     color: #FFC224
 }
 
-.comment-form__ratting .icon-star {
+.comment-form__rating .icon-star {
     color: transparent;
     -webkit-text-stroke: 1px #FFC224;
 }
 
-.comment-form__ratting .icon-star.filled {
+.comment-form__rating .icon-star.filled {
     color: #FFC224;
 }
 

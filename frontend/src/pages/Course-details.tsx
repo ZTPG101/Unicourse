@@ -10,6 +10,7 @@ import { CartService } from "../services/carts.service";
 import type { Course } from "../services/courses.service";
 import { CoursesService } from "../services/courses.service";
 import { EnrollmentService } from "../services/enrollment.service";
+import { renderStars } from "../utils/stars";
 
 const CourseDetails: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
@@ -234,7 +235,7 @@ const CourseDetails: React.FC = () => {
                     </span>
                   </div>
                   <h3 className="course-details__title">{course.title}</h3>
-                  <div className="course-details__client-and-ratting-box">
+                  <div className="course-details__client-and-rating-box">
                     <div className="course-details__client-box">
                       <div className="course-details__client-img">
                         <img
@@ -256,8 +257,8 @@ const CourseDetails: React.FC = () => {
                         <h4>{course.instructor.name}</h4>
                       </div>
                     </div>
-                    <div className="course-details__ratting-box-1">
-                      <ul className="course-details__ratting-list-1 list-unstyled">
+                    <div className="course-details__rating-box-1">
+                      <ul className="course-details__rating-list-1 list-unstyled">
                         <li>
                           <p>Last Update</p>
                           <h4>{formattedDate}</h4>
@@ -266,18 +267,8 @@ const CourseDetails: React.FC = () => {
                           <p>
                             ({course.rating} / {course.reviewCount} Reviews)
                           </p>
-                          <ul className="course-details__review-ratting list-unstyled">
-                            {[...Array(5)].map((_, index) => (
-                              <li key={index}>
-                                <span
-                                  className={`icon-star ${
-                                    index < Math.floor(course.rating)
-                                      ? "filled"
-                                      : ""
-                                  }`}
-                                ></span>
-                              </li>
-                            ))}
+                          <ul className="course-details__review-rating list-unstyled">
+                            {renderStars(course.rating)}
                           </ul>
                         </li>
                       </ul>

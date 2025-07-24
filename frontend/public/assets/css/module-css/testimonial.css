@@ -166,14 +166,14 @@
     margin-bottom: 19px;
 }
 
-.testimonial-one__ratting-and-social {
+.testimonial-one__rating-and-social {
     position: relative;
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
-.testimonial-one__ratting {
+.testimonial-one__rating {
     position: relative;
     display: flex;
     align-items: center;
@@ -184,21 +184,21 @@
     border-radius: 21px;
 }
 
-.testimonial-one__ratting li {
+.testimonial-one__rating li {
     position: relative;
     display: flex;
     align-items: center;
 }
 
-.testimonial-one__ratting li span {
+.testimonial-one__rating li span {
     position: relative;
     display: inline-block;
     font-size: 14px;
     color: #FFC224;
 }
 
-.testimonial-one__ratting li:nth-child(4) span,
-.testimonial-one__ratting li:nth-child(5) span {
+.testimonial-one__rating li:nth-child(4) span,
+.testimonial-one__rating li:nth-child(5) span {
     color: #6B778B;
 }
 

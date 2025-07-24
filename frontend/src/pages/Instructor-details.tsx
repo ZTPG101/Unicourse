@@ -56,7 +56,7 @@ const InstructorDetails: React.FC = () => {
                 </div>
                 <div className="col-xl-7">
                   <div className="team-details__right">
-                    <div className="team-details__name-and-ratting-box">
+                    <div className="team-details__name-and-rating-box">
                       <div className="team-details__name-box">
                         <h3 className="team-details__name">
                           {instructor.user?.name || "Instructor"}
@@ -65,8 +65,8 @@ const InstructorDetails: React.FC = () => {
                           {instructor.occupation}
                         </p>
                       </div>
-                      <div className="team-details__ratting-box">
-                        <ul className="team-details__ratting list-unstyled">
+                      <div className="team-details__rating-box">
+                        <ul className="team-details__rating list-unstyled">
                           <li>
                             <span className="icon-star"></span>
                           </li>
@@ -83,7 +83,7 @@ const InstructorDetails: React.FC = () => {
                             <span className="icon-star"></span>
                           </li>
                         </ul>
-                        <p className="team-details__ratting-text">
+                        <p className="team-details__rating-text">
                           (5.0 / 5.2 Rating)
                         </p>
                       </div>

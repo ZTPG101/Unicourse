@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface PaginationProps {
   currentPage: number;
@@ -6,7 +6,11 @@ interface PaginationProps {
   onPageChange: (page: number) => void;
 }
 
-const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPageChange }) => {
+const Pagination: React.FC<PaginationProps> = ({
+  currentPage,
+  totalPages,
+  onPageChange,
+}) => {
   if (totalPages <= 1) {
     return null; // Don't render pagination if there's only one page
   }
@@ -19,26 +23,41 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
   };
 
   return (
-    <div className="blog-list__pagination">
-      <ul className="pg-pagination list-unstyled">
-        <li className={`prev${currentPage === 1 ? ' disabled' : ''}`}>
-          <a href="#" aria-label="prev" onClick={(e) => handlePageClick(e, currentPage - 1)}>
-            <i className="fas fa-arrow-left"></i>
-          </a>
-        </li>
-        {[...Array(totalPages)].map((_, idx) => (
-          <li key={idx + 1} className={`count${currentPage === idx + 1 ? ' active' : ''}`}>
-            <a href="#" onClick={(e) => handlePageClick(e, idx + 1)}>
-              {idx + 1}
+    <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
+      <div className="blog-list__pagination">
+        <ul className="pg-pagination list-unstyled">
+          <li className={`prev${currentPage === 1 ? " disabled" : ""}`}>
+            <a
+              href="#"
+              aria-label="prev"
+              onClick={(e) => handlePageClick(e, currentPage - 1)}
+            >
+              <i className="fas fa-arrow-left"></i>
             </a>
           </li>
-        ))}
-        <li className={`next${currentPage === totalPages ? ' disabled' : ''}`}>
-          <a href="#" aria-label="next" onClick={(e) => handlePageClick(e, currentPage + 1)}>
-            <i className="fas fa-arrow-right"></i>
-          </a>
-        </li>
-      </ul>
+          {[...Array(totalPages)].map((_, idx) => (
+            <li
+              key={idx + 1}
+              className={`count${currentPage === idx + 1 ? " active" : ""}`}
+            >
+              <a href="#" onClick={(e) => handlePageClick(e, idx + 1)}>
+                {idx + 1}
+              </a>
+            </li>
+          ))}
+          <li
+            className={`next${currentPage === totalPages ? " disabled" : ""}`}
+          >
+            <a
+              href="#"
+              aria-label="next"
+              onClick={(e) => handlePageClick(e, currentPage + 1)}
+            >
+              <i className="fas fa-arrow-right"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
   );
 };

@@ -10,7 +10,7 @@ body .courses-one__single,
 
 
 .testimonial-one__social a,
-.testimonial-one__ratting,
+.testimonial-one__rating,
 .why-choose-one__points-icon,
 .why-choose-one__shape-2,
 .about-one__awards-box,
@@ -103,7 +103,7 @@ body .courses-one__single,
 .live-class-one__carousel.owl-theme .owl-nav .owl-prev,
 .live-class-one__carousel.owl-theme .owl-nav .owl-next,
 .testimonial-one__social a,
-.testimonial-one__ratting,
+.testimonial-one__rating,
 .owl-carousel .owl-nav button.owl-prev,
 .owl-carousel .owl-nav button.owl-next,
 .owl-theme .owl-dots .owl-dot span,
@@ -115,7 +115,7 @@ body .courses-one__single,
 
 
 .blog-one__meta,
-.courses-one__ratting-and-heart-box {
+.courses-one__rating-and-heart-box {
     border-bottom: 1px solid rgba(var(--fistudy-white-rgb), .10);
 }
 

@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import type { Course } from "../../services/courses.service";
 import { ReviewsService, type Review } from "../../services/reviews.service";
 import { CoursesService } from "../../services/courses.service";
+import { renderStars } from "../../utils/stars";
 
 const REVIEWS_PER_PAGE = 5;
 
@@ -120,7 +121,7 @@ const CourseReviewTab: React.FC<CourseReviewTabProps> = ({
 
   function renderStarRow(filledCount: number) {
     return (
-      <div className="course-details__ratting-list">
+      <div className="course-details__rating-list">
         {[...Array(5)].map((_, i) => (
           <span
             key={i}
@@ -147,8 +148,8 @@ const CourseReviewTab: React.FC<CourseReviewTabProps> = ({
       <div className="tab active-tab" id="review">
         <div className="course-details__tab-inner">
           {/* Start of Review rating and Review box */}
-          <div className="course-details__ratting-and-review-box">
-            <ul className="course-details__ratting-box list-unstyled">
+          <div className="course-details__rating-and-review-box">
+            <ul className="course-details__rating-box list-unstyled">
               {starData.map((star) => (
                 <li key={star.count}>
                   {renderStarRow(star.count)}
@@ -179,17 +180,7 @@ const CourseReviewTab: React.FC<CourseReviewTabProps> = ({
               </div>
               <div className="course-details__review-content">
                 <p>{course.reviewCount} Reviews</p>
-                <ul className="course-details__review-ratting list-unstyled">
-                  {[...Array(5)].map((_, index) => (
-                    <li key={index}>
-                      <span
-                        className={`icon-star ${
-                          index < Math.floor(course.rating) ? "filled" : ""
-                        }`}
-                      ></span>
-                    </li>
-                  ))}
-                </ul>
+                {renderStars(course.rating)}
                 <div className="course-details__review-text">
                   <p>
                     <span className="icon-star"></span>
@@ -294,9 +285,9 @@ const CourseReviewTab: React.FC<CourseReviewTabProps> = ({
         {/* Start of Comment Form */}
         <div className="comment-form">
           <h3 className="comment-form__title">Submit Your Reviews</h3>
-          <div className="comment-form__text-and-ratting">
+          <div className="comment-form__text-and-rating">
             <p className="comment-form__text">Your Ratings </p>
-            <ul className="comment-form__ratting list-unstyled">
+            <ul className="comment-form__rating list-unstyled">
               {[...Array(5)].map((_, i) => (
                 <li
                   key={i}

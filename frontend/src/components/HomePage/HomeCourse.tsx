@@ -14,8 +14,11 @@ const HomeCourse: React.FC = () => {
     const fetchHomepageCourses = async () => {
       try {
         setLoading(true);
-        const fetchedCourses = await CoursesService.getAllCourses(1, 8);
-        setCourses(fetchedCourses);
+        const fetchedCourses = await CoursesService.getAllCourses(10, 0);
+        const uniqueCourses = Array.from(
+          new Map(fetchedCourses.map((c) => [c.id, c])).values()
+        );
+        setCourses(uniqueCourses);
         setError(null);
       } catch (err) {
         console.error("Failed to fetch homepage courses:", err);
@@ -24,22 +27,20 @@ const HomeCourse: React.FC = () => {
         setLoading(false);
       }
     };
-
     fetchHomepageCourses();
   }, []);
 
   const settings = {
     dots: true,
-    infinite: true,
+    infinite: false,
     speed: 500,
     slidesToShow: 3,
     slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 5000,
+    autoplay: false,
     responsive: [
       {
         breakpoint: 1200,
-        settings: { slidesToShow: 2 },
+        settings: { slidesToShow: 3 },
       },
       {
         breakpoint: 768,
@@ -48,52 +49,53 @@ const HomeCourse: React.FC = () => {
     ],
   };
 
-  if (loading) {
-    return (
-      <section className="courses-one">
-        <div className="container">
-          <div className="text-center p-5">
-            <div className="spinner-border" role="status">
-              <span className="visually-hidden">Loading...</span>
-            </div>
+  const LoadingCarousel = () => (
+    <section className="courses-one">
+      <div className="container">
+        <div className="text-center p-5">
+          <div className="spinner-border" role="status">
+            <span className="visually-hidden">Loading...</span>
           </div>
         </div>
-      </section>
-    );
-  }
+      </div>
+    </section>
+  );
 
-  if (error) {
-    return (
-      <section className="courses-one">
-        <div className="container">
-          <div className="alert alert-danger text-center" role="alert">
-            {error}
-          </div>
+  const ErrorMessage: React.FC<{ error: string }> = ({ error }) => (
+    <section className="courses-one">
+      <div className="container">
+        <div className="alert alert-danger text-center" role="alert">
+          {error}
         </div>
-      </section>
-    );
-  }
+      </div>
+    </section>
+  );
 
+  const SectionTitle = () => (
+    <div className="section-title text-center sec-title-animation animation-style1">
+      <div className="section-title__tagline-box">
+        <div className="section-title__tagline-shape"></div>
+        <span className="section-title__tagline">Our Courses</span>
+      </div>
+      <h2 className="section-title__title title-animation">
+        More Than Just A Brand: A Journey Of{" "}
+        <span>
+          Excellence{" "}
+          <img
+            src="assets/images/shapes/section-title-shape-1.png"
+            alt="decorative underline"
+          />
+        </span>
+      </h2>
+    </div>
+  );
+
+  if (loading) return <LoadingCarousel />;
+  if (error) return <ErrorMessage error={error} />;
   return (
     <section className="courses-one">
       <div className="container">
-        <div className="section-title text-center sec-title-animation animation-style1">
-          <div className="section-title__tagline-box">
-            <div className="section-title__tagline-shape"></div>
-            <span className="section-title__tagline">Our Courses</span>
-          </div>
-          <h2 className="section-title__title title-animation">
-            More Than Just A Brand: A Journey Of{" "}
-            <span>
-              Excellence{" "}
-              <img
-                src="assets/images/shapes/section-title-shape-1.png"
-                alt="decorative underline"
-              />
-            </span>
-          </h2>
-        </div>
-
+        <SectionTitle />
         {courses.length > 0 ? (
           <div className="courses-one__carousel">
             <Slider {...settings}>
@@ -106,7 +108,7 @@ const HomeCourse: React.FC = () => {
           </div>
         ) : (
           <div className="text-center">
-            <p>No courses available.</p>
+            <p>No courses are available at the moment.</p>
           </div>
         )}
       </div>

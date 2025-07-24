@@ -20,7 +20,7 @@
     background-color: #FCFCFC;
     border: 1px solid var(--fistudy-bdr-color);
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.07);
-    border-radius: 16px;
+    border-radius: 20px;
     padding: 19px 19px 20px;
 }
 
@@ -34,6 +34,8 @@
     display: block;
     overflow: hidden;
     border-radius: 16px;
+    width: 368px, auto;
+    height: 230px, auto;
 }
 
 .courses-one__img::before {
@@ -75,7 +77,12 @@
     position: relative;
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 10px;
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .courses-one__tag {
@@ -144,7 +151,7 @@
     color: var(--fistudy-base);
 }
 
-.courses-one__ratting-and-heart-box {
+.courses-one__rating-and-heart-box {
     position: relative;
     display: flex;
     align-items: center;
@@ -154,36 +161,36 @@
     margin-bottom: 15px;
 }
 
-.courses-one__ratting-box {
+.courses-one__rating-box {
     position: relative;
     display: flex;
     align-items: center;
     gap: 13px;
 }
 
-.courses-one__ratting {
+.courses-one__rating {
     position: relative;
     display: flex;
     align-items: center;
     gap: 5px;
 }
 
-.courses-one__ratting li {
+.courses-one__rating li {
     position: relative;
     display: block;
 }
 
-.courses-one__ratting li span {
+.courses-one__rating li span {
     font-size: 14px;
     color: #FFC224;
 }
 
-.courses-one__ratting li:nth-child(4) span,
-.courses-one__ratting li:nth-child(5) span {
+.courses-one__rating li:nth-child(4) span,
+.courses-one__rating li:nth-child(5) span {
     color: var(--fistudy-gray);
 }
 
-.courses-one__ratting-text {
+.courses-one__rating-text {
     font-size: 16px;
     line-height: 26px;
 }
@@ -259,17 +266,40 @@
     bottom: -97px;
     left: 0;
 }
-
-.course-carousel-item {
-  padding: 0 15px;
+.slick-track {
+  display: flex !important;
+  align-items: stretch !important;
 }
 
-.course-carousel-item .courses-one__single {
-  display: flex !important;
-  flex-direction: column !important;
+.slick-slide {
+  height: auto;
+}
+
+.slick-slide > div {
   height: 100%;
 }
 
+.course-carousel-item {
+  display: flex !important; 
+  padding: 0 15px;    
+}
+
+.course-carousel-item .courses-one__single {
+  display: flex;         
+  flex-direction: column;
+  width: 100%;           
+  flex-grow: 1;          
+}
+
+.course-carousel-item .courses-one__single .courses-one__content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.course-carousel-item .courses-one__single .courses-one__btn-and-dollar-box {
+  margin-top: auto;
+}
 /*--------------------------------------------------------------
 # Courses Two
 --------------------------------------------------------------*/
@@ -380,8 +410,8 @@
     display: block;
     overflow: hidden;
     border-radius: 16px;
-    width: 368px;
-    height: 230px;
+    width: 368px, auto;
+    height: 230px, auto;
 }
 
 .courses-two__img::before {
@@ -1363,7 +1393,7 @@
     margin: 24px 0 44px;
 }
 
-.course-details__client-and-ratting-box {
+.course-details__client-and-rating-box {
     position: relative;
     display: flex;
     align-items: center;
@@ -1414,56 +1444,56 @@
     letter-spacing: 0.05em;
 }
 
-.course-details__ratting-box-1 {
+.course-details__rating-box-1 {
     position: relative;
     display: block;
 }
 
-.course-details__ratting-list-1 {
+.course-details__rating-list-1 {
     position: relative;
     display: flex;
     align-items: center;
     gap: 60px;
 }
 
-.course-details__ratting-list-1>li {
+.course-details__rating-list-1>li {
     position: relative;
     display: block;
 }
 
-.course-details__ratting-list-1>li p {
+.course-details__rating-list-1>li p {
     font-size: 16px;
     line-height: 24px;
 }
 
-.course-details__ratting-list-1>li h4 {
+.course-details__rating-list-1>li h4 {
     font-size: 20px;
     font-weight: 500;
     line-height: 20px;
     margin-top: 3px;
 }
 
-.course-details__ratting {
+.course-details__rating {
     position: relative;
     display: flex;
     align-items: center;
     gap: 5px;
 }
 
-.course-details__ratting>li {
+.course-details__rating>li {
     position: relative;
     display: block;
 }
 
-.course-details__ratting>li span {
+.course-details__rating>li span {
     position: relative;
     display: inline-block;
     font-size: 14px;
     color: #FFC224;
 }
 
-.course-details__ratting>li:nth-child(4) span,
-.course-details__ratting>li:nth-child(5) span {
+.course-details__rating>li:nth-child(4) span,
+.course-details__rating>li:nth-child(5) span {
     color: #6B778B;
 }
 
@@ -1567,7 +1597,7 @@
     display: block;
 }
 
-.course-details__ratting-and-review-box {
+.course-details__rating-and-review-box {
     position: relative;
     display: flex;
     align-items: center;
@@ -1575,39 +1605,39 @@
     margin-bottom: 60px;
 }
 
-.course-details__ratting-box {
+.course-details__rating-box {
     position: relative;
     display: block;
     max-width: 385px;
     width: 100%;
 }
 
-.course-details__ratting-box>li {
+.course-details__rating-box>li {
     position: relative;
     display: flex;
     align-items: center;
     gap: 20px;
 }
 
-.course-details__ratting-box>li+li {
+.course-details__rating-box>li+li {
     margin-top: 15px;
 }
 
-.course-details__ratting-list {
+.course-details__rating-list {
     position: relative;
     display: flex;
     align-items: center;
     gap: 5px;
 }
 
-.course-details__ratting-list>span {
+.course-details__rating-list>span {
     position: relative;
     display: inline-block;
     font-size: 14px;
     color: #FFC224;
 }
 
-.course-details__ratting-list .fill-white {
+.course-details__rating-list .fill-white {
     color: transparent;
     -webkit-text-stroke: 1px #FFC224;
 }
@@ -1716,32 +1746,23 @@
     line-height: 24px;
 }
 
-.course-details__review-ratting {
+.course-details__review-rating {
     position: relative;
     display: flex;
     align-items: center;
     gap: 5px;
 }
 
-.course-details__review-ratting>li {
+.course-details__review-rating>li {
     position: relative;
     display: block;
 }
 
-.course-details__review-ratting>li>span {
+.course-details__review-rating>li>span {
     position: relative;
     display: inline-block;
     font-size: 14px;
     color: #FFC224;
-}
-
-.course-details__review-ratting .icon-star {
-    color: transparent;
-    -webkit-text-stroke: 1px #FFC224;
-}
-
-.course-details__review-ratting .icon-star.filled {
-    color: #FFC224; /* Filled stars */
 }
 
 .comment-one__review-rating .icon-star{
@@ -1751,6 +1772,23 @@
 
 .comment-one__review-rating .icon-star.filled {
     color: #FFC224; /* Filled stars */
+}
+
+.courses-one__stars {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 8px;
+}
+
+.courses-one__stars i {
+  font-size: 14px;
+  color: transparent;
+  -webkit-text-stroke: 1px #FFC224;
+}
+
+.courses-one__stars i.fas.fa-star,
+.courses-one__stars i.fas.fa-star-half-alt {
+  color: #FFC224;
 }
 
 .course-details__review-text {
@@ -2149,19 +2187,19 @@
     color: var(--fistudy-base);
 }
 
-.course-details__Instructor-ratting-list {
+.course-details__Instructor-rating-list {
     position: relative;
     display: flex;
     align-items: center;
     gap: 30px;
 }
 
-.course-details__Instructor-ratting-list>li {
+.course-details__Instructor-rating-list>li {
     position: relative;
     display: block;
 }
 
-.course-details__Instructor-ratting-list>li>p {
+.course-details__Instructor-rating-list>li>p {
     position: relative;
     display: flex;
     align-items: center;
@@ -2170,11 +2208,11 @@
     line-height: 24px;
 }
 
-.course-details__Instructor-ratting-list>li>p>span {
+.course-details__Instructor-rating-list>li>p>span {
     color: #FFC224;
 }
 
-.course-details__Instructor-ratting-list>li:last-child>p>span {
+.course-details__Instructor-rating-list>li:last-child>p>span {
     color: var(--fistudy-black);
 }
 
@@ -2887,32 +2925,32 @@
     color: var(--fistudy-base);
 }
 
-.course-list__ratting-box {
+.course-list__rating-box {
     position: relative;
     display: flex;
     align-items: center;
     gap: 13px;
 }
 
-.course-list__ratting {
+.course-list__rating {
     position: relative;
     display: flex;
     align-items: center;
     gap: 5px;
 }
 
-.course-list__ratting span {
+.course-list__rating span {
     position: relative;
     display: inline-block;
     font-size: 16px;
     color: #FFC224;
 }
 
-.course-list__ratting .star-2 {
+.course-list__rating .star-2 {
     color: #6B778B;
 }
 
-.course-list__ratting-text {
+.course-list__rating-text {
     font-size: 16px;
     line-height: 24px;
 }

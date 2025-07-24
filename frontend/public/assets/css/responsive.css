@@ -377,11 +377,11 @@
         line-height: 45px;
     }
 
-    .course-details__client-and-ratting-box {
+    .course-details__client-and-rating-box {
         gap: 10px;
     }
 
-    .course-details__ratting-list-1 {
+    .course-details__rating-list-1 {
         gap: 10px;
     }
 
@@ -1612,13 +1612,13 @@
         line-height: 35px;
     }
 
-    .course-details__client-and-ratting-box {
+    .course-details__client-and-rating-box {
         gap: 20px;
         flex-direction: column;
         align-items: baseline;
     }
 
-    .course-details__ratting-list-1 {
+    .course-details__rating-list-1 {
         flex-direction: column;
         align-items: baseline;
         gap: 15px;
@@ -1631,7 +1631,7 @@
         flex-direction: column;
     }
 
-    .course-details__ratting-and-review-box {
+    .course-details__rating-and-review-box {
         gap: 30px;
         flex-direction: column;
         align-items: baseline;
@@ -1717,7 +1717,7 @@
         margin-top: 40px;
     }
 
-    .team-details__name-and-ratting-box {
+    .team-details__name-and-rating-box {
         flex-direction: column;
         align-items: baseline;
     }

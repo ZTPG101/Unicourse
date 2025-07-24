@@ -3,6 +3,7 @@
 import React from "react";
 import type { Course } from "../services/courses.service";
 import { formatDuration } from "../utils/formatters";
+import { renderStars } from "../utils/stars";
 
 interface CourseCard2Props {
   course: Course;
@@ -20,20 +21,6 @@ const CourseCard2: React.FC<CourseCard2Props> = ({
       e.preventDefault();
       onActionClick(e);
     }
-  };
-
-  // Helper to generate star ratings
-  const renderStars = (rating: number) => {
-    const stars = [];
-    const fullStars = Math.floor(rating);
-    for (let i = 0; i < 5; i++) {
-      stars.push(
-        <li key={i}>
-          <span className={i < fullStars ? "icon-star" : "icon-star-empty"}></span>
-        </li>
-      );
-    }
-    return stars;
   };
 
   return (
@@ -66,12 +53,12 @@ const CourseCard2: React.FC<CourseCard2Props> = ({
         <h3 className="courses-one__title">
           <a href={`/course-details/${course.id}`}>{course.title}</a>
         </h3>
-        <div className="courses-one__ratting-and-heart-box">
-          <div className="courses-one__ratting-box">
-            <ul className="courses-one__ratting list-unstyled">
+        <div className="courses-one__rating-and-heart-box">
+          <div className="courses-one__rating-box">
+            <ul className="courses-one__rating list-unstyled">
               {renderStars(course.rating)}
             </ul>
-            <p className="courses-one__ratting-text">
+            <p className="courses-one__rating-text">
               {course.reviewCount} Reviews
             </p>
           </div>

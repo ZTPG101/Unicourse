@@ -339,15 +339,15 @@ const CourseComponent: React.FC = () => {
                     ))}
                   </div>
                 </div>
-                {/* Pagination */}
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={totalPages}
-                  onPageChange={setCurrentPage}
-                />
               </div>
             </div>
             {/* Course Grid Right End */}
+            {/* Pagination */}
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
           </div>
         </div>
       </section>

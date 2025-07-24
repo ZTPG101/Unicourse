@@ -534,7 +534,7 @@
     margin-right: 109px;
 }
 
-.team-details__name-and-ratting-box {
+.team-details__name-and-rating-box {
     position: relative;
     display: flex;
     align-items: center;
@@ -560,12 +560,12 @@
     color: var(--fistudy-base);
 }
 
-.team-details__ratting-box {
+.team-details__rating-box {
     position: relative;
     display: block;
 }
 
-.team-details__ratting {
+.team-details__rating {
     position: relative;
     display: flex;
     align-items: center;
@@ -573,23 +573,23 @@
     margin-bottom: 1px;
 }
 
-.team-details__ratting>li {
+.team-details__rating>li {
     position: relative;
     display: block;
 }
 
-.team-details__ratting>li>span {
+.team-details__rating>li>span {
     position: relative;
     display: inline-block;
     font-size: 14px;
     color: #FFC224;
 }
 
-.team-details__ratting>li:nth-child(5) span {
+.team-details__rating>li:nth-child(5) span {
     color: var(--fistudy-gray);
 }
 
-.team-details__ratting-text {
+.team-details__rating-text {
     font-size: 16px;
     line-height: 16px;
 }
