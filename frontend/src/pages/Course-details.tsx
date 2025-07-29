@@ -11,11 +11,11 @@ import type { Course } from "../services/courses.service";
 import { CoursesService } from "../services/courses.service";
 import { EnrollmentService } from "../services/enrollment.service";
 import { renderStars } from "../utils/stars";
+import { useAuth } from "../context/AuthContext";
 
 const CourseDetails: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const location = useLocation();
-  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<
     "overview" | "curriculum" | "instructor" | "review"
   >(() => location.state?.activeTab || "overview");
@@ -31,6 +31,9 @@ const CourseDetails: React.FC = () => {
   const [alreadyEnrolled, setAlreadyEnrolled] = useState(false);
   const tabContentRef = useRef<HTMLDivElement>(null);
   const curriculumTabRef = useRef<HTMLDivElement>(null);
+
+  const { isLoggedIn, user } = useAuth();
+  const navigate = useNavigate();
 
   // Fetch course details
   useEffect(() => {
@@ -62,21 +65,23 @@ const CourseDetails: React.FC = () => {
   // Check if already enrolled in this course
   useEffect(() => {
     const checkEnrollment = async () => {
-      if (!courseId) return;
+      if (!user || !courseId) return;
+
       try {
-        const enrollments = await EnrollmentService.getAllEnrollments();
+        const enrollments = await EnrollmentService.getUserEnrollments(user.id);
         const enrolled = enrollments.some(
-          (enrollment) =>
+          (enrollment: any) =>
             enrollment.course && enrollment.course.id === parseInt(courseId)
         );
         setAlreadyEnrolled(enrolled);
       } catch (err) {
-        // Optionally handle error
+        console.error("Failed to check enrollment:", err);
         setAlreadyEnrolled(false);
       }
     };
+
     checkEnrollment();
-  }, [courseId]);
+  }, [user, courseId]);
 
   // Handle scroll to tab on navigation
   useEffect(() => {
@@ -99,7 +104,16 @@ const CourseDetails: React.FC = () => {
   const handleEnroll = async () => {
     if (!course) return;
 
-    // If already enrolled, just scroll to the content
+    if (!isLoggedIn) {
+      const wantsToLogin = window.confirm(
+        "You need to be logged in to enroll in this course. Would you like to log in now?"
+      );
+      if (wantsToLogin) {
+        navigate("/login", { state: { from: location } });
+      }
+      return;
+    }
+
     if (alreadyEnrolled) {
       setActiveTab("curriculum");
       setTimeout(() => {
@@ -111,7 +125,6 @@ const CourseDetails: React.FC = () => {
       return;
     }
 
-    // Otherwise, proceed with enrollment
     setEnrollLoading(true);
     setEnrollError(null);
     setEnrollSuccess(false);
@@ -127,7 +140,7 @@ const CourseDetails: React.FC = () => {
         });
       }, 100);
     } catch (err) {
-      setEnrollError("Please login to enroll in the course.");
+      setEnrollError("Failed to enroll. Please try again.");
     } finally {
       setEnrollLoading(false);
     }
@@ -136,7 +149,16 @@ const CourseDetails: React.FC = () => {
   const handlePurchase = async () => {
     if (!course) return;
 
-    // If already enrolled, just scroll to the content
+    if (!isLoggedIn) {
+      const wantsToLogin = window.confirm(
+        "You need to be logged in to purchase a course. Would you like to log in now?"
+      );
+      if (wantsToLogin) {
+        navigate("/login", { state: { from: location } });
+      }
+      return;
+    }
+
     if (alreadyEnrolled) {
       setActiveTab("curriculum");
       setTimeout(() => {
@@ -148,16 +170,15 @@ const CourseDetails: React.FC = () => {
       return;
     }
 
-    // Otherwise, proceed with adding to cart
     setPurchaseLoading(true);
     setPurchaseError(null);
     setPurchaseSuccess(false);
     try {
       await CartService.addItem(course.id);
       setPurchaseSuccess(true);
-      setTimeout(() => navigate("/cart"), 1000); // Redirect to cart on success
+      setTimeout(() => navigate("/cart"), 1000);
     } catch (err) {
-      setPurchaseError("Please login to purchase the course.");
+      setPurchaseError("Failed to add to cart. Please try again.");
     } finally {
       setPurchaseLoading(false);
     }
@@ -171,39 +192,43 @@ const CourseDetails: React.FC = () => {
       })
     : "";
 
-  // Show loading state
   if (loading) {
     return (
-      <div className="container mt-5">
-        <div className="row">
-          <div className="col-12 text-center">
-            <div className="spinner-border" role="status">
-              <span className="visually-hidden">Loading...</span>
-            </div>
-            <p className="mt-3">Loading course details...</p>
-          </div>
+      <div className="container mt-5 text-center">
+        <div className="spinner-border" role="status">
+          <span className="visually-hidden">Loading...</span>
         </div>
+        <p className="mt-3">Loading course details...</p>
       </div>
     );
   }
 
-  // Show error state
-  if (error || !course) {
+  if (error) {
     return (
-      <div className="container mt-5">
-        <div className="row">
-          <div className="col-12 text-center">
-            <div className="alert alert-danger" role="alert">
-              {error || "Course not found"}
-            </div>
-            <a href="/course" className="btn btn-primary">
-              Back to Courses
-            </a>
-          </div>
+      <div className="container mt-5 text-center">
+        <div className="alert alert-danger" role="alert">
+          {error}
         </div>
+        <a href="/course" className="btn btn-primary">
+          Back to Courses
+        </a>
       </div>
     );
   }
+
+  if (!course) {
+    return (
+      <div className="container mt-5 text-center">
+        <div className="alert alert-warning" role="alert">
+          Course not found. It may have been moved or deleted.
+        </div>
+        <a href="/course" className="btn btn-primary">
+          Back to Courses
+        </a>
+      </div>
+    );
+  }
+
   const breadcrumbs = [
     { label: "Home", path: "/" },
     { label: "Course", path: "/course" },

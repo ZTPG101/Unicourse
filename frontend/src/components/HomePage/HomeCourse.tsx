@@ -14,11 +14,8 @@ const HomeCourse: React.FC = () => {
     const fetchHomepageCourses = async () => {
       try {
         setLoading(true);
-        const fetchedCourses = await CoursesService.getAllCourses(10, 0);
-        const uniqueCourses = Array.from(
-          new Map(fetchedCourses.map((c) => [c.id, c])).values()
-        );
-        setCourses(uniqueCourses);
+        const fetchedCourses = await CoursesService.getAllCourses({ limit: 10, offset: 0 });
+        setCourses(fetchedCourses);
         setError(null);
       } catch (err) {
         console.error("Failed to fetch homepage courses:", err);
@@ -32,11 +29,13 @@ const HomeCourse: React.FC = () => {
 
   const settings = {
     dots: true,
-    infinite: false,
+    infinite: courses.length > 3,
     speed: 500,
     slidesToShow: 3,
     slidesToScroll: 1,
     autoplay: false,
+    swipeToSlide: true,
+    touchThreshold: 20,
     responsive: [
       {
         breakpoint: 1200,

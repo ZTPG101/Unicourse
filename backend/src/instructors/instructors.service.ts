@@ -1,4 +1,9 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Instructor } from 'src/database/entities/instructor.entity';
 import { User } from 'src/database/entities/user.entity';
@@ -14,28 +19,69 @@ export class InstructorsService {
     private userRepo: Repository<User>,
   ) {}
 
-  async create(createInstructorDto: CreateInstructorDto): Promise<Instructor> {
-    const { userId, ...rest } = createInstructorDto;
-    const user = await this.userRepo.findOne({ where: { id: userId } });
-    if (!user) {
-      throw new NotFoundException('User not found');
+  async isUserOwnerOfProfile(
+    profileId: number,
+    userId: number,
+  ): Promise<boolean> {
+    const count = await this.instructorRepo.count({
+      where: { id: profileId, user: { id: userId } },
+    });
+    return count > 0;
+  }
+
+  async create(
+    createDto: CreateInstructorDto,
+    user: User,
+  ): Promise<Instructor> {
+    const targetUserId =
+      user.role === 'admin' && createDto.userId ? createDto.userId : user.id;
+
+    const existingProfile = await this.instructorRepo.findOne({
+      where: { user: { id: targetUserId } },
+    });
+    if (existingProfile) {
+      throw new ConflictException(
+        `An instructor profile already exists for this user.`,
+      );
     }
-    const instructor = this.instructorRepo.create({ ...rest, user });
-    return this.instructorRepo.save(instructor);
+
+    const targetUser = await this.userRepo.findOne({
+      where: { id: targetUserId },
+    });
+    if (!targetUser) {
+      throw new NotFoundException(`User with ID ${targetUserId} not found.`);
+    }
+
+    const newProfile = this.instructorRepo.create({
+      ...createDto,
+      user: targetUser,
+    });
+
+    return this.instructorRepo.save(newProfile);
+  }
+
+  async update(
+    id: number,
+    updateDto: UpdateInstructorDto,
+  ): Promise<Instructor> {
+    const profile = await this.instructorRepo.preload({ id, ...updateDto });
+    if (!profile) {
+      throw new NotFoundException(
+        `Instructor profile with ID ${id} not found.`,
+      );
+    }
+    return this.instructorRepo.save(profile);
   }
 
   async findById(id: number): Promise<Instructor | null> {
-    return this.instructorRepo.findOne({ where: { id }, relations: ['user'] });
+    return await this.instructorRepo.findOne({
+      where: { id },
+      relations: ['user'],
+    });
   }
 
-  findAll(): Promise<Instructor[]> {
-    return this.instructorRepo.find({ relations: ['user'] });
-  }
-
-  async update(id: number, updateInstructorDto: UpdateInstructorDto): Promise<Instructor | null> {
-    const instructor = await this.instructorRepo.preload({ id, ...updateInstructorDto });
-    if (!instructor) throw new NotFoundException(`Instructor with id ${id} not found`);
-    return this.instructorRepo.save(instructor);
+  async findAll(): Promise<Instructor[]> {
+    return await this.instructorRepo.find({ relations: ['user'] });
   }
 
   async remove(id: number): Promise<{ message: string }> {

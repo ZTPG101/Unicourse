@@ -44,10 +44,6 @@ export class LessonsService {
     return this.LessonRepo.find();
   }
 
-  // findOne(id: number) {
-  //   return `This action returns a #${id} lesson`;
-  // }
-
   async update(
     id: number,
     updateLessonDto: UpdateLessonDto,

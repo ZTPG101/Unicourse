@@ -251,6 +251,16 @@
     width: auto;
 }
 
+.team-carousel-slide {
+  padding: 0 15px;
+  box-sizing: border-box;
+}
+
+.team-carousel-slide > div {
+  width: 100%; 
+  margin: 0 auto;
+}
+
 /*--------------------------------------------------------------
 # Team Two
 --------------------------------------------------------------*/

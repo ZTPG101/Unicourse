@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom"; // Import Link for internal navigation
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import PageHeader from "../components/PageHeader";
 
@@ -24,13 +24,12 @@ const Login = () => {
         email,
         password,
       });
-      // Store the accessToken in localStorage
+
       localStorage.setItem("token", response.data.accessToken);
-      // Store the refreshToken in localStorage
       localStorage.setItem("refreshToken", response.data.refreshToken);
       alert("Login successful!");
-      navigate("/");
       login();
+      navigate("/");
     } catch (err: any) {
       setError(err.response?.data?.message || "Login failed");
     }
@@ -42,7 +41,6 @@ const Login = () => {
     <>
       <PageHeader title="Login" breadcrumbs={breadcrumbs} />
 
-      {/* Start Login One */}
       <section className="login-one">
         <div className="container">
           <div className="login-one__form">
@@ -57,7 +55,6 @@ const Login = () => {
                       <label htmlFor="formEmail">Email</label>
                       <input
                         type="email"
-                        name="form_email"
                         id="formEmail"
                         placeholder="Email..."
                         value={email}
@@ -73,7 +70,6 @@ const Login = () => {
                       <label htmlFor="formPassword">Password</label>
                       <input
                         type="password"
-                        name="form_password"
                         id="formPassword"
                         placeholder="Password..."
                         value={password}
@@ -83,6 +79,7 @@ const Login = () => {
                     </div>
                   </div>
                 </div>
+
                 {error && (
                   <div className="col-xl-12">
                     <div className="form-group">
@@ -92,6 +89,7 @@ const Login = () => {
                     </div>
                   </div>
                 )}
+
                 <div className="col-xl-12">
                   <div className="form-group">
                     <button className="thm-btn" type="submit">
@@ -99,6 +97,29 @@ const Login = () => {
                     </button>
                   </div>
                 </div>
+
+                {/* SOCIAL LOGIN */}
+                <div className="google-facebook">
+                  <a href="http://localhost:3000/auth/google/login">
+                    <div className="icon">
+                      <img
+                        src="/assets/images/icon/icon-google-2.png"
+                        alt="Google"
+                      />
+                    </div>
+                    Continue with Google
+                  </a>
+                  <a href="#">
+                    <div className="icon">
+                      <img
+                        src="/assets/images/icon/icon-facebook.png"
+                        alt="Facebook"
+                      />
+                    </div>
+                    Continue with Facebook
+                  </a>
+                </div>
+
                 <div className="remember-forget">
                   <div className="checked-box1">
                     <input
@@ -116,6 +137,7 @@ const Login = () => {
                     <a href="#">Forget password?</a>
                   </div>
                 </div>
+
                 <div className="create-account text-center">
                   <p>
                     Not registered yet?{" "}
@@ -127,7 +149,6 @@ const Login = () => {
           </div>
         </div>
       </section>
-      {/* End Login One */}
     </>
   );
 };

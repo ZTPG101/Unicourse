@@ -2,56 +2,92 @@ import React, { useEffect, useState } from "react";
 import PageHeader from "../components/PageHeader";
 import { CartService, type Cart as CartType } from "../services/carts.service";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const breadcrumbs = [{ label: "Home", path: "/" }, { label: "Cart" }];
 
 const Cart: React.FC = () => {
+  const { isLoggedIn, user } = useAuth();
+  const navigate = useNavigate();
+
   const [carts, setCart] = useState<CartType | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
-    CartService.getCart()
-      .then((cart) => {
-        setCart(cart);
-        setLoading(false);
-      })
-      .catch((err) => {
-        if (
-          err &&
-          typeof err === "object" &&
-          "status" in err &&
-          err.status === 401
-        ) {
-          // Not logged in, treat as empty cart (no error)
-          localStorage.removeItem("token");
-          setCart({ id: 0, items: [], status: "", createdAt: "" });
-          setError(null);
-        } else {
-          setError("Failed to load cart.");
-        }
-        setLoading(false);
-      });
-  }, []);
+    if (isLoggedIn && user) {
+      CartService.getCart()
+        .then((cartData) => {
+          setCart(cartData);
+        })
+        .catch((err) => {
+          console.error("Failed to load cart for logged-in user:", err);
+          setError("Could not load your cart. Please try again later.");
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+    else if (!isLoggedIn) {
+      setCart(null);
+      setLoading(false);
+    }
+  }, [isLoggedIn, user]);
 
   const handleRemove = (courseId: number) => {
+    setCart((prev) =>
+      prev
+        ? { ...prev, items: prev.items.filter((item) => item.id !== courseId) }
+        : null
+    );
     CartService.removeItem(courseId)
-      .then((cart) => setCart(cart))
-      .catch(() => setError("Failed to remove item."));
+      .then((updatedCart) => setCart(updatedCart))
+      .catch(() => {
+        setError("Failed to remove item. Please refresh and try again.");
+        // Optional: Rollback UI update if needed
+      });
   };
 
   const handleClear = () => {
+    setCart((prev) => (prev ? { ...prev, items: [] } : null));
     CartService.clearCart()
-      .then((cart) => setCart(cart))
-      .catch(() => setError("Failed to clear cart."));
+      .then((updatedCart) => setCart(updatedCart))
+      .catch(() =>
+        setError("Failed to clear cart. Please refresh and try again.")
+      );
+  };
+
+  const handleCheckout = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    if (!isLoggedIn || !user) {
+      const wantsToLogin = window.confirm(
+        "You need to be logged in to proceed to checkout. Would you like to \nlog in now?"
+      );
+      if (wantsToLogin) {
+        navigate("/login", { state: { from: "/checkout" } });
+      }
+    } else {
+      navigate("/checkout");
+    }
   };
 
   const items = carts?.items || [];
   const total = items.reduce((sum, item) => sum + (item.price || 0), 0);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div className="alert alert-danger">{error}</div>;
+  if (loading) {
+    return (
+      <div className="container mt-5 text-center">
+        <div className="spinner-border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+        <p className="mt-3">Loading your cart...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div className="alert alert-danger container mt-4">{error}</div>;
+  }
 
   return (
     <>
@@ -132,25 +168,19 @@ const Cart: React.FC = () => {
                   </a>
                 </div>
                 <div className="cart-page__buttons-1">
-                  <a className="thm-btn" href="#" onClick={handleClear}>
+                  <button
+                    className="thm-btn"
+                    onClick={handleClear}
+                    disabled={items.length === 0}
+                  >
                     Clear Cart
-                  </a>
+                  </button>
                 </div>
                 <div className="cart-page__buttons-2">
                   <a
                     href="/checkout"
                     className="thm-btn"
-                    onClick={e => {
-                      e.preventDefault();
-                      if (!localStorage.getItem("token")) {
-                        const loginPrompt = window.confirm("You need to login to checkout. Go to login page?");
-                        if (loginPrompt) {
-                          navigate("/login", { state: { from: "/checkout" } });
-                        }
-                      } else {
-                        navigate("/checkout");
-                      }
-                    }}
+                    onClick={handleCheckout}
                   >
                     Checkout
                   </a>

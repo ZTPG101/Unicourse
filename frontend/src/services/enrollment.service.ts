@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:3000';
+import apiClient from '../api/ApiClient';
 
 export type Enrollment = {
   id: number;
@@ -10,84 +10,34 @@ export type Enrollment = {
 };
 
 export class EnrollmentService {
-  static getToken() {
-    return localStorage.getItem('token');
+
+  static async createEnrollment(courseId: number): Promise<Enrollment> {
+    return apiClient.post('/enrollments', { courseId });
   }
 
-  static async createEnrollment(courseId: number, token?: string): Promise<Enrollment> {
-    const authToken = token || this.getToken();
-    const response = await fetch(`${API_BASE_URL}/enrollments`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
-      },
-      body: JSON.stringify({ courseId }),
-    });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json();
+  static async getUserEnrollments(userId: number): Promise<Enrollment[]> {
+    return apiClient.get(`/enrollments/user/${userId}`);
   }
 
-  static async getEnrollmentById(id: number, token?: string): Promise<Enrollment> {
-    const authToken = token || this.getToken();
-    const response = await fetch(`${API_BASE_URL}/enrollments/${id}`, {
-      headers: {
-        ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
-      },
-    });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json();
+  static async getEnrollmentById(id: number): Promise<Enrollment> {
+    return apiClient.get(`/enrollments/${id}`);
   }
 
-  // Only for admin/instructor
-  static async getAllEnrollments(token?: string): Promise<Enrollment[]> {
-    const authToken = token || this.getToken();
-    const response = await fetch(`${API_BASE_URL}/enrollments`, {
-      headers: {
-        ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
-      },
-    });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json();
+  // (Admin/Instructor) Fetches all enrollments in the system
+  static async getAllEnrollments(): Promise<Enrollment[]> {
+    return apiClient.get('/enrollments');
   }
 
-  static async updateEnrollment(id: number, updateData: Partial<Enrollment>, token?: string): Promise<Enrollment> {
-    const authToken = token || this.getToken();
-    const response = await fetch(`${API_BASE_URL}/enrollments/${id}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
-      },
-      body: JSON.stringify(updateData),
-    });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json();
+  // (Admin/Instructor) Updates an enrollment record
+  static async updateEnrollment(id: number, updateData: Partial<Enrollment>): Promise<Enrollment> {
+    return apiClient.patch(`/enrollments/${id}`, updateData);
   }
 
-  static async updateEnrollmentProgress(id: number, progress: number, token?: string): Promise<Enrollment> {
-    const authToken = token || this.getToken();
-    const response = await fetch(`${API_BASE_URL}/enrollments/${id}/progress`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
-      },
-      body: JSON.stringify({ progress }),
-    });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json();
+  static async updateEnrollmentProgress(id: number, progress: number): Promise<Enrollment> {
+    return apiClient.patch(`/enrollments/${id}/progress`, { progress });
   }
 
-  static async deleteEnrollment(id: number, token?: string): Promise<{ message: string }> {
-    const authToken = token || this.getToken();
-    const response = await fetch(`${API_BASE_URL}/enrollments/${id}`, {
-      method: 'DELETE',
-      headers: {
-        ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
-      },
-    });
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    return await response.json();
+  static async deleteEnrollment(id: number): Promise<{ message: string }> {
+    return apiClient.delete(`/enrollments/${id}`);
   }
 }

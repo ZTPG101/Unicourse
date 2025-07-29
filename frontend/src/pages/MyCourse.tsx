@@ -4,6 +4,9 @@ import CourseCard from "../components/CourseCard";
 import PageHeader from "../components/PageHeader";
 import type { Enrollment } from "../services/enrollment.service";
 import { EnrollmentService } from "../services/enrollment.service";
+import { mapBackendCourseToFrontend } from "../services/mappers/course.mapper";
+import { useAuth } from "../context/AuthContext";
+import type { BackendCourse } from "../services/courses.service";
 
 const breadcrumbs = [{ label: "Home", path: "/" }, { label: "My Courses" }];
 
@@ -12,16 +15,35 @@ const MyCourse: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { user, isLoggedIn } = useAuth();
 
   useEffect(() => {
-    EnrollmentService.getAllEnrollments()
-      .then(setEnrollments)
-      .catch((err) => {
-        setError("Please login to see your enrolled courses.");
-        console.error(err);
-      })
-      .finally(() => setLoading(false));
-  }, []);
+    if (user) {
+      EnrollmentService.getUserEnrollments(user.id)
+        .then((enrollmentsFromApi) => {
+          const mappedEnrollments = enrollmentsFromApi.map((enrollment) => {
+            if (enrollment.course) {
+              enrollment.course = mapBackendCourseToFrontend(
+                enrollment.course as unknown as BackendCourse
+              );
+            }
+            return enrollment;
+          });
+          setEnrollments(mappedEnrollments);
+        })
+        .catch((err) => {
+          if (err.message.includes("401")) {
+            setError("Please login to see your enrolled courses.");
+          } else {
+            setError("Failed to fetch enrollments.");
+          }
+          console.error(err);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [user, isLoggedIn]);
 
   const handleViewCourse = (courseId: number) => {
     navigate(`/course-details/${courseId}`, {
@@ -64,7 +86,7 @@ const MyCourse: React.FC = () => {
         <div className="container">
           {error && <div className="alert alert-danger">{error}</div>}
 
-          {!error && enrollments.length === 0 && (
+          {!error && isLoggedIn && enrollments.length === 0 && (
             <div className="text-center">
               <h3>You haven't enrolled in any courses yet.</h3>
               <p>Explore our courses and start your learning journey today!</p>
@@ -75,31 +97,33 @@ const MyCourse: React.FC = () => {
           )}
 
           <div className="row">
-            {enrollments.map((enrollment) => (
-              <div className="col-xl-4 col-lg-6 col-md-6" key={enrollment.id}>
-                {enrollment.course && (
-                  <div style={{ position: "relative", marginBottom: "30px" }}>
-                    <CourseCard
-                      course={enrollment.course}
-                      actionText="View Course"
-                      onActionClick={() =>
-                        handleViewCourse(enrollment.course.id)
-                      }
-                    />
+            {isLoggedIn &&
+              !error &&
+              enrollments.map((enrollment) => (
+                <div className="col-xl-4 col-lg-6 col-md-6" key={enrollment.id}>
+                  {enrollment.course && (
+                    <div style={{ position: "relative", marginBottom: "30px" }}>
+                      <CourseCard
+                        course={enrollment.course}
+                        actionText="View Course"
+                        onActionClick={() =>
+                          handleViewCourse(enrollment.course.id)
+                        }
+                      />
 
-                    <div className="cross-icon">
-                      <button
-                        onClick={() => handleRemoveEnrollment(enrollment.id)}
-                        type="button"
-                        aria-label="Remove course from my list"
-                      >
-                        <i className="fas fa-times"></i>
-                      </button>
+                      <div className="cross-icon">
+                        <button
+                          onClick={() => handleRemoveEnrollment(enrollment.id)}
+                          type="button"
+                          aria-label="Remove course from my list"
+                        >
+                          <i className="fas fa-times"></i>
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            ))}
+                  )}
+                </div>
+              ))}
           </div>
         </div>
       </section>

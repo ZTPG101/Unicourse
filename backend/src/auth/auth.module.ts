@@ -9,12 +9,13 @@ import { UsersModule } from 'src/users/users.module';
 import { UsersService } from 'src/users/users.service';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import googleOauthConfig from './config/google-oauth.config';
 import jwtConfig from './config/jwt.config';
 import refreshJwtConfig from './config/refresh-jwt.config';
 import { JwtAuthGuard } from './guards/jwt-auth/jwt-auth.guard';
+import { GoogleStrategy } from './strategies/google.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { RefreshJwtStrategy } from './strategies/refresh.strategy';
-import { RolesGuard } from './guards/roles/roles.guard';
 
 @Module({
   imports: [
@@ -22,10 +23,10 @@ import { RolesGuard } from './guards/roles/roles.guard';
     JwtModule.registerAsync(jwtConfig.asProvider()),
     ConfigModule.forFeature(jwtConfig),
     ConfigModule.forFeature(refreshJwtConfig),
+    ConfigModule.forFeature(googleOauthConfig),
     DatabaseModule,
     UsersModule,
     SessionModule
-
   ],
   controllers: [AuthController],
   providers: [
@@ -34,6 +35,7 @@ import { RolesGuard } from './guards/roles/roles.guard';
     SessionService,
     JwtStrategy,
     RefreshJwtStrategy,
+    GoogleStrategy,
     { 
       provide: APP_GUARD,
       useClass: JwtAuthGuard //@UseGuards(JwtAuthGuard) applied on all API endpoints

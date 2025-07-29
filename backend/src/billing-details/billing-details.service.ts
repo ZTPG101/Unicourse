@@ -1,8 +1,9 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { BillingDetails } from '../database/entities/billingDetails.entity';
+
 import { CreateBillingDetailDto } from './dto/create-billing-detail.dto';
 import { UpdateBillingDetailDto } from './dto/update-billing-detail.dto';
+import { BillingDetails } from 'src/database/entities/billingDetails.entity';
 
 @Injectable()
 export class BillingDetailsService {
@@ -11,31 +12,29 @@ export class BillingDetailsService {
     private readonly billingDetailsRepo: Repository<BillingDetails>,
   ) {}
 
-  async create(createBillingDetailDto: CreateBillingDetailDto, user: any): Promise<BillingDetails> {
-    const billingDetails = this.billingDetailsRepo.create({ ...createBillingDetailDto, user });
-    return this.billingDetailsRepo.save(billingDetails);
+  async findByUserId(userId: number): Promise<BillingDetails | null> {
+    return this.billingDetailsRepo.findOne({ where: { user: { id: userId } } });
   }
 
-  async findAll(): Promise<BillingDetails[]> {
-    return this.billingDetailsRepo.find();
-  }
-
-  async findOne(id: number): Promise<BillingDetails | null> {
-    return this.billingDetailsRepo.findOne({ where: { id } });
-  }
-
-  async update(id: number, updateBillingDetailDto: UpdateBillingDetailDto): Promise<BillingDetails> {
-    const billingDetails = await this.billingDetailsRepo.findOne({ where: { id } });
-    if (!billingDetails) throw new Error('Billing details not found');
-    Object.assign(billingDetails, updateBillingDetailDto);
-    return this.billingDetailsRepo.save(billingDetails);
-  }
-
-  async remove(id: number): Promise<{ message: string }> {
-    const result = await this.billingDetailsRepo.delete({ id });
-    if (!result.affected) {
-      throw new NotFoundException(`Billing details with id ${id} not found`);
+  async create(createDto: CreateBillingDetailDto, userId: number): Promise<BillingDetails> {
+    const existingDetails = await this.findByUserId(userId);
+    if (existingDetails) {
+      throw new NotFoundException('Billing details already exist for this user. Use PATCH to update.');
     }
-    return { message: 'Billing details deleted successfully.' };
+    const newDetails = this.billingDetailsRepo.create({
+      ...createDto,
+      user: { id: userId },
+    });
+    return this.billingDetailsRepo.save(newDetails);
+  }
+
+  async updateByUser(userId: number, updateDto: UpdateBillingDetailDto): Promise<BillingDetails> {
+    const billingDetails = await this.findByUserId(userId);
+    if (!billingDetails) {
+      throw new NotFoundException('Billing details not found for this user. Use POST to create.');
+    }
+    // Update the found entity and save it
+    Object.assign(billingDetails, updateDto);
+    return this.billingDetailsRepo.save(billingDetails);
   }
 }

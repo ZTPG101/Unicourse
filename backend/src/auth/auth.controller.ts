@@ -3,8 +3,12 @@ import {
   Body,
   ConflictException,
   Controller,
+  Get,
   Post,
+  Req,
   Request,
+  Res,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { CreateUserDto } from 'src/auth/dto/create-user.dto';
@@ -12,7 +16,7 @@ import { QueryFailedError } from 'typeorm';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
 import { LoginDto } from './dto/login.dto';
-import { JwtAuthGuard } from './guards/jwt-auth/jwt-auth.guard';
+import { GoogleAuthGuard } from './guards/google-auth/google-auth.guard';
 import { RefreshAuthGuard } from './guards/refresh-auth/refresh-auth.guard';
 
 @Public()
@@ -37,7 +41,7 @@ export class AuthController {
       if (err instanceof QueryFailedError) {
         throw new BadRequestException('Failed to create user');
       }
-      
+
       throw err;
     }
   }
@@ -57,5 +61,23 @@ export class AuthController {
   @Post('logout')
   logOut(@Request() req) {
     this.authService.logout(req.userId, req.body.refreshToken);
+  }
+
+  @Public()
+  @UseGuards(GoogleAuthGuard)
+  @Get('google/login')
+  googleLogin() {}
+
+  @Public()
+  @UseGuards(GoogleAuthGuard)
+  @Get('google/callback')
+  async googleCallback(@Req() req, @Res() res) {
+    const user = await this.authService.validategoogleUser(req.user);
+
+    if (!user) {
+      throw new UnauthorizedException('Could not process Google user.');
+    }
+    const tokens = await this.authService.login({ id: user.id });
+    res.redirect(`http://localhost:5173?token=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`);
   }
 }

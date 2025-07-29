@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   UseGuards,
@@ -15,8 +16,12 @@ import { RolesGuard } from 'src/auth/guards/roles/roles.guard';
 import { CreateInstructorDto } from './dto/create-instructor.dto';
 import { UpdateInstructorDto } from './dto/update-instructor.dto';
 import { InstructorsService } from './instructors.service';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { User } from 'src/database/entities/user.entity';
+import { InstructorOwnerOrAdminGuard } from 'src/auth/guards/instructor-or-admin.guard';
 
 @Controller('instructors')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class InstructorsController {
   constructor(private readonly instructorsService: InstructorsService) {}
 
@@ -32,25 +37,28 @@ export class InstructorsController {
     return this.instructorsService.findById(+id);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @AdminOrInstructor()
+  
   @Post()
-  create(@Body() createInstructorDto: CreateInstructorDto) {
-    return this.instructorsService.create(createInstructorDto);
+  @AdminOrInstructor()
+  create(
+    @Body() createInstructorDto: CreateInstructorDto,
+    @CurrentUser() user: User
+  ) {
+    return this.instructorsService.create(createInstructorDto, user);
   }
 
   @Patch(':id')
+  @UseGuards(InstructorOwnerOrAdminGuard)
   update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateInstructorDto: UpdateInstructorDto,
   ) {
-    return this.instructorsService.update(+id, updateInstructorDto);
+    return this.instructorsService.update(id, updateInstructorDto);
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @AdminOrInstructor()
-  async remove(@Param('id') id: number): Promise<{ message: string }> {
-    return this.instructorsService.remove(+id);
+  @UseGuards(InstructorOwnerOrAdminGuard)
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.instructorsService.remove(id);
   }
 }

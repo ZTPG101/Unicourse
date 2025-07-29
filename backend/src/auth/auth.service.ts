@@ -1,4 +1,9 @@
-import { Body, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Body,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as argon2 from 'argon2';
@@ -25,21 +30,23 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
+    if (password === '')
+      throw new UnauthorizedException('Please provide the password');
     const isPasswordMatch = await compare(password, user.password);
     if (!isPasswordMatch)
       throw new UnauthorizedException('Invalid credentials');
-    
+
     return { id: user.id };
   }
-  
-  async register(@Body() body: CreateUserDto){
-    return this.userService.create(body)
+
+  async register(@Body() body: CreateUserDto) {
+    return this.userService.create(body);
   }
-  
+
   async login(user: { id: number }, deviceInfo?: string) {
     const { accessToken, refreshToken } = await this.generateTokens(user.id);
     const hashedRefreshToken = await argon2.hash(refreshToken);
-    
+
     const userEntity = await this.userService.findById(user.id);
     if (!userEntity) {
       throw new UnauthorizedException('User not found!');
@@ -50,7 +57,7 @@ export class AuthService {
       hashedRefreshToken,
       deviceInfo,
     );
-    
+
     return {
       id: user.id,
       accessToken,
@@ -163,5 +170,11 @@ export class AuthService {
     if (!user) throw new UnauthorizedException('User not found');
     const currentUser: CurrentUser = { id: user.id, role: user.role };
     return currentUser;
+  }
+
+  async validategoogleUser(googleUser: CreateUserDto) {
+    const user = await this.userService.findByEmail(googleUser.email);
+    if (user) return user;
+    return await this.userService.create(googleUser);
   }
 }

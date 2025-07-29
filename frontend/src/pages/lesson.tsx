@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link, useLocation } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 
 // Define the lesson type (adjust fields as needed)
 interface Lesson {
@@ -17,7 +17,6 @@ const LessonPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Replace with your actual API endpoint
     fetch(`/api/lessons/${lessonId}`)
       .then((res) => res.json())
       .then((data) => {
@@ -27,8 +26,17 @@ const LessonPage: React.FC = () => {
       .catch(() => setLoading(false));
   }, [lessonId]);
 
+  const getYouTubeEmbedUrl = (url: string): string | null => {
+    const match = url.match(
+      /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/
+    );
+    return match ? `https://www.youtube.com/embed/${match[1]}` : null;
+  };
+
   if (loading) return <div>Loading...</div>;
   if (!lesson) return <div>Lesson not found.</div>;
+
+  const youTubeEmbedUrl = lesson.videoUrl ? getYouTubeEmbedUrl(lesson.videoUrl) : null;
 
   return (
     <div className="lesson-page container">
@@ -41,14 +49,34 @@ const LessonPage: React.FC = () => {
         &larr; Back to Curriculum
       </Link>
       <h1>{lesson.title}</h1>
+
       {lesson.videoUrl && (
         <div className="lesson-video" style={{ margin: "24px 0" }}>
-          <video width="100%" controls>
-            <source src={lesson.videoUrl} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
+          {youTubeEmbedUrl ? (
+            <div style={{ position: "relative", paddingBottom: "56.25%", height: 0 }}>
+              <iframe
+                src={youTubeEmbedUrl}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                title="Lesson Video"
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                }}
+              ></iframe>
+            </div>
+          ) : (
+            <video width="100%" controls>
+              <source src={lesson.videoUrl} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          )}
         </div>
       )}
+
       <div
         className="lesson-content"
         dangerouslySetInnerHTML={{ __html: lesson.content }}

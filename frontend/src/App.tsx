@@ -1,31 +1,53 @@
-import React from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import CustomCursor from "./components/CustomCursor";
 import Layout from "./components/layout/Layout";
+import { useAuth } from "./context/AuthContext";
+import About from "./pages/About";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
+import Contact from "./pages/Contact";
 import Course from "./pages/Course";
 import CourseDetails from "./pages/Course-details";
 import Home from "./pages/Home";
-import Instructor from "./pages/Instructors";
 import InstructorDetails from "./pages/Instructor-details";
+import Instructor from "./pages/Instructors";
 import LessonPage from "./pages/lesson";
 import Login from "./pages/Login";
-import Register from "./pages/Register";
 import MyCourse from "./pages/MyCourse";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
+import Register from "./pages/Register";
 import Testimonial from "./pages/Testimonial";
 
 const App: React.FC = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const token = params.get('token');
+    const refreshToken = params.get('refreshToken');
+
+    if (token && refreshToken) {
+      // Store the tokens
+      localStorage.setItem('token', token);
+      localStorage.setItem('refreshToken', refreshToken);
+
+      login();
+
+      
+      navigate('/', { replace: true });
+    }
+  }, [location, navigate, login]);
+
   return (
-    <BrowserRouter>
+    <>
       <CustomCursor />
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
-          <Route path="register" element={<Register />} />
-          <Route path="login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/course" element={<Course />} />
           <Route path="/course-details/:courseId" element={<CourseDetails />} />
           <Route path="/lesson/:lessonId" element={<LessonPage />} />
@@ -40,7 +62,7 @@ const App: React.FC = () => {
           {/* Define other routes for your application here */}
         </Route>
       </Routes>
-    </BrowserRouter>
+    </>
   );
 };
 

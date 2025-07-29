@@ -7,23 +7,34 @@ import {
   Patch,
   Post,
   UseGuards,
-  Query
+  Query,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { Public } from 'src/auth/decorators/public.decorator';
-import { AdminOnly, AdminOrInstructor } from 'src/auth/decorators/roles.decorator';
+import {
+  AdminOnly,
+  AdminOrInstructor,
+} from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles/roles.guard';
 import { CoursesService } from './courses.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { CourseOwnerOrAdminGuard } from 'src/auth/guards/course-owner-or-admin.guard';
+import { User } from 'src/database/entities/user.entity';
 
 @Controller('courses')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class CoursesController {
   constructor(private readonly coursesService: CoursesService) {}
 
   @Public()
   @Get()
-  getAllCourse(@Query('limit') limit?: string, @Query('offset') offset?: string) {
+  getAllCourse(
+    @Query('limit') limit?: string,
+    @Query('offset') offset?: string,
+  ) {
     const parsedLimit = limit ? parseInt(limit, 10) : undefined;
     const parsedOffset = offset ? parseInt(offset, 10) : undefined;
     return this.coursesService.findAll(parsedLimit, parsedOffset);
@@ -34,9 +45,8 @@ export class CoursesController {
   getCoursesMetadata(
     @Query('search') search?: string,
     @Query('priceMin') priceMin?: string,
-    @Query('priceMax') priceMax?: string
+    @Query('priceMax') priceMax?: string,
   ) {
-    // Convert query params to appropriate types
     const filters = {
       search: search || undefined,
       priceMin: priceMin ? Number(priceMin) : undefined,
@@ -52,23 +62,23 @@ export class CoursesController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @AdminOrInstructor()
-  create(@Body() dto: CreateCourseDto) {
-    return this.coursesService.create(dto);
+  create(@Body() createCourseDto: CreateCourseDto, @CurrentUser() user: User) {
+    return this.coursesService.create(createCourseDto, user);
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @AdminOrInstructor()
-  update(@Param('id') id: string, @Body() updateCourseDto: UpdateCourseDto) {
-    return this.coursesService.update(+id, updateCourseDto);
+  @UseGuards(CourseOwnerOrAdminGuard)
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateCourseDto: UpdateCourseDto,
+  ) {
+    return this.coursesService.update(id, updateCourseDto);
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @AdminOnly()
-  remove(@Param('id') id: string) {
-    return this.coursesService.remove(+id);
+  @UseGuards(CourseOwnerOrAdminGuard)
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.coursesService.remove(id);
   }
 }

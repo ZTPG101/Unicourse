@@ -5,16 +5,16 @@ import {
   Get,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
+  Req,
   UseGuards,
 } from '@nestjs/common';
-import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { AdminOrInstructor } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles/roles.guard';
 import { SelfOrAdminGuard } from 'src/auth/guards/self-admin.guard';
-import { User } from 'src/database/entities/user.entity';
 import { CreateEnrollmentDto } from './dto/create-enrollment.dto';
 import { UpdateEnrollmentDto } from './dto/update-enrollment.dto';
 import { UpdateProgressDto } from './dto/update-progress.dto';
@@ -25,12 +25,10 @@ export class EnrollmentsController {
   constructor(private readonly enrollmentsService: EnrollmentsService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard, RolesGuard, SelfOrAdminGuard)
-  create(
-    @Body() dto: CreateEnrollmentDto,
-    @CurrentUser() user: User,
-  ) {
-    return this.enrollmentsService.create(dto, user.id);
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  create(@Body() dto: CreateEnrollmentDto, @Req() req) {
+    const userId = req.user.id;
+    return this.enrollmentsService.create(dto, userId);
   }
 
   @Get()
@@ -43,6 +41,12 @@ export class EnrollmentsController {
   @UseGuards(JwtAuthGuard, RolesGuard, SelfOrAdminGuard)
   findOne(@Param('id') id: string) {
     return this.enrollmentsService.findById(+id);
+  }
+
+  @Get('user/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard, SelfOrAdminGuard)
+  findByUser(@Param('id', ParseIntPipe) id: number) {
+    return this.enrollmentsService.findByUserId(id);
   }
 
   //for bulk update

@@ -128,15 +128,15 @@ const Register: React.FC = () => {
                 </button>
               </div>
               <div className="google-facebook">
-                <a href="#">
-                  <div className="icon">
-                    <img
-                      src="/assets/images/icon/icon-google-2.png"
-                      alt="Google"
-                    />
-                  </div>{" "}
-                  Continue with Google
-                </a>
+                <a href="http://localhost:3000/auth/google/login">
+                    <div className="icon">
+                      <img
+                        src="/assets/images/icon/icon-google-2.png"
+                        alt="Google"
+                      />
+                    </div>
+                    Rgister with Google
+                  </a>
                 <a href="#">
                   <div className="icon">
                     <img
@@ -144,7 +144,7 @@ const Register: React.FC = () => {
                       alt="Facebook"
                     />
                   </div>{" "}
-                  Continue with Facebook
+                  Register with Facebook
                 </a>
               </div>
               <div className="create-account text-center">

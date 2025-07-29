@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import type { Course } from "../../services/courses.service";
 import { ReviewsService, type Review } from "../../services/reviews.service";
-import { CoursesService } from "../../services/courses.service";
 import { renderStars } from "../../utils/stars";
 
 const REVIEWS_PER_PAGE = 5;

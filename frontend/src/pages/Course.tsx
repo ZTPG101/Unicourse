@@ -51,17 +51,13 @@ const CourseComponent: React.FC = () => {
       try {
         setLoading(true);
         // Fetch all filtered courses (no pagination on backend)
-        const fetchedCourses = await CoursesService.getAllCourses(
-          undefined,
-          undefined,
-          {
-            search: searchTerm,
-            priceMin: priceRange.min,
-            priceMax: priceRange.max,
-            categories: selectedCategories.join(","),
-            skillLevels: selectedSkillLevels.join(","),
-          }
-        );
+        const fetchedCourses = await CoursesService.getAllCourses({
+          search: searchTerm,
+          priceMin: priceRange.min,
+          priceMax: priceRange.max,
+          categories: selectedCategories.join(","),
+          skillLevels: selectedSkillLevels.join(","),
+        });
         setCourses(fetchedCourses);
         setError(null);
       } catch (err) {

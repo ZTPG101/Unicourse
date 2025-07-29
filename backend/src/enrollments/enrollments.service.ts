@@ -34,11 +34,25 @@ export class EnrollmentsService {
   async findById(id: number): Promise<Enrollment | null> {
     return this.EnrollmentRepo.findOne({
       where: { id },
+      relations: ['course'],
+    });
+  }
+
+  findByUserId(userId: number) {
+    return this.EnrollmentRepo.find({
+      where: { user: { id: userId } },
+      relations: [
+        'course', 
+        'course.instructor', 
+        'course.instructor.user',
+        'course.category'
+      ],
+      order: { enrolledAt: 'DESC' },
     });
   }
 
   findAll(): Promise<Enrollment[]> {
-    return this.EnrollmentRepo.find({ relations: ["course", "user"] });
+    return this.EnrollmentRepo.find({ relations: ['course', 'user'] });
   }
 
   async update(

@@ -115,6 +115,7 @@
     border-radius: 50%;
     top: 13px;
     left: -13px;
+    z-index: 2;
 }
 
 .testimonial-one__icon span {
@@ -271,6 +272,23 @@
 .testimonial-one .owl-theme .owl-dots .owl-dot span:before {
     font-size: 12px;
     line-height: 12px;
+}
+
+.testimonial-one__carousel .slick-slide {
+    float: none !important;
+    display: block !important;
+    height: auto !important; /* Allow slide height to be determined by content */
+}
+
+.testimonial-one__carousel .slick-slide > div {
+    display: block;
+    width: 100%;
+}
+
+.testimonial-one__carousel .testimonial-one__single {
+    display: flex !important; /* Force flex display */
+    align-items: center; /* Keep items vertically centered */
+    width: 100%;
 }
 
 /*--------------------------------------------------------------

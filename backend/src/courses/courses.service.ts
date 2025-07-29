@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { Repository } from 'typeorm';
@@ -18,32 +18,35 @@ export class CoursesService {
     @Inject('CATEGORY_REPOSITORY') private CategoryRepo: Repository<Category>,
   ) {}
 
-  async create(createCourseDto: CreateCourseDto): Promise<Course | null> {
-    const instructor = await this.InstructorRepo.findOne({
-      where: { id: createCourseDto.instructorId },
+  async isInstructorOwnerOfCourse(courseId: number, userId: number): Promise<boolean> {
+    const course = await this.CourseRepo.findOne({
+      where: { id: courseId },
+      relations: ['instructor', 'instructor.user'],
     });
+    return !!course && course.instructor?.user?.id === userId;
+  }
 
-    if (!instructor) {
-      throw new NotFoundException(
-        `Instructor with id ${createCourseDto.instructorId} not found`,
-      );
+  async create(createCourseDto: CreateCourseDto, user: User): Promise<Course | null> {
+    let instructor: Instructor | null;
+
+    if (user.role === UserRole.ADMIN && createCourseDto.instructorId) {
+      instructor = await this.InstructorRepo.findOne({ where: { id: createCourseDto.instructorId } });
+      if (!instructor) {
+        throw new NotFoundException(`Instructor with id ${createCourseDto.instructorId} not found`);
+      }
+    } else {
+      instructor = await this.InstructorRepo.findOne({ where: { user: { id: user.id } } });
+      if (!instructor) {
+        throw new ForbiddenException('You must have an instructor profile to create a course.');
+      }
     }
 
-    const category = await this.CategoryRepo.findOne({
-      where: { id: createCourseDto.categoryId },
-    });
+    const category = await this.CategoryRepo.findOne({ where: { id: createCourseDto.categoryId } });
     if (!category) {
-      throw new NotFoundException(
-        `Category with id ${createCourseDto.categoryId} not found`,
-      );
+      throw new NotFoundException(`Category with id ${createCourseDto.categoryId} not found`);
     }
 
-    const coursePayload = this.CourseRepo.create({
-      ...createCourseDto,
-      instructor: instructor,
-      category: category,
-    });
-
+    const coursePayload = this.CourseRepo.create({ ...createCourseDto, instructor, category });
     const course = await this.CourseRepo.save(coursePayload);
     return this.findById(course.id);
   }
