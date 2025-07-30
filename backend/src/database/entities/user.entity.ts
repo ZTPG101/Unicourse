@@ -12,14 +12,13 @@ import {
 import { Course } from './course.entity';
 import { Enrollment } from './enrollment.entity';
 import { Review } from './review.entity';
-
-import * as bcrypt from 'bcrypt';
 import { Session } from './session.entity';
-import { UserRole, UserRoleType } from 'src/auth/types/roles.enum';
 import { Cart } from './cart.entity';
 import { Order } from './order.entity';
 import { BillingDetails } from './billingDetails.entity';
 import { Instructor } from './instructor.entity';
+import { UserRole, UserRoleType } from 'src/auth/types/roles.enum';
+import * as bcrypt from 'bcrypt';
 
 @Entity()
 export class User {

@@ -15,7 +15,7 @@ import { RolesGuard } from 'src/auth/guards/roles/roles.guard';
 import { User } from 'src/database/entities/user.entity';
 
 @Controller('carts')
-@UseGuards(JwtAuthGuard, RolesGuard) // Apply guards for the whole controller
+@UseGuards(JwtAuthGuard, RolesGuard) 
 export class CartsController {
   constructor(private readonly cartsService: CartsService) {}
 

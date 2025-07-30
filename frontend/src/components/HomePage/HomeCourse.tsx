@@ -99,8 +99,10 @@ const HomeCourse: React.FC = () => {
           <div className="courses-one__carousel">
             <Slider {...settings}>
               {courses.map((course) => (
-                <div key={course.id} className="course-carousel-item">
-                  <CourseCard2 course={course} />
+                 <div key={course.id}> 
+                  <div className="course-carousel-item-wrapper">
+                    <CourseCard2 course={course} />
+                  </div>
                 </div>
               ))}
             </Slider>

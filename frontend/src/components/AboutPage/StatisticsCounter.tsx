@@ -1,5 +1,6 @@
 import React from "react";
 import CountUp from "react-countup";
+import VideoPopup from "../VideoPopup";
 
 interface statItem {
   studentsTrained: number;
@@ -31,15 +32,12 @@ const StatisticsCounter: React.FC<StatisticsCounterProps> = ({ data }) => {
               alt=""
             />
           </div>
-          <a
-            href="https://www.youtube.com/watch?v=Get7rqXYrbQ"
-            className="video-popup"
-          >
+          <VideoPopup videoId="dQw4w9WgXcQ" className="video-popup">
             <div className="counter-one__video-icon">
               <span className="icon-play"></span>
               <i className="ripple"></i>
             </div>
-          </a>
+          </VideoPopup>
         </div>
       </div>
       <div

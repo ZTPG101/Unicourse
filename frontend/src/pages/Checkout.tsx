@@ -335,6 +335,7 @@ const Checkout: React.FC = () => {
                     </div>
                   )}
 
+                  {/* --- PayPal Button Section --- */}
                   <div
                     className={`checkout__payment__item ${
                       activePayment === "paypal"
@@ -357,6 +358,31 @@ const Checkout: React.FC = () => {
                           onError={(message) => setOrderError(message)}
                           disabled={!billingId || isSavingBilling}
                           fundingSource={FUNDING.PAYPAL}
+                        />
+                      </div>
+                    )}
+                  </div>
+                   {/* --- Card Button Section --- */}
+                   <div
+                    className={`checkout__payment__item ${
+                      activePayment === "card" ? "checkout__payment__item--active" : ""
+                    }`}
+                  >
+                    <h3
+                      className="checkout__payment__title"
+                      onClick={() => setActivePayment("card")}
+                    >
+                      Pay with Credit Card
+                    </h3>
+                    {activePayment === "card" && (
+                      <div className="checkout__payment__content">
+                        <PayPalButton
+                          total={total}
+                          billingId={billingId}
+                          onSuccess={handleOrderSuccess}
+                          onError={(message) => setOrderError(message)}
+                          disabled={!billingId || isSavingBilling}
+                          fundingSource={FUNDING.CARD}
                         />
                       </div>
                     )}

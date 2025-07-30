@@ -134,7 +134,7 @@ ul {
   margin: 0 auto;
   width: 100%;
   min-width: 300px;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 .container {
@@ -804,7 +804,7 @@ ul {
 .main-menu__left {
   display: flex;
   align-items: center;
-  gap: 60px;
+  margin-left: 50px;
   padding: 22.5px 0;
 }
 
@@ -1014,6 +1014,17 @@ ul {
   align-items: center;
   flex-wrap: wrap;
   gap: 10px;
+}
+
+.main-menu__btn-boxes button {
+  padding: 6px 20px 7px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+  background-color: var(--fistudy-base);
+  color: var(--fistudy-white);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .main-menu__btn-box-1 .thm-btn {

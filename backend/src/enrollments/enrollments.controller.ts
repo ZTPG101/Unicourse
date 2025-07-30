@@ -21,37 +21,37 @@ import { UpdateProgressDto } from './dto/update-progress.dto';
 import { EnrollmentsService } from './enrollments.service';
 
 @Controller('enrollments')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class EnrollmentsController {
   constructor(private readonly enrollmentsService: EnrollmentsService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  
   create(@Body() dto: CreateEnrollmentDto, @Req() req) {
     const userId = req.user.id;
     return this.enrollmentsService.create(dto, userId);
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard, RolesGuard, SelfOrAdminGuard)
+  @UseGuards(SelfOrAdminGuard)
   findAll() {
     return this.enrollmentsService.findAll();
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard, SelfOrAdminGuard)
+  @UseGuards(SelfOrAdminGuard)
   findOne(@Param('id') id: string) {
     return this.enrollmentsService.findById(+id);
   }
 
   @Get('user/:id')
-  @UseGuards(JwtAuthGuard, RolesGuard, SelfOrAdminGuard)
+  @UseGuards(SelfOrAdminGuard)
   findByUser(@Param('id', ParseIntPipe) id: number) {
     return this.enrollmentsService.findByUserId(id);
   }
 
   //for bulk update
   @Patch(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @AdminOrInstructor()
   update(
     @Param('id') id: string,
@@ -62,7 +62,7 @@ export class EnrollmentsController {
 
   //for student user
   @Patch(':id/progress')
-  @UseGuards(JwtAuthGuard, RolesGuard, SelfOrAdminGuard)
+  @UseGuards(SelfOrAdminGuard)
   async updateProgress(
     @Param('id') id: string,
     @Body() updateProgressDto: UpdateProgressDto,
@@ -76,7 +76,7 @@ export class EnrollmentsController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard, SelfOrAdminGuard)
+  @UseGuards(SelfOrAdminGuard)
   remove(@Param('id') id: string) {
     return this.enrollmentsService.remove(+id);
   }

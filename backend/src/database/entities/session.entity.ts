@@ -16,7 +16,7 @@ export class Session {
   hashedRefreshToken: string;
 
   @Column({ nullable: true })
-  deviceInfo: string; // e.g., 'Chrome on Windows'
+  deviceInfo: string;
 
   @CreateDateColumn()
   createdAt: Date;

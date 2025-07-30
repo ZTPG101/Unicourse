@@ -64,7 +64,7 @@ export class AuthService {
       refreshToken,
     };
   }
-  
+
   async generateTokens(userId: number) {
     const payload: AuthJwtpayload = { sub: userId };
     const [accessToken, refreshToken] = await Promise.all([
@@ -176,5 +176,11 @@ export class AuthService {
     const user = await this.userService.findByEmail(googleUser.email);
     if (user) return user;
     return await this.userService.create(googleUser);
+  }
+
+  async validateFacebookUser(facebookUser: any) {
+    const user = await this.userService.findByEmail(facebookUser.email);
+    if (user) return user;
+    return await this.userService.create(facebookUser);
   }
 }

@@ -7,12 +7,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Category } from './category.entity';
 import { Enrollment } from './enrollment.entity';
+import { Instructor } from './instructor.entity';
 import { Lesson } from './lesson.entity';
 import { Review } from './review.entity';
-import { User } from './user.entity';
-import { Category } from './category.entity';
-import { Instructor } from './instructor.entity';
 
 @Entity()
 export class Course {
@@ -75,7 +74,7 @@ export class Course {
   @Column({
     type: 'simple-json',
     nullable: true,
-    default: '[]', // Default to an empty JSON array string
+    default: '[]',
     comment:
       'Stores an array of strings detailing what the student will learn.',
   })
@@ -84,7 +83,7 @@ export class Course {
   @Column({
     type: 'simple-json',
     nullable: true,
-    default: '[]', // Default to an empty JSON array string
+    default: '[]',
     comment: 'Stores an array of objects for course requirements.',
   })
   requirements: { title: string; text: string; icon?: string }[];

@@ -18,7 +18,7 @@ const MyCourse: React.FC = () => {
   const { user, isLoggedIn } = useAuth();
 
   useEffect(() => {
-    if (user) {
+    if (isLoggedIn && user) {
       EnrollmentService.getUserEnrollments(user.id)
         .then((enrollmentsFromApi) => {
           const mappedEnrollments = enrollmentsFromApi.map((enrollment) => {
@@ -32,18 +32,20 @@ const MyCourse: React.FC = () => {
           setEnrollments(mappedEnrollments);
         })
         .catch((err) => {
-          if (err.message.includes("401")) {
-            setError("Please login to see your enrolled courses.");
-          } else {
-            setError("Failed to fetch enrollments.");
-          }
-          console.error(err);
+          console.error("Failed to fetch enrollments:", err);
+          setError("Failed to fetch your enrolled courses.");
         })
         .finally(() => {
           setLoading(false);
         });
     }
-  }, [user, isLoggedIn]);
+
+    else if (!isLoggedIn) {
+      setLoading(false); 
+      setError("Please log in to see your enrolled courses.");
+    }
+
+  }, [isLoggedIn, user]);
 
   const handleViewCourse = (courseId: number) => {
     navigate(`/course-details/${courseId}`, {

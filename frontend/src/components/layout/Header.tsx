@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom"; // Import Link for navigation
 import { useAuth } from "../../context/AuthContext";
 import { InstructorService } from "../../services/instructor.service";
@@ -84,7 +84,6 @@ const Header = () => {
               <div className="main-menu__wrapper-inner">
                 <div className="main-menu__left">
                   <div className="main-menu__logo">
-                    {/* Use Link for home navigation */}
                     <Link to="/">
                       <img
                         src="/assets/images/unicourselogo.jpeg"
@@ -92,34 +91,6 @@ const Header = () => {
                         style={{ width: "100px", height: "auto" }}
                       />
                     </Link>
-                  </div>
-                  <div className="main-menu__category-box">
-                    <div className="main-menu__category-btn">
-                      <i className="fas fa-th"></i>
-                      <p>Category</p>
-                      <span className="icon-down-arrow"></span>
-                    </div>
-                    {/* Dropdown menu content here... */}
-                    <ul className="list-unstyled main-menu__category-sub-menu">
-                      {[
-                        "Technology & Programming",
-                        "Business & Finance",
-                        "Arts & Design",
-                        "Personal Development",
-                        "Language Learning",
-                        "Academic Subjects",
-                        "Lifestyle & Hobbies",
-                        "Career & Professional Skills",
-                      ].map((cat) => (
-                        <li key={cat}>
-                          <Link
-                            to={`/course?category=${encodeURIComponent(cat)}`}
-                          >
-                            {cat}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
                   </div>
                 </div>
                 <div className="main-menu__main-menu-box">
@@ -162,10 +133,10 @@ const Header = () => {
                       </ul>
                     </li>
                     <li>
-                      <Link to="/course">Course</Link>
+                      <Link to="/course">Courses</Link>
                     </li>
                     <li>
-                      <Link to="/my-course">My course</Link>
+                      <Link to="/my-course">My courses</Link>
                     </li>
                     <li>
                       <Link to="/contact">Contact</Link>
@@ -277,18 +248,18 @@ const Header = () => {
                         </Link>
                       </li>
                       <li>
-                          <Link to="/testimonial">Testimonials</Link>
-                        </li>
+                        <Link to="/testimonial">Testimonials</Link>
+                      </li>
                       <li>
                         <Link to="/cart">Cart</Link>
                       </li>
                     </ul>
                   </li>
                   <li>
-                    <Link to="/course">Course</Link>
+                    <Link to="/course">Courses</Link>
                   </li>
                   <li>
-                    <Link to="/my-course">My Course</Link>
+                    <Link to="/my-course">My Courses</Link>
                   </li>
                   <li>
                     <Link to="/contact">Contact</Link>

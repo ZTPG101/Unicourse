@@ -22,6 +22,8 @@
 }
 
 .team-one__img-box {
+    width: auto;
+    height: auto;
     position: relative;
     display: block;
 }

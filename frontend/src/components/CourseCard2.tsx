@@ -30,8 +30,9 @@ const CourseCard2: React.FC<CourseCard2Props> = ({
           <img src={course.imageUrl} alt={course.title} />
         </div>
       </div>
+      <div className="course-card-content">
       <div className="courses-one__content">
-        <div className="courses-one__tag-and-meta">
+        <div className="courses-one__tag-and-meta list-unstyled">
           <div className="courses-one__tag">
             <span>{course.category?.name || "Uncategorized"}</span>
           </div>
@@ -76,6 +77,7 @@ const CourseCard2: React.FC<CourseCard2Props> = ({
           </div>
           <span>${course.price.toFixed(2)}</span>
         </div>
+      </div>
       </div>
     </div>
   );

@@ -1869,7 +1869,7 @@ Product Details
 .checkout__payment {
     background-color: rgba(var(--fistudy-bdr-color-rgb), .50);
     border-radius: 0;
-    padding: 49px 50px 18px;
+    padding: 18px 50px 18px;
     margin-bottom: 30px;
 }
 
@@ -1911,6 +1911,10 @@ Product Details
 
 .checkout__payment__title img {
     margin-left: 15px;
+}
+
+.checkout__payment p {
+    margin-bottom: 20px;
 }
 
 .checkout__payment__item--active .checkout__payment__title::before {

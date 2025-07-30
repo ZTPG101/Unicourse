@@ -233,7 +233,7 @@ const CourseComponent: React.FC = () => {
     scrollToContentBox();
   }, [currentPage]);
 
-  const breadcrumbs = [{ label: "Home", path: "/" }, { label: "Course" }];
+  const breadcrumbs = [{ label: "Home", path: "/" }, { label: "Courses" }];
 
   const scrollToContentBox = () => {
     if (contentBoxRef.current) {
@@ -285,7 +285,7 @@ const CourseComponent: React.FC = () => {
 
   return (
     <>
-      <PageHeader title="Course" breadcrumbs={breadcrumbs} />
+      <PageHeader title="Courses" breadcrumbs={breadcrumbs} />
       {/* Course Grid Start */}
       <section className="course-grid">
         <div className="container">

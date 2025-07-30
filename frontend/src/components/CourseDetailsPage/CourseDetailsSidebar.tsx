@@ -3,6 +3,7 @@
 import React from "react";
 import type { Course } from "../../services/courses.service";
 import { formatDuration } from "../../utils/formatters";
+import VideoPopup from "../VideoPopup";
 
 interface CourseDetailsSidebarProps {
   course: Course;
@@ -53,15 +54,12 @@ const CourseDetailsSidebar: React.FC<CourseDetailsSidebarProps> = ({
                 "url(/assets/images/backgrounds/course-details-video-link-bg.jpg)",
             }}
           ></div>
-          <a
-            href="https://youtu.be/dQw4w9WgXcQ?si=ad0P4xO5PsJ2T0Cg"
-            className="video-popup"
-          >
+          <VideoPopup videoId="dQw4w9WgXcQ" className="video-popup">
             <div className="course-details__video-icon">
               <span className="icon-play"></span>
               <i className="ripple"></i>
             </div>
-          </a>
+          </VideoPopup>
         </div>
         <div className="course-details__dollar-and-btn-box">
           <h3 className="course-details__dollar">${course.price.toFixed(2)}</h3>

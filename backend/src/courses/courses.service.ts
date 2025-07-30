@@ -102,7 +102,6 @@ export class CoursesService {
       'category',
     );
 
-    // Apply filters if provided
     if (filters.search) {
       query.andWhere(
         'course.title LIKE :search OR course.description LIKE :search',
@@ -116,10 +115,8 @@ export class CoursesService {
       query.andWhere('course.price <= :max', { max: filters.priceMax });
     }
 
-    // Get total count
     const totalCourses = await query.getCount();
 
-    // Get counts per category
     const categoryCounts = await this.CourseRepo.createQueryBuilder('course')
       .leftJoin('course.category', 'category')
       .select('category.id', 'id')
@@ -129,7 +126,6 @@ export class CoursesService {
       .addGroupBy('category.name')
       .getRawMany();
 
-    // Get counts per skill level
     const skillLevelCounts = await this.CourseRepo.createQueryBuilder('course')
       .select('course.level', 'level')
       .addSelect('COUNT(course.id)', 'count')

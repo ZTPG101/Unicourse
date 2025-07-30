@@ -16,14 +16,16 @@ import { JwtAuthGuard } from './guards/jwt-auth/jwt-auth.guard';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { RefreshJwtStrategy } from './strategies/refresh.strategy';
+import facebookOauthConfig from './config/facebook-oauth.config';
+import { FacebookStrategy } from './strategies/facebook.strategy';
 
 @Module({
   imports: [
-    // TypeOrmModule.forFeature([User]),
     JwtModule.registerAsync(jwtConfig.asProvider()),
     ConfigModule.forFeature(jwtConfig),
     ConfigModule.forFeature(refreshJwtConfig),
     ConfigModule.forFeature(googleOauthConfig),
+    ConfigModule.forFeature(facebookOauthConfig),
     DatabaseModule,
     UsersModule,
     SessionModule
@@ -36,9 +38,10 @@ import { RefreshJwtStrategy } from './strategies/refresh.strategy';
     JwtStrategy,
     RefreshJwtStrategy,
     GoogleStrategy,
+    FacebookStrategy,
     { 
       provide: APP_GUARD,
-      useClass: JwtAuthGuard //@UseGuards(JwtAuthGuard) applied on all API endpoints
+      useClass: JwtAuthGuard
     },
   ],
   exports: [AuthService],

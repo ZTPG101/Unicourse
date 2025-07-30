@@ -16,6 +16,7 @@ import { QueryFailedError } from 'typeorm';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
 import { LoginDto } from './dto/login.dto';
+import { FacebookAuthGuard } from './guards/facebook-auth/facebook-auth.guard';
 import { GoogleAuthGuard } from './guards/google-auth/google-auth.guard';
 import { RefreshAuthGuard } from './guards/refresh-auth/refresh-auth.guard';
 
@@ -76,6 +77,22 @@ export class AuthController {
 
     if (!user) {
       throw new UnauthorizedException('Could not process Google user.');
+    }
+    const tokens = await this.authService.login({ id: user.id });
+    res.redirect(`http://localhost:5173?token=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`);
+  }
+
+  @Get('facebook')
+  @UseGuards(FacebookAuthGuard)
+  async facebookLogin() {}
+
+  @Get('facebook/callback')
+  @UseGuards(FacebookAuthGuard)
+  async facebookCallback(@Req() req, @Res() res) {
+    const user = await this.authService.validateFacebookUser(req.user);
+
+    if (!user) {
+      throw new UnauthorizedException('Could not process Facebook user.');
     }
     const tokens = await this.authService.login({ id: user.id });
     res.redirect(`http://localhost:5173?token=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`);

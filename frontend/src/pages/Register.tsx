@@ -135,7 +135,7 @@ const Register: React.FC = () => {
                         alt="Google"
                       />
                     </div>
-                    Rgister with Google
+                    Continue with Google
                   </a>
                 <a href="#">
                   <div className="icon">
@@ -144,7 +144,7 @@ const Register: React.FC = () => {
                       alt="Facebook"
                     />
                   </div>{" "}
-                  Register with Facebook
+                  Continue with Facebook
                 </a>
               </div>
               <div className="create-account text-center">

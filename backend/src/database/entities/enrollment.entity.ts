@@ -1,13 +1,12 @@
 import {
-  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
-  PrimaryGeneratedColumn,
+  PrimaryGeneratedColumn
 } from 'typeorm';
-import { User } from './user.entity';
 import { Course } from './course.entity';
+import { User } from './user.entity';
 
 @Entity()
 export class Enrollment {
