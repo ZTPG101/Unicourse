@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import CourseCurriculumTab from "../components/CourseDetailsPage/CourseCurriculumTab";
 import CourseDetailsSidebar from "../components/CourseDetailsPage/CourseDetailsSidebar";
-import CourseInstructorTab from "../components/CourseInstructorTab";
+import CourseInstructorTab from "../components/CourseDetailsPage/CourseInstructorTab";
 import CourseOverviewTab from "../components/CourseDetailsPage/CourseOverviewTab";
 import CourseReviewTab from "../components/CourseDetailsPage/CourseReviewTab";
 import PageHeader from "../components/PageHeader";
@@ -354,7 +354,10 @@ const CourseDetails: React.FC = () => {
                       )}
                       {activeTab === "curriculum" && (
                         <div ref={curriculumTabRef}>
-                          <CourseCurriculumTab course={course} />
+                          <CourseCurriculumTab
+                            course={course}
+                            alreadyEnrolled={alreadyEnrolled}
+                          />
                         </div>
                       )}
                       {activeTab === "instructor" && (

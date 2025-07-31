@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import type { Course } from "../services/courses.service";
+import type { Course } from "../../services/courses.service";
 
 interface CourseInstructorTabProps {
   course: Course;

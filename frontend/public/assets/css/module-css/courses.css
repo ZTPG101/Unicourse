@@ -2511,6 +2511,7 @@
     font-size: 20px;
     font-weight: 500;
     line-height: 30px;
+    margin-top: 15px;
 }
 
 .accrodion-content__points {
@@ -2525,6 +2526,7 @@
     align-items: center;
     justify-content: space-between;
     padding-bottom: 23px;
+    margin-top: 20px;
 }
 
 .accrodion-content__points li+li {
@@ -3127,6 +3129,14 @@
 
 .slick-dots {
     margin-top: 10px;
+}
+
+.lesson-page{
+    position: relative;
+    display: block;
+    padding: 120px 0 153px;
+    counter-reset: count;
+    z-index: 1;
 }
 
 /*--------------------------------------------------------------

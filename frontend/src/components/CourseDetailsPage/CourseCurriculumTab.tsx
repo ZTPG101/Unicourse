@@ -5,10 +5,12 @@ import { Link } from "react-router-dom";
 
 interface CourseCurriculumTabProps {
   course: Course;
+  alreadyEnrolled: boolean;
 }
 
 const CourseCurriculumTab: React.FC<CourseCurriculumTabProps> = ({
   course,
+  alreadyEnrolled,
 }) => {
   return (
     <div className="tab active-tab" id="curriculum">
@@ -19,10 +21,9 @@ const CourseCurriculumTab: React.FC<CourseCurriculumTabProps> = ({
               Course Curriculum
             </h3>
             <p className="course-details__curriculam-text">
-              Through engaging lessons and hands-on projects, you'll learn
-              Python fundamentals, data structures, object-oriented programming,
-              and popular libraries like NumPy and pandas. You'll also tackle
-              real-world applications such as data analysis and web scraping.
+              Through engaging lessons and hands-on projects, you'll learn lots
+              of stuff from this course. You'll also tackle real-world
+              applications during the course.
             </p>
             <div className="course-details__curriculam-faq">
               <div className="accrodion-grp" data-grp-name="faq-one-accrodion">
@@ -32,14 +33,14 @@ const CourseCurriculumTab: React.FC<CourseCurriculumTabProps> = ({
                     <div className="accrodion-title-box">
                       <div className="accrodion-title__count"></div>
                       <div className="accrodion-title-text">
-                        <h4>What is construction?</h4>
+                        <h4>This course components</h4>
                       </div>
                     </div>
                     <ul className="accrodion-meta list-unstyled">
                       <li>
                         <p>
                           <span className="icon-book"></span>{" "}
-                          {course.lessonCount}
+                          {course.lessonCount} lessons
                         </p>
                       </li>
                       <li>
@@ -62,7 +63,7 @@ const CourseCurriculumTab: React.FC<CourseCurriculumTabProps> = ({
                       </p>
                       <ul className="accrodion-content__points list-unstyled">
                         {course.lessons && course.lessons.length > 0 ? (
-                          course.lessons.map((lesson) => (
+                          course.lessons.map((lesson, index) => (
                             <li
                               key={lesson.id}
                               style={{
@@ -85,16 +86,31 @@ const CourseCurriculumTab: React.FC<CourseCurriculumTabProps> = ({
                                   gap: "8px",
                                 }}
                               >
-                                <div className="accrodion-content__points-btn">
-                                  <Link to={`/lesson/${lesson.id}`}>
-                                    {course.price === 0 ? "View" : "Preview"}
-                                  </Link>
-                                </div>
-                                {/* Only show lock icon if course is not free */}
-                                {course.price !== 0 && (
-                                  <div className="accrodion-content__icon">
-                                    <span className="far fa-lock-alt"></span>
+                                {alreadyEnrolled ? (
+                                  <div className="accrodion-content__points-btn">
+                                    <Link to={`/lesson/${lesson.id}`}>
+                                      View
+                                    </Link>
                                   </div>
+                                ) : (
+                                  <>
+                                    {/* Show button if course is free or it's one of the first two lessons */}
+                                    {(course.price === 0 || index < 2) && (
+                                      <div className="accrodion-content__points-btn">
+                                        <Link to={`/lesson/${lesson.id}`}>
+                                          {course.price === 0
+                                            ? "View"
+                                            : "Preview"}
+                                        </Link>
+                                      </div>
+                                    )}
+                                    {/* Only show lock icon if course is not free */}
+                                    {course.price !== 0 && (
+                                      <div className="accrodion-content__icon">
+                                        <span className="far fa-lock-alt"></span>
+                                      </div>
+                                    )}
+                                  </>
                                 )}
                               </div>
                             </li>
@@ -106,7 +122,6 @@ const CourseCurriculumTab: React.FC<CourseCurriculumTabProps> = ({
                     </div>
                   </div>
                 </div>
-                {/* ...repeat for other curriculum items as in your HTML... */}
               </div>
             </div>
           </div>
