@@ -292,11 +292,18 @@
 
 .category-one__img {
     position: relative;
+    width: 100%;
+    max-width: 533px;
+    max-height: 586px;
     display: block;
 }
 
 .category-one__img img {
     width: 100%;
+    height: 100%;
+    border-radius: 16px;
+    transform: scale(1.0);
+    transition: all 1500ms ease;
 }
 
 .category-one__social-media {

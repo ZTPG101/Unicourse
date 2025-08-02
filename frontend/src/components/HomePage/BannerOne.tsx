@@ -94,7 +94,7 @@ const BannerOne: React.FC = () => {
             <div className="banner-one__right">
               <div className="banner-one__img-box">
                 <div className="banner-one__img">
-                  <img src="/assets/images/resources/banner-two-img-1.png" alt="" />
+                  <img src="https://i.ibb.co/cKXS4FWM/student-removebg.png" alt="" />
                   <div className="banner-one__udemy-review">
                     <div className="banner-one__udemy-review-img">
                       <img src="/assets/images/resources/banner-one-udemy-review-img.jpg" alt="" />

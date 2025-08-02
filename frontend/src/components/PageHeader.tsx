@@ -12,10 +12,10 @@ interface PageHeaderProps {
   imagePath?: string;
 }
 
-const PageHeader: React.FC<PageHeaderProps> = ({ 
-  title, 
-  breadcrumbs, 
-  imagePath = "/assets/images/resources/page-header-img-1.png" 
+const PageHeader: React.FC<PageHeaderProps> = ({
+  title,
+  breadcrumbs,
+  imagePath = "/assets/images/page_header_lady.png",
 }) => {
   return (
     <section className="page-header">
@@ -44,24 +44,17 @@ const PageHeader: React.FC<PageHeaderProps> = ({
       <div className="container">
         <div className="page-header__inner">
           <div className="page-header__img">
-            <img src={imagePath} alt="" />
+            <div className="page-header__person">
+              <img src={imagePath} alt="" />
+            </div>
             <div className="page-header__shape-1">
-              <img
-                src="/assets/images/shapes/page-header-shape-1.png"
-                alt=""
-              />
+              <img src="/assets/images/shapes/page-header-shape-1.png" alt="" />
             </div>
             <div className="page-header__shape-2">
-              <img
-                src="/assets/images/shapes/page-header-shape-2.png"
-                alt=""
-              />
+              <img src="/assets/images/shapes/page-header-shape-2.png" alt="" />
             </div>
             <div className="page-header__shape-3">
-              <img
-                src="/assets/images/shapes/page-header-shape-3.png"
-                alt=""
-              />
+              <img src="/assets/images/shapes/page-header-shape-3.png" alt="" />
             </div>
           </div>
           <h2>{title}</h2>

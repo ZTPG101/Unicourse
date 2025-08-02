@@ -127,7 +127,7 @@ const CategoryOne: React.FC = () => {
             <div className="category-one__right">
               <div className="category-one__img">
                 <img
-                  src="/assets/images/resources/category-one-img-1.png"
+                  src="https://i.ibb.co/cS0vjvfS/Art-and-Illustration-for-Graphic-Design-Example-3.png"
                   alt=""
                 />
               </div>

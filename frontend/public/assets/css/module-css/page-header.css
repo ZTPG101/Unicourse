@@ -68,6 +68,9 @@
     width: auto;
     animation: topBottom 3s ease-in-out infinite;
 }
+.page-header__img .page-header__person img{
+    height: 378px;
+}
 
 .page-header__shape-1 {
     position: absolute;
@@ -113,7 +116,7 @@
 
 .page-header__shape-3 {
     position: absolute;
-    left: -105px;
+    left: -50px;
     bottom: 40px;
     z-index: -1;
 }
